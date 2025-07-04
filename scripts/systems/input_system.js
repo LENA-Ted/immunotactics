@@ -1,0 +1,107 @@
+class InputSystem {
+    constructor(game_canvas, tower_factory) {
+        this.game_canvas = game_canvas;
+        this.tower_factory = tower_factory;
+        this.cursor_state = {
+            x: 0,
+            y: 0,
+            displayed_energy: GAME_CONFIG.PLAYER_MAX_ENERGY,
+            error_timer: 0
+        };
+        this.is_initialized = false;
+    }
+
+    initialize() {
+        if (this.is_initialized) {
+            return;
+        }
+
+        this.setup_event_listeners();
+        this.is_initialized = true;
+    }
+
+    setup_event_listeners() {
+        document.addEventListener('mousemove', (event) => {
+            this.handle_mouse_move(event);
+        });
+
+        document.addEventListener('click', (event) => {
+            this.handle_mouse_click(event);
+        });
+    }
+
+    handle_mouse_move(event) {
+        const rect = this.game_canvas.getBoundingClientRect();
+        this.cursor_state.x = event.clientX - rect.left;
+        this.cursor_state.y = event.clientY - rect.top;
+    }
+
+    handle_mouse_click(event) {
+        if (!window.game_state || window.game_state.is_game_over) {
+            return;
+        }
+
+        this.attempt_place_tower();
+    }
+
+    attempt_place_tower(tower_type = TOWER_TYPES.SNIPER) {
+        const cost = this.tower_factory.get_tower_cost(tower_type);
+        
+        if (!window.game_state.player.can_afford(cost)) {
+            this.trigger_insufficient_energy_error();
+            return false;
+        }
+
+        const success = window.game_state.player.spend_energy(cost);
+        if (!success) {
+            this.trigger_insufficient_energy_error();
+            return false;
+        }
+
+        const tower = this.tower_factory.create_tower(
+            tower_type, 
+            this.cursor_state.x, 
+            this.cursor_state.y
+        );
+
+        if (tower && window.game_state.towers) {
+            window.game_state.towers.push(tower);
+            return true;
+        }
+
+        return false;
+    }
+
+    trigger_insufficient_energy_error() {
+        this.cursor_state.error_timer = 30;
+    }
+
+    update_cursor_state(player) {
+        if (this.cursor_state.error_timer > 0) {
+            this.cursor_state.error_timer--;
+        }
+
+        this.cursor_state.displayed_energy = MathUtils.lerp(
+            this.cursor_state.displayed_energy, 
+            player.energy, 
+            0.2
+        );
+    }
+
+    get_cursor_position() {
+        return {
+            x: this.cursor_state.x,
+            y: this.cursor_state.y
+        };
+    }
+
+    get_cursor_state() {
+        return this.cursor_state;
+    }
+
+    is_error_active() {
+        return this.cursor_state.error_timer > 0;
+    }
+}
+
+window.InputSystem = InputSystem;

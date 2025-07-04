@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Defense</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/ui.css">
+</head>
+<body>
+
+    <div id="game_container">
+        <canvas id="cursor_canvas"></canvas>
+        <canvas id="game_canvas"></canvas>
+        <div id="top_left_ui_container">
+            <div id="core_hp_container" class="pill"></div>
+            <div id="timer_container" class="pill">00:00</div>
+        </div>
+        <div id="game_over_screen">
+            <div>GAME OVER</div>
+            <button onclick="init()">Play Again</button>
+        </div>
+    </div>
+
+    <script src="scripts/config/game_config.js"></script>
+    <script src="scripts/config/tower_configs.js"></script>
+    <script src="scripts/config/enemy_configs.js"></script>
+
+    <script src="scripts/utils/math_utils.js"></script>
+    <script src="scripts/utils/screen_effects.js"></script>
+
+    <script src="scripts/entities/damage_number.js"></script>
+    <script src="scripts/entities/pop_effect.js"></script>
+    <script src="scripts/entities/projectile.js"></script>
+    <script src="scripts/entities/player.js"></script>
+    <script src="scripts/entities/core.js"></script>
+
+    <script src="scripts/entities/towers/base_tower.js"></script>
+    <script src="scripts/entities/towers/sniper_tower.js"></script>
+
+    <script src="scripts/entities/enemies/base_enemy.js"></script>
+    <script src="scripts/entities/enemies/basic_enemy.js"></script>
+
+    <script src="scripts/factories/tower_factory.js"></script>
+    <script src="scripts/factories/enemy_factory.js"></script>
+
+    <script src="scripts/systems/collision_system.js"></script>
+    <script src="scripts/systems/spawn_system.js"></script>
+    <script src="scripts/systems/ui_system.js"></script>
+    <script src="scripts/systems/input_system.js"></script>
+    <script src="scripts/systems/rendering_system.js"></script>
+    <script src="scripts/systems/game_loop.js"></script>
+
+    <script src="scripts/main.js"></script>
+
+</body>
+</html>
