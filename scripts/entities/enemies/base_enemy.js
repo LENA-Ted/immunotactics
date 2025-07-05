@@ -13,7 +13,18 @@ class BaseEnemy {
     }
 
     generate_hp() {
-        return MathUtils.get_random_int(this.config.min_hp, this.config.max_hp);
+        const base_hp = MathUtils.get_random_int(this.config.min_hp, this.config.max_hp);
+        return this.apply_intensity_hp_modifier(base_hp);
+    }
+
+    apply_intensity_hp_modifier(base_hp) {
+        if (!window.game_state) {
+            return base_hp;
+        }
+
+        const intensity_level = window.game_state.intensity_level || 0;
+        const hp_multiplier = 1 + (intensity_level * INTENSITY_CONFIG.HP_MODIFIER_PER_LEVEL);
+        return Math.ceil(base_hp * hp_multiplier);
     }
 
     generate_speed() {
