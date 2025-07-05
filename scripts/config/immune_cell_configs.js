@@ -14,7 +14,7 @@ const IMMUNE_CELL_CONFIGS = {
         projectile_speed: 8
     },
     MAST_CELL: {
-        cost: 30,
+        cost: 25,
         base_hp: 10,
         shoot_hp_cost: 1,
         shoot_interval_ms: 1000,
