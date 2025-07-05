@@ -71,6 +71,7 @@ class CollisionSystem {
         if (is_enemy_destroyed) {
             game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));
             game_state.enemies.splice(enemy_index, 1);
+            this.handle_enemy_destroyed(game_state);
         }
     }
 
@@ -84,6 +85,8 @@ class CollisionSystem {
         if (window.game_state && window.game_state.last_tower_damage_time) {
             delete window.game_state.last_tower_damage_time[tower.id];
         }
+
+        this.handle_enemy_destroyed(game_state);
     }
 
     handle_enemy_hit_core(enemy, core, enemy_index, game_state) {
@@ -96,6 +99,31 @@ class CollisionSystem {
         if (core_destroyed) {
             game_state.is_game_over = true;
         }
+
+        this.handle_enemy_destroyed(game_state);
+    }
+
+    handle_enemy_destroyed(game_state) {
+        game_state.killcount++;
+        game_state.total_killcount++;
+        game_state.intensity_pulsate.trigger();
+
+        if (game_state.killcount >= game_state.killcount_required) {
+            this.handle_intensity_level_up(game_state);
+        }
+    }
+
+    handle_intensity_level_up(game_state) {
+        if (game_state.intensity_level >= INTENSITY_CONFIG.MAX_INTENSITY_LEVEL) {
+            return;
+        }
+
+        game_state.intensity_level++;
+        game_state.killcount = 0;
+        game_state.killcount_required = Math.ceil(
+            game_state.killcount_required * INTENSITY_CONFIG.KILLCOUNT_SCALING_FACTOR
+        );
+        game_state.intensity_pulsate.trigger();
     }
 
     is_circle_collision(entity1, entity2) {
