@@ -42,10 +42,6 @@ class InputSystem {
             return;
         }
 
-        if (this.selection_system && this.selection_system.is_input_blocked()) {
-            return;
-        }
-
         if (!this.is_valid_game_click(event)) {
             return;
         }
