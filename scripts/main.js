@@ -145,8 +145,14 @@ function init() {
     game_instance.restart();
 }
 
+function handle_play_again_click(event) {
+    event.stopPropagation();
+    init();
+}
+
 window.addEventListener('load', () => {
     init();
 });
 
 window.init = init;
+window.handle_play_again_click = handle_play_again_click;
