@@ -113,7 +113,7 @@ class Game {
             this.spawn_system.reset();
         }
         if (this.ui_system) {
-            this.ui_system.reset_timer();
+            this.ui_system.reset();
         }
     }
 
@@ -145,8 +145,14 @@ function init() {
     game_instance.restart();
 }
 
+function handle_play_again_click(event) {
+    event.stopPropagation();
+    init();
+}
+
 window.addEventListener('load', () => {
     init();
 });
 
 window.init = init;
+window.handle_play_again_click = handle_play_again_click;

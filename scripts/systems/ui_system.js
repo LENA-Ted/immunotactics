@@ -69,6 +69,11 @@ class UISystem {
         this.start_time = performance.now();
     }
 
+    reset() {
+        this.reset_timer();
+        this.hide_game_over_screen();
+    }
+
     get_elapsed_time_seconds() {
         return Math.floor((performance.now() - this.start_time) / 1000);
     }
