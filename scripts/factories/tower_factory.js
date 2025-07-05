@@ -6,10 +6,15 @@ class TowerFactory {
 
     register_default_towers() {
         this.register_tower_type(TOWER_TYPES.SNIPER, SniperTower);
+        this.register_tower_type(IMMUNE_CELL_TYPES.B_CELL, BCell);
+        this.register_tower_type(IMMUNE_CELL_TYPES.MAST_CELL, MastCell);
+        this.register_tower_type(IMMUNE_CELL_TYPES.INTERFERON, Interferon);
     }
 
     register_tower_type(type_name, tower_class) {
-        if (!TOWER_CONFIGS[type_name]) {
+        const config = TOWER_CONFIGS[type_name] || IMMUNE_CELL_CONFIGS[type_name];
+        
+        if (!config) {
             console.error(`Tower config not found for type: ${type_name}`);
             return false;
         }
@@ -35,8 +40,18 @@ class TowerFactory {
     }
 
     get_tower_cost(type_name) {
-        const config = TOWER_CONFIGS[type_name];
-        return config ? config.cost : 0;
+        const tower_config = TOWER_CONFIGS[type_name];
+        const immune_config = IMMUNE_CELL_CONFIGS[type_name];
+        
+        if (tower_config) {
+            return tower_config.cost;
+        }
+        
+        if (immune_config) {
+            return immune_config.cost;
+        }
+        
+        return 0;
     }
 
     get_available_tower_types() {
