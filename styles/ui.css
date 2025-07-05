@@ -9,6 +9,17 @@
     pointer-events: none;
 }
 
+#top_right_ui_container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+}
+
 .pill {
     background-color: #F5F5DC;
     border-radius: 50px;
@@ -45,6 +56,38 @@
     color: #2c3e50;
     font-size: 1.4em;
     font-weight: 600;
+}
+
+#intensity_gauge_container {
+    position: relative;
+    width: 102px;
+    height: 102px;
+    border-radius: 50%;
+    padding: 0;
+    background-color: #F5F5DC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#intensity_gauge_canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#intensity_level_number {
+    position: relative;
+    z-index: 1;
+    color: #2c3e50;
+    font-size: 41px;
+    font-weight: 700;
+    text-align: center;
+    transition: transform 0.1s ease;
+    pointer-events: none;
 }
 
 #game_over_screen {
