@@ -6,10 +6,12 @@ class BaseEnemy {
         this.hp = this.generate_hp();
         this.max_hp = this.hp;
         this.displayed_hp = this.hp;
-        this.speed = this.generate_speed();
+        this.base_speed = this.generate_speed();
+        this.current_speed = this.base_speed;
         this.radius = this.generate_radius();
         this.color = this.generate_color();
         this.pulsate_effect = new PulsateEffect();
+        this.status_effects = [];
     }
 
     generate_hp() {
@@ -46,6 +48,41 @@ class BaseEnemy {
 
     update_pulsate() {
         this.pulsate_effect.update();
+    }
+
+    update_status_effects(timestamp) {
+        this.status_effects = this.status_effects.filter(effect => {
+            effect.update(timestamp);
+            if (effect.is_expired()) {
+                effect.remove_effect(this);
+                return false;
+            }
+            return true;
+        });
+        
+        this.calculate_current_speed();
+    }
+
+    calculate_current_speed() {
+        this.current_speed = this.base_speed;
+    }
+
+    add_status_effect(effect) {
+        const existing_effect_index = this.status_effects.findIndex(
+            existing => existing.get_type() === effect.get_type()
+        );
+        
+        if (existing_effect_index !== -1) {
+            this.status_effects[existing_effect_index].remove_effect(this);
+            this.status_effects.splice(existing_effect_index, 1);
+        }
+        
+        this.status_effects.push(effect);
+        effect.apply_effect(this);
+    }
+
+    has_status_effect(effect_type) {
+        return this.status_effects.some(effect => effect.get_type() === effect_type);
     }
 
     draw_hp_gauge(ctx) {
@@ -90,14 +127,15 @@ class BaseEnemy {
         this.draw_hp_gauge(ctx);
     }
 
-    update(target) {
+    update(target, timestamp) {
+        this.update_status_effects(timestamp);
         this.move_toward_target(target);
     }
 
     move_toward_target(target) {
         const angle = MathUtils.get_angle_between(this.x, this.y, target.x, target.y);
-        this.x += Math.cos(angle) * this.speed;
-        this.y += Math.sin(angle) * this.speed;
+        this.x += Math.cos(angle) * this.current_speed;
+        this.y += Math.sin(angle) * this.current_speed;
     }
 
     take_damage(amount) {
