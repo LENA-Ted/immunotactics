@@ -40,12 +40,20 @@ class SpawnSystem {
             return;
         }
 
-        if (Math.random() < this.spawn_chance) {
+        const modified_spawn_chance = this.get_intensity_modified_spawn_chance();
+
+        if (Math.random() < modified_spawn_chance) {
             this.spawn_enemy();
             this.reset_spawn_chance();
         } else {
             this.increase_spawn_chance();
         }
+    }
+
+    get_intensity_modified_spawn_chance() {
+        const intensity_level = window.game_state ? window.game_state.intensity_level : 0;
+        const intensity_modifier = intensity_level * INTENSITY_CONFIG.SPAWN_CHANCE_MODIFIER_PER_LEVEL;
+        return this.spawn_chance + intensity_modifier;
     }
 
     spawn_enemy(enemy_type = ENEMY_TYPES.BASIC) {
@@ -77,7 +85,7 @@ class SpawnSystem {
     }
 
     get_current_spawn_chance() {
-        return this.spawn_chance;
+        return this.get_intensity_modified_spawn_chance();
     }
 
     is_spawn_system_running() {

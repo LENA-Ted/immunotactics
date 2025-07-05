@@ -64,7 +64,14 @@ class Game {
             effects: [],
             screen_shake: new ScreenShake(),
             is_game_over: false,
-            last_tower_damage_time: {}
+            last_tower_damage_time: {},
+            intensity_level: 0,
+            killcount: 0,
+            total_killcount: 0,
+            killcount_required: INTENSITY_CONFIG.INITIAL_KILLCOUNT_REQUIREMENT,
+            displayed_killcount_progress: 0,
+            intensity_gauge_pulsate: new PulsateEffect(),
+            intensity_level_pulsate: new PulsateEffect()
         };
     }
 
@@ -108,6 +115,14 @@ class Game {
         this.game_state.screen_shake = new ScreenShake();
 
         this.game_state.is_game_over = false;
+
+        this.game_state.intensity_level = 0;
+        this.game_state.killcount = 0;
+        this.game_state.total_killcount = 0;
+        this.game_state.killcount_required = INTENSITY_CONFIG.INITIAL_KILLCOUNT_REQUIREMENT;
+        this.game_state.displayed_killcount_progress = 0;
+        this.game_state.intensity_gauge_pulsate = new PulsateEffect();
+        this.game_state.intensity_level_pulsate = new PulsateEffect();
 
         if (this.spawn_system) {
             this.spawn_system.reset();
