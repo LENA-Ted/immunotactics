@@ -113,7 +113,7 @@ class Game {
             this.spawn_system.reset();
         }
         if (this.ui_system) {
-            this.ui_system.reset_timer();
+            this.ui_system.reset();
         }
     }
 
