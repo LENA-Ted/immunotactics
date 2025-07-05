@@ -11,6 +11,7 @@ class Game {
         this.ui_system = null;
         this.input_system = null;
         this.rendering_system = null;
+        this.selection_system = null;
         this.game_loop = null;
         
         this.game_state = null;
@@ -48,7 +49,8 @@ class Game {
         );
         this.collision_system = new CollisionSystem();
         this.ui_system = new UISystem();
-        this.input_system = new InputSystem(this.game_canvas, this.tower_factory);
+        this.selection_system = new SelectionSystem();
+        this.input_system = new InputSystem(this.game_canvas, this.tower_factory, this.selection_system);
         this.rendering_system = new RenderingSystem(this.game_canvas, this.cursor_canvas);
         this.game_loop = new GameLoop();
     }
@@ -71,20 +73,24 @@ class Game {
             killcount_required: INTENSITY_CONFIG.INITIAL_KILLCOUNT_REQUIREMENT,
             displayed_killcount_progress: 0,
             intensity_gauge_pulsate: new PulsateEffect(),
-            intensity_level_pulsate: new PulsateEffect()
+            intensity_level_pulsate: new PulsateEffect(),
+            canvas_width: this.game_canvas.width,
+            canvas_height: this.game_canvas.height
         };
     }
 
     setup_systems() {
         this.ui_system.initialize();
         this.input_system.initialize();
+        this.selection_system.initialize();
 
         const systems = {
             spawn: this.spawn_system,
             collision: this.collision_system,
             ui: this.ui_system,
             input: this.input_system,
-            rendering: this.rendering_system
+            rendering: this.rendering_system,
+            selection: this.selection_system
         };
 
         this.game_loop.initialize(systems, this.game_state);
@@ -124,11 +130,17 @@ class Game {
         this.game_state.intensity_gauge_pulsate = new PulsateEffect();
         this.game_state.intensity_level_pulsate = new PulsateEffect();
 
+        this.game_state.canvas_width = this.game_canvas.width;
+        this.game_state.canvas_height = this.game_canvas.height;
+
         if (this.spawn_system) {
             this.spawn_system.reset();
         }
         if (this.ui_system) {
             this.ui_system.reset();
+        }
+        if (this.selection_system) {
+            this.selection_system.reset();
         }
     }
 
