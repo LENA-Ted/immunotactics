@@ -3,17 +3,33 @@ class UISystem {
         this.core_hp_container = document.getElementById('core_hp_container');
         this.timer_container = document.getElementById('timer_container');
         this.game_over_screen = document.getElementById('game_over_screen');
+        this.intensity_gauge_canvas = document.getElementById('intensity_gauge_canvas');
+        this.intensity_level_number = document.getElementById('intensity_level_number');
         this.start_time = 0;
+        this.intensity_ctx = null;
     }
 
     initialize() {
         this.start_time = performance.now();
         this.hide_game_over_screen();
+        this.initialize_intensity_gauge();
+    }
+
+    initialize_intensity_gauge() {
+        if (!this.intensity_gauge_canvas) {
+            return;
+        }
+
+        const gauge_size = 34 * INTENSITY_CONFIG.GAUGE_SIZE_MULTIPLIER;
+        this.intensity_gauge_canvas.width = gauge_size;
+        this.intensity_gauge_canvas.height = gauge_size;
+        this.intensity_ctx = this.intensity_gauge_canvas.getContext('2d');
     }
 
     update_ui(game_state) {
         this.update_core_hp_display(game_state.core);
         this.update_timer_display();
+        this.update_intensity_display(game_state);
         
         if (game_state.is_game_over) {
             this.show_game_over_screen();
@@ -53,6 +69,55 @@ class UISystem {
         this.timer_container.textContent = `${minutes}:${seconds}`;
     }
 
+    update_intensity_display(game_state) {
+        this.update_intensity_gauge(game_state);
+        this.update_intensity_level_number(game_state);
+    }
+
+    update_intensity_gauge(game_state) {
+        if (!this.intensity_ctx) {
+            return;
+        }
+
+        const canvas = this.intensity_gauge_canvas;
+        const ctx = this.intensity_ctx;
+        const center_x = canvas.width / 2;
+        const center_y = canvas.height / 2;
+        const radius = (canvas.width / 2) - 8;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const progress = game_state.killcount / game_state.killcount_required;
+        const progress_angle = progress * Math.PI * 2;
+
+        ctx.beginPath();
+        ctx.arc(center_x, center_y, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `${GAME_CONFIG.COLOR_INTENSITY_PROGRESS}40`;
+        ctx.lineWidth = 8;
+        ctx.stroke();
+
+        if (progress > 0) {
+            ctx.beginPath();
+            ctx.arc(center_x, center_y, radius, -Math.PI / 2, -Math.PI / 2 + progress_angle);
+            ctx.strokeStyle = GAME_CONFIG.COLOR_INTENSITY_PROGRESS;
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+    }
+
+    update_intensity_level_number(game_state) {
+        if (!this.intensity_level_number) {
+            return;
+        }
+
+        game_state.intensity_pulsate.update();
+        const scale = game_state.intensity_pulsate.get_scale();
+
+        this.intensity_level_number.textContent = game_state.intensity_level;
+        this.intensity_level_number.style.transform = `scale(${scale})`;
+    }
+
     show_game_over_screen() {
         if (this.game_over_screen) {
             this.game_over_screen.classList.add('active');
@@ -72,6 +137,18 @@ class UISystem {
     reset() {
         this.reset_timer();
         this.hide_game_over_screen();
+        this.reset_intensity_display();
+    }
+
+    reset_intensity_display() {
+        if (this.intensity_level_number) {
+            this.intensity_level_number.textContent = '0';
+            this.intensity_level_number.style.transform = 'scale(1)';
+        }
+
+        if (this.intensity_ctx) {
+            this.intensity_ctx.clearRect(0, 0, this.intensity_gauge_canvas.width, this.intensity_gauge_canvas.height);
+        }
     }
 
     get_elapsed_time_seconds() {
