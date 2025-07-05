@@ -69,7 +69,9 @@ class Game {
             killcount: 0,
             total_killcount: 0,
             killcount_required: INTENSITY_CONFIG.INITIAL_KILLCOUNT_REQUIREMENT,
-            intensity_pulsate: new PulsateEffect()
+            displayed_killcount_progress: 0,
+            intensity_gauge_pulsate: new PulsateEffect(),
+            intensity_level_pulsate: new PulsateEffect()
         };
     }
 
@@ -118,7 +120,9 @@ class Game {
         this.game_state.killcount = 0;
         this.game_state.total_killcount = 0;
         this.game_state.killcount_required = INTENSITY_CONFIG.INITIAL_KILLCOUNT_REQUIREMENT;
-        this.game_state.intensity_pulsate = new PulsateEffect();
+        this.game_state.displayed_killcount_progress = 0;
+        this.game_state.intensity_gauge_pulsate = new PulsateEffect();
+        this.game_state.intensity_level_pulsate = new PulsateEffect();
 
         if (this.spawn_system) {
             this.spawn_system.reset();
