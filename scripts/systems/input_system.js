@@ -41,7 +41,38 @@ class InputSystem {
             return;
         }
 
+        if (!this.is_valid_game_click(event)) {
+            return;
+        }
+
         this.attempt_place_tower();
+    }
+
+    is_valid_game_click(event) {
+        const game_container = document.getElementById('game_container');
+        const game_over_screen = document.getElementById('game_over_screen');
+        
+        if (!game_container) {
+            return false;
+        }
+
+        if (game_over_screen && game_over_screen.classList.contains('active')) {
+            return false;
+        }
+
+        if (event.target.tagName === 'BUTTON') {
+            return false;
+        }
+
+        if (event.target.closest('#top_left_ui_container')) {
+            return false;
+        }
+
+        if (!event.target.closest('#game_container')) {
+            return false;
+        }
+
+        return true;
     }
 
     attempt_place_tower(tower_type = TOWER_TYPES.SNIPER) {
