@@ -28,10 +28,6 @@ class SelectionSystem {
     }
 
     handle_key_press(event) {
-        if (this.input_blocked) {
-            return;
-        }
-
         if (!window.game_state || window.game_state.is_game_over) {
             return;
         }
@@ -39,6 +35,10 @@ class SelectionSystem {
         const key = event.key;
         
         if (this.selection_map.hasOwnProperty(key)) {
+            if (this.input_blocked) {
+                return;
+            }
+            
             const new_selection = this.selection_map[key];
             
             if (new_selection !== this.current_selection) {
