@@ -106,7 +106,7 @@ class CollisionSystem {
     handle_enemy_destroyed(game_state) {
         game_state.killcount++;
         game_state.total_killcount++;
-        game_state.intensity_pulsate.trigger();
+        game_state.intensity_gauge_pulsate.trigger();
 
         if (game_state.killcount >= game_state.killcount_required) {
             this.handle_intensity_level_up(game_state);
@@ -123,7 +123,7 @@ class CollisionSystem {
         game_state.killcount_required = Math.ceil(
             game_state.killcount_required * INTENSITY_CONFIG.KILLCOUNT_SCALING_FACTOR
         );
-        game_state.intensity_pulsate.trigger();
+        game_state.intensity_level_pulsate.trigger();
     }
 
     is_circle_collision(entity1, entity2) {
