@@ -16,6 +16,12 @@
             <div id="core_hp_container" class="pill"></div>
             <div id="timer_container" class="pill">00:00</div>
         </div>
+        <div id="top_right_ui_container">
+            <div id="intensity_gauge_container" class="pill">
+                <canvas id="intensity_gauge_canvas"></canvas>
+                <div id="intensity_level_number">0</div>
+            </div>
+        </div>
         <div id="game_over_screen">
             <div>GAME OVER</div>
             <button onclick="handle_play_again_click(event)">Play Again</button>
@@ -25,6 +31,7 @@
     <script src="scripts/config/game_config.js"></script>
     <script src="scripts/config/tower_configs.js"></script>
     <script src="scripts/config/enemy_configs.js"></script>
+    <script src="scripts/config/intensity_config.js"></script>
 
     <script src="scripts/utils/math_utils.js"></script>
     <script src="scripts/utils/screen_effects.js"></script>
