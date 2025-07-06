@@ -1,7 +1,8 @@
 class InputSystem {
-    constructor(game_canvas, tower_factory) {
+    constructor(game_canvas, tower_factory, selection_system) {
         this.game_canvas = game_canvas;
         this.tower_factory = tower_factory;
+        this.selection_system = selection_system;
         this.cursor_state = {
             x: 0,
             y: 0,
@@ -68,6 +69,10 @@ class InputSystem {
             return false;
         }
 
+        if (event.target.closest('#top_right_ui_container')) {
+            return false;
+        }
+
         if (!event.target.closest('#game_container')) {
             return false;
         }
@@ -75,7 +80,11 @@ class InputSystem {
         return true;
     }
 
-    attempt_place_tower(tower_type = TOWER_TYPES.SNIPER) {
+    attempt_place_tower() {
+        const tower_type = this.selection_system ? 
+            this.selection_system.get_current_selection() : 
+            TOWER_TYPES.SNIPER;
+            
         const cost = this.tower_factory.get_tower_cost(tower_type);
         
         if (!window.game_state.player.can_afford(cost)) {
@@ -96,6 +105,9 @@ class InputSystem {
         );
 
         if (tower && window.game_state.towers) {
+            if (tower.update_range) {
+                tower.update_range();
+            }
             window.game_state.towers.push(tower);
             return true;
         }

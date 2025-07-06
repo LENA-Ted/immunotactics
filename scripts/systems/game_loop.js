@@ -54,13 +54,21 @@ class GameLoop {
     update_game_state(timestamp) {
         this.game_state.player.update(timestamp);
 
+        if (this.systems.selection) {
+            this.systems.selection.update(timestamp);
+        }
+
         this.game_state.towers.forEach(tower => {
             tower.update(timestamp);
         });
 
         this.game_state.enemies.forEach(enemy => {
-            enemy.update(this.game_state.core);
+            enemy.update(this.game_state.core, timestamp);
         });
+
+        if (this.systems.status_effects) {
+            this.systems.status_effects.update_all_status_effects(this.game_state.enemies, timestamp);
+        }
 
         this.game_state.projectiles.forEach(projectile => {
             projectile.update();
@@ -102,12 +110,20 @@ class GameLoop {
             effect.is_alive()
         );
 
-        this.game_state.projectiles = this.game_state.projectiles.filter(projectile => 
-            !projectile.is_out_of_bounds(
+        this.game_state.projectiles = this.game_state.projectiles.filter(projectile => {
+            if (projectile.is_out_of_bounds(
                 this.systems.rendering.game_canvas.width, 
                 this.systems.rendering.game_canvas.height
-            )
-        );
+            )) {
+                return false;
+            }
+            
+            if (projectile.is_out_of_range && projectile.is_out_of_range()) {
+                return false;
+            }
+            
+            return true;
+        });
     }
 
     render_frame() {
