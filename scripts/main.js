@@ -12,6 +12,7 @@ class Game {
         this.input_system = null;
         this.rendering_system = null;
         this.selection_system = null;
+        this.status_effect_system = null;
         this.game_loop = null;
         
         this.game_state = null;
@@ -50,6 +51,7 @@ class Game {
         this.collision_system = new CollisionSystem();
         this.ui_system = new UISystem();
         this.selection_system = new SelectionSystem();
+        this.status_effect_system = new StatusEffectSystem();
         this.input_system = new InputSystem(this.game_canvas, this.tower_factory, this.selection_system);
         this.rendering_system = new RenderingSystem(this.game_canvas, this.cursor_canvas);
         this.game_loop = new GameLoop();
@@ -75,7 +77,8 @@ class Game {
             intensity_gauge_pulsate: new PulsateEffect(),
             intensity_level_pulsate: new PulsateEffect(),
             canvas_width: this.game_canvas.width,
-            canvas_height: this.game_canvas.height
+            canvas_height: this.game_canvas.height,
+            selection_system: this.selection_system
         };
     }
 
@@ -90,7 +93,8 @@ class Game {
             ui: this.ui_system,
             input: this.input_system,
             rendering: this.rendering_system,
-            selection: this.selection_system
+            selection: this.selection_system,
+            status_effects: this.status_effect_system
         };
 
         this.game_loop.initialize(systems, this.game_state);
@@ -132,6 +136,7 @@ class Game {
 
         this.game_state.canvas_width = this.game_canvas.width;
         this.game_state.canvas_height = this.game_canvas.height;
+        this.game_state.selection_system = this.selection_system;
 
         if (this.spawn_system) {
             this.spawn_system.reset();
