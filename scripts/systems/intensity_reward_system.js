@@ -74,9 +74,18 @@ class IntensityRewardSystem {
             return;
         }
 
-        const current_adaptation = window.game_state.adaptation_system.get_adaptation(adaptation_type);
-        const target_level = current_adaptation ? current_adaptation.get_level() + 1 : 0;
-        const level_display = target_level > 0 ? `+${target_level}` : '';
+        let target_level;
+        let level_display;
+
+        if (adaptation_type === ADAPTATION_TYPES.NUTRIENT_GLUT) {
+            target_level = 0;
+            level_display = '';
+        } else {
+            const current_adaptation = window.game_state.adaptation_system.get_adaptation(adaptation_type);
+            target_level = current_adaptation ? current_adaptation.get_level() + 1 : 0;
+            level_display = target_level > 0 ? `+${target_level}` : '';
+        }
+
         const description = adaptation_config.descriptions[target_level] || adaptation_config.descriptions[0];
 
         const name_element = card_element.querySelector('.adaptation_name');

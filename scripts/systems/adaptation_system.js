@@ -21,6 +21,11 @@ class AdaptationSystem {
     }
 
     add_adaptation(adaptation_type) {
+        if (adaptation_type === ADAPTATION_TYPES.NUTRIENT_GLUT) {
+            this.apply_nutrient_glut_effect_only();
+            return true;
+        }
+
         if (this.has_adaptation(adaptation_type)) {
             const adaptation = this.get_adaptation(adaptation_type);
             const leveled_up = adaptation.level_up();
@@ -38,6 +43,13 @@ class AdaptationSystem {
         }
     }
 
+    apply_nutrient_glut_effect_only() {
+        const biomass_gain = ADAPTATION_CONFIGS.NUTRIENT_GLUT.effects[0].biomass_gain;
+        if (biomass_gain > 0 && window.game_state.resource_system) {
+            window.game_state.resource_system.add_biomass(biomass_gain);
+        }
+    }
+
     apply_immediate_effects(adaptation) {
         if (!window.game_state) {
             return;
@@ -46,9 +58,6 @@ class AdaptationSystem {
         switch (adaptation.type) {
             case ADAPTATION_TYPES.HYPERPLASIA:
                 this.apply_hyperplasia_effect(adaptation);
-                break;
-            case ADAPTATION_TYPES.NUTRIENT_GLUT:
-                this.apply_nutrient_glut_effect(adaptation);
                 break;
         }
     }
