@@ -65,7 +65,13 @@ class BCell extends BaseTower {
     create_projectile(target) {
         if (window.game_state && window.game_state.projectiles) {
             const projectile = new Projectile(this.x, this.y, target, this);
-            projectile.damage = this.config.projectile_damage;
+            
+            let base_damage = this.config.projectile_damage;
+            if (window.game_state.resource_system) {
+                base_damage = window.game_state.resource_system.apply_damage_bonus(base_damage);
+            }
+            
+            projectile.damage = base_damage;
             window.game_state.projectiles.push(projectile);
         }
     }
