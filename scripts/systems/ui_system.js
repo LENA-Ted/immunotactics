@@ -16,6 +16,12 @@ class UISystem {
             adjuvants: document.getElementById('adjuvants_container'),
             biomass: document.getElementById('biomass_container')
         };
+        this.gameplay_ui_containers = [
+            document.getElementById('top_left_ui_container'),
+            document.getElementById('top_right_ui_container'),
+            document.getElementById('bottom_left_ui_container'),
+            document.getElementById('selection_ui_container')
+        ];
         this.start_time = 0;
         this.intensity_ctx = null;
         this.resource_feedback_timers = {};
@@ -330,6 +336,22 @@ class UISystem {
         container.classList.remove('feedback_active');
     }
 
+    hide_all_gameplay_ui() {
+        this.gameplay_ui_containers.forEach(container => {
+            if (container) {
+                container.style.display = 'none';
+            }
+        });
+    }
+
+    show_all_gameplay_ui() {
+        this.gameplay_ui_containers.forEach(container => {
+            if (container) {
+                container.style.display = '';
+            }
+        });
+    }
+
     show_game_over_screen() {
         if (this.game_over_screen) {
             this.game_over_screen.classList.add('active');
@@ -353,6 +375,7 @@ class UISystem {
         this.initialize_selection_ui();
         this.initialize_resource_feedback();
         this.clear_resource_feedback_states();
+        this.show_all_gameplay_ui();
     }
 
     clear_resource_feedback_states() {
