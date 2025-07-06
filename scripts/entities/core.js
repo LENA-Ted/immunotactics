@@ -34,6 +34,22 @@ class Core {
         return false;
     }
 
+    heal(amount) {
+        if (amount <= 0) {
+            return;
+        }
+        
+        this.hp = Math.min(this.max_hp, this.hp + amount);
+    }
+
+    increase_max_hp(amount) {
+        if (amount <= 0) {
+            return;
+        }
+        
+        this.max_hp += amount;
+    }
+
     is_alive() {
         return this.hp > 0;
     }
