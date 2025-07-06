@@ -10,6 +10,7 @@ class ResourceParticle {
         this.despawn_paused = false;
         this.velocity_x = 0;
         this.velocity_y = 0;
+        this.acceleration_factor = 1.0;
     }
 
     get_color_for_type() {
@@ -50,11 +51,15 @@ class ResourceParticle {
 
     move_toward_cursor(cursor_x, cursor_y) {
         const angle = MathUtils.get_angle_between(this.x, this.y, cursor_x, cursor_y);
-        this.velocity_x = Math.cos(angle) * RESOURCE_CONFIG.GRAVITATION_SPEED;
-        this.velocity_y = Math.sin(angle) * RESOURCE_CONFIG.GRAVITATION_SPEED;
+        const current_speed = RESOURCE_CONFIG.GRAVITATION_SPEED * this.acceleration_factor;
+        
+        this.velocity_x = Math.cos(angle) * current_speed;
+        this.velocity_y = Math.sin(angle) * current_speed;
         
         this.x += this.velocity_x;
         this.y += this.velocity_y;
+        
+        this.acceleration_factor += 0.1;
     }
 
     is_collected_by_cursor(cursor_x, cursor_y) {
