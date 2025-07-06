@@ -14,6 +14,8 @@ class Game {
         this.selection_system = null;
         this.status_effect_system = null;
         this.resource_system = null;
+        this.adaptation_system = null;
+        this.intensity_reward_system = null;
         this.game_loop = null;
         
         this.game_state = null;
@@ -54,6 +56,8 @@ class Game {
         this.selection_system = new SelectionSystem();
         this.status_effect_system = new StatusEffectSystem();
         this.resource_system = new ResourceSystem();
+        this.adaptation_system = new AdaptationSystem();
+        this.intensity_reward_system = new IntensityRewardSystem();
         this.input_system = new InputSystem(this.game_canvas, this.tower_factory, this.selection_system);
         this.rendering_system = new RenderingSystem(this.game_canvas, this.cursor_canvas);
         this.game_loop = new GameLoop();
@@ -71,6 +75,7 @@ class Game {
             resource_particles: [],
             screen_shake: new ScreenShake(),
             is_game_over: false,
+            is_game_paused: false,
             last_tower_damage_time: {},
             intensity_level: 0,
             killcount: 0,
@@ -83,6 +88,8 @@ class Game {
             canvas_height: this.game_canvas.height,
             selection_system: this.selection_system,
             resource_system: this.resource_system,
+            adaptation_system: this.adaptation_system,
+            intensity_reward_system: this.intensity_reward_system,
             ui_system: this.ui_system
         };
     }
@@ -91,6 +98,7 @@ class Game {
         this.ui_system.initialize();
         this.input_system.initialize();
         this.selection_system.initialize();
+        this.intensity_reward_system.initialize();
 
         const systems = {
             spawn: this.spawn_system,
@@ -100,7 +108,9 @@ class Game {
             rendering: this.rendering_system,
             selection: this.selection_system,
             status_effects: this.status_effect_system,
-            resource: this.resource_system
+            resource: this.resource_system,
+            adaptation: this.adaptation_system,
+            intensity_reward: this.intensity_reward_system
         };
 
         this.game_loop.initialize(systems, this.game_state);
@@ -132,6 +142,7 @@ class Game {
         this.game_state.screen_shake = new ScreenShake();
 
         this.game_state.is_game_over = false;
+        this.game_state.is_game_paused = false;
 
         this.game_state.intensity_level = 0;
         this.game_state.killcount = 0;
@@ -145,6 +156,8 @@ class Game {
         this.game_state.canvas_height = this.game_canvas.height;
         this.game_state.selection_system = this.selection_system;
         this.game_state.resource_system = this.resource_system;
+        this.game_state.adaptation_system = this.adaptation_system;
+        this.game_state.intensity_reward_system = this.intensity_reward_system;
         this.game_state.ui_system = this.ui_system;
 
         if (this.spawn_system) {
@@ -158,6 +171,12 @@ class Game {
         }
         if (this.resource_system) {
             this.resource_system.reset();
+        }
+        if (this.adaptation_system) {
+            this.adaptation_system.reset();
+        }
+        if (this.intensity_reward_system) {
+            this.intensity_reward_system.reset();
         }
     }
 
