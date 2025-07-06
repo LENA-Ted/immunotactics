@@ -44,7 +44,31 @@ class Projectile {
     }
 
     get_damage() {
-        return this.damage;
+        let final_damage = this.damage;
+        
+        final_damage = this.apply_adaptation_damage_multiplier(final_damage);
+        final_damage = this.apply_resource_damage_multiplier(final_damage);
+        
+        return final_damage;
+    }
+
+    apply_adaptation_damage_multiplier(base_damage) {
+        const multiplier = this.get_adaptation_damage_multiplier();
+        return Math.ceil(base_damage * multiplier);
+    }
+
+    apply_resource_damage_multiplier(base_damage) {
+        if (window.game_state && window.game_state.resource_system) {
+            return window.game_state.resource_system.apply_damage_bonus(base_damage);
+        }
+        return base_damage;
+    }
+
+    get_adaptation_damage_multiplier() {
+        if (window.game_state && window.game_state.adaptation_system) {
+            return window.game_state.adaptation_system.get_total_damage_multiplier();
+        }
+        return 1.0;
     }
 }
 
