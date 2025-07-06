@@ -11,8 +11,14 @@ class UISystem {
             2: document.getElementById('selection_2'),
             3: document.getElementById('selection_3')
         };
+        this.resource_containers = {
+            cytokines: document.getElementById('cytokines_container'),
+            adjuvants: document.getElementById('adjuvants_container'),
+            biomass: document.getElementById('biomass_container')
+        };
         this.start_time = 0;
         this.intensity_ctx = null;
+        this.resource_feedback_timers = {};
     }
 
     initialize() {
@@ -20,6 +26,7 @@ class UISystem {
         this.hide_game_over_screen();
         this.initialize_intensity_gauge();
         this.initialize_selection_ui();
+        this.initialize_resource_feedback();
     }
 
     initialize_intensity_gauge() {
@@ -33,6 +40,14 @@ class UISystem {
 
     initialize_selection_ui() {
         this.update_selection_ui(IMMUNE_CELL_TYPES.B_CELL);
+    }
+
+    initialize_resource_feedback() {
+        this.resource_feedback_timers = {
+            [RESOURCE_TYPES.CYTOKINES]: 0,
+            [RESOURCE_TYPES.ADJUVANTS]: 0,
+            [RESOURCE_TYPES.BIOMASS]: 0
+        };
     }
 
     set_dynamic_gauge_sizing() {
@@ -54,6 +69,8 @@ class UISystem {
         this.update_timer_display();
         this.update_intensity_display(game_state);
         this.update_selection_ui_from_game_state();
+        this.update_resource_display(game_state);
+        this.update_resource_feedback_timers();
         
         if (game_state.is_game_over) {
             this.show_game_over_screen();
@@ -189,6 +206,81 @@ class UISystem {
         });
     }
 
+    update_resource_display(game_state) {
+        if (!game_state.resource_system) {
+            return;
+        }
+
+        this.update_resource_container('cytokines', game_state.resource_system.get_cytokines());
+        this.update_resource_container('adjuvants', game_state.resource_system.get_adjuvants());
+        this.update_resource_container('biomass', game_state.resource_system.get_biomass());
+    }
+
+    update_resource_container(resource_type, value) {
+        const container = this.resource_containers[resource_type];
+        if (!container) {
+            return;
+        }
+
+        const symbol_element = container.querySelector('.resource_symbol');
+        const value_element = container.querySelector('.resource_value');
+
+        if (symbol_element && value_element) {
+            value_element.textContent = value;
+        }
+    }
+
+    update_resource_feedback_timers() {
+        const current_time = performance.now();
+
+        Object.keys(this.resource_feedback_timers).forEach(resource_type => {
+            const timer_info = this.resource_feedback_timers[resource_type];
+            
+            if (timer_info && timer_info.end_time && current_time >= timer_info.end_time) {
+                this.end_resource_feedback(resource_type);
+                this.resource_feedback_timers[resource_type] = 0;
+            }
+        });
+    }
+
+    trigger_resource_feedback(resource_type) {
+        const container_map = {
+            [RESOURCE_TYPES.CYTOKINES]: 'cytokines',
+            [RESOURCE_TYPES.ADJUVANTS]: 'adjuvants',
+            [RESOURCE_TYPES.BIOMASS]: 'biomass'
+        };
+
+        const container_key = container_map[resource_type];
+        const container = this.resource_containers[container_key];
+
+        if (!container) {
+            return;
+        }
+
+        container.classList.add('feedback_active');
+
+        this.resource_feedback_timers[resource_type] = {
+            end_time: performance.now() + RESOURCE_CONFIG.UI_FEEDBACK_DURATION_MS
+        };
+    }
+
+    end_resource_feedback(resource_type) {
+        const container_map = {
+            [RESOURCE_TYPES.CYTOKINES]: 'cytokines',
+            [RESOURCE_TYPES.ADJUVANTS]: 'adjuvants',
+            [RESOURCE_TYPES.BIOMASS]: 'biomass'
+        };
+
+        const container_key = container_map[resource_type];
+        const container = this.resource_containers[container_key];
+
+        if (!container) {
+            return;
+        }
+
+        container.classList.remove('feedback_active');
+    }
+
     show_game_over_screen() {
         if (this.game_over_screen) {
             this.game_over_screen.classList.add('active');
@@ -210,6 +302,7 @@ class UISystem {
         this.hide_game_over_screen();
         this.reset_intensity_display();
         this.initialize_selection_ui();
+        this.initialize_resource_feedback();
     }
 
     reset_intensity_display() {
