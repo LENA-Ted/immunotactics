@@ -65,6 +65,12 @@ class BaseEnemy {
 
     calculate_current_speed() {
         this.current_speed = this.base_speed;
+        
+        this.status_effects.forEach(effect => {
+            if (effect.get_type() === 'INTERFERED') {
+                this.current_speed *= effect.get_speed_multiplier();
+            }
+        });
     }
 
     add_status_effect(effect) {
