@@ -66,6 +66,10 @@ class GameLoop {
             enemy.update(this.game_state.core, timestamp);
         });
 
+        if (this.systems.status_effects) {
+            this.systems.status_effects.update_all_status_effects(this.game_state.enemies, timestamp);
+        }
+
         this.game_state.projectiles.forEach(projectile => {
             projectile.update();
         });
