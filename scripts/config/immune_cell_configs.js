@@ -37,7 +37,7 @@ const IMMUNE_CELL_CONFIGS = {
         color: '#50C878',
         stroke_color: '#ffffff',
         stroke_width: 2,
-        range_factor: 1/3,
+        range_factor: 2/3,
         interfered_duration_ms: 3000
     }
 };
