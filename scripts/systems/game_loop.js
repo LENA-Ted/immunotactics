@@ -82,11 +82,19 @@ class GameLoop {
             effect.update();
         });
 
+        if (this.game_state.resource_particles) {
+            const cursor_state = this.systems.input.get_cursor_state();
+            this.game_state.resource_particles.forEach(particle => {
+                particle.update(cursor_state.x, cursor_state.y);
+            });
+        }
+
         this.game_state.screen_shake.update();
 
-        this.systems.collision.handle_all_collisions(this.game_state);
-
         this.systems.input.update_cursor_state(this.game_state.player);
+
+        const cursor_state = this.systems.input.get_cursor_state();
+        this.systems.collision.handle_all_collisions(this.game_state, cursor_state);
 
         this.systems.ui.update_ui(this.game_state);
     }
@@ -109,6 +117,12 @@ class GameLoop {
         this.game_state.effects = this.game_state.effects.filter(effect => 
             effect.is_alive()
         );
+
+        if (this.game_state.resource_particles) {
+            this.game_state.resource_particles = this.game_state.resource_particles.filter(particle => 
+                !particle.is_expired()
+            );
+        }
 
         this.game_state.projectiles = this.game_state.projectiles.filter(projectile => {
             if (projectile.is_out_of_bounds(
