@@ -111,6 +111,8 @@ class CollisionSystem {
             game_state.resource_system.spawn_particles_from_enemy(enemy, game_state);
         }
 
+        this.apply_necrotic_recycling_refund(tower, game_state);
+
         game_state.enemies.splice(enemy_index, 1);
         game_state.towers.splice(tower_index, 1);
 
@@ -139,6 +141,13 @@ class CollisionSystem {
         this.handle_enemy_destroyed(game_state);
     }
 
+    apply_necrotic_recycling_refund(tower, game_state) {
+        if (game_state.adaptation_system && tower.get_cost) {
+            const tower_cost = tower.get_cost();
+            game_state.adaptation_system.apply_tower_destruction_refund(tower_cost);
+        }
+    }
+
     handle_enemy_destroyed(game_state) {
         game_state.killcount++;
         game_state.total_killcount++;
@@ -160,6 +169,22 @@ class CollisionSystem {
             game_state.killcount_required * INTENSITY_CONFIG.KILLCOUNT_SCALING_FACTOR
         );
         game_state.intensity_level_pulsate.trigger();
+
+        this.apply_regenerative_cycle_healing(game_state);
+        this.trigger_intensity_reward_modal(game_state);
+    }
+
+    apply_regenerative_cycle_healing(game_state) {
+        if (game_state.adaptation_system) {
+            game_state.adaptation_system.apply_regenerative_cycle_healing();
+        }
+    }
+
+    trigger_intensity_reward_modal(game_state) {
+        if (game_state.intensity_reward_system) {
+            game_state.is_game_paused = true;
+            game_state.intensity_reward_system.show_intensity_reward_modal();
+        }
     }
 
     is_circle_collision(entity1, entity2) {
