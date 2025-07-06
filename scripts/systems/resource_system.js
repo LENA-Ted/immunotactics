@@ -70,22 +70,48 @@ class ResourceSystem {
     collect_particle(particle, game_state) {
         const resource_type = particle.get_resource_type();
         const intensity_level = game_state.intensity_level || 0;
-        const amount = this.calculate_resource_gain(intensity_level);
+        const base_amount = this.calculate_resource_gain(intensity_level);
 
         switch (resource_type) {
             case RESOURCE_TYPES.CYTOKINES:
-                this.cytokines += amount;
+                const cytokine_amount = this.apply_cytokine_multiplier(base_amount);
+                this.cytokines += cytokine_amount;
                 this.trigger_ui_feedback(RESOURCE_TYPES.CYTOKINES);
                 break;
             case RESOURCE_TYPES.ADJUVANTS:
-                this.adjuvants += amount;
+                const adjuvant_amount = this.apply_adjuvant_multiplier(base_amount);
+                this.adjuvants += adjuvant_amount;
                 this.trigger_ui_feedback(RESOURCE_TYPES.ADJUVANTS);
                 break;
             case RESOURCE_TYPES.BIOMASS:
-                this.biomass += amount;
+                this.biomass += base_amount;
                 this.trigger_ui_feedback(RESOURCE_TYPES.BIOMASS);
                 break;
         }
+    }
+
+    apply_cytokine_multiplier(base_amount) {
+        const multiplier = this.get_adaptation_cytokine_multiplier();
+        return Math.ceil(base_amount * multiplier);
+    }
+
+    apply_adjuvant_multiplier(base_amount) {
+        const multiplier = this.get_adaptation_adjuvant_multiplier();
+        return Math.ceil(base_amount * multiplier);
+    }
+
+    get_adaptation_cytokine_multiplier() {
+        if (window.game_state && window.game_state.adaptation_system) {
+            return window.game_state.adaptation_system.get_cytokine_multiplier();
+        }
+        return 1.0;
+    }
+
+    get_adaptation_adjuvant_multiplier() {
+        if (window.game_state && window.game_state.adaptation_system) {
+            return window.game_state.adaptation_system.get_adjuvant_multiplier();
+        }
+        return 1.0;
     }
 
     calculate_resource_gain(intensity_level) {
@@ -126,6 +152,11 @@ class ResourceSystem {
     apply_effect_bonus(base_value) {
         const multiplier = this.get_current_effect_multiplier();
         return Math.ceil(base_value * multiplier);
+    }
+
+    add_biomass(amount) {
+        this.biomass += amount;
+        this.trigger_ui_feedback(RESOURCE_TYPES.BIOMASS);
     }
 
     get_cytokines() {
