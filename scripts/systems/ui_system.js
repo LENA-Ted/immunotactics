@@ -19,6 +19,13 @@ class UISystem {
         this.start_time = 0;
         this.intensity_ctx = null;
         this.resource_feedback_timers = {};
+        this.animated_resource_values = {
+            cytokines: 0,
+            adjuvants: 0,
+            biomass: 0
+        };
+        this.last_animation_update = 0;
+        this.animation_interval_ms = 100;
     }
 
     initialize() {
@@ -48,6 +55,14 @@ class UISystem {
             [RESOURCE_TYPES.ADJUVANTS]: 0,
             [RESOURCE_TYPES.BIOMASS]: 0
         };
+        
+        this.animated_resource_values = {
+            cytokines: 0,
+            adjuvants: 0,
+            biomass: 0
+        };
+        
+        this.last_animation_update = 0;
     }
 
     set_dynamic_gauge_sizing() {
@@ -69,6 +84,7 @@ class UISystem {
         this.update_timer_display();
         this.update_intensity_display(game_state);
         this.update_selection_ui_from_game_state();
+        this.update_animated_resource_values(game_state);
         this.update_resource_display(game_state);
         this.update_resource_feedback_timers();
         
@@ -211,9 +227,42 @@ class UISystem {
             return;
         }
 
-        this.update_resource_container('cytokines', game_state.resource_system.get_cytokines());
-        this.update_resource_container('adjuvants', game_state.resource_system.get_adjuvants());
-        this.update_resource_container('biomass', game_state.resource_system.get_biomass());
+        this.update_resource_container('cytokines', this.animated_resource_values.cytokines);
+        this.update_resource_container('adjuvants', this.animated_resource_values.adjuvants);
+        this.update_resource_container('biomass', this.animated_resource_values.biomass);
+    }
+
+    update_animated_resource_values(game_state) {
+        if (!game_state.resource_system) {
+            return;
+        }
+
+        const current_time = performance.now();
+        
+        if (current_time - this.last_animation_update < this.animation_interval_ms) {
+            return;
+        }
+
+        this.last_animation_update = current_time;
+
+        const target_values = {
+            cytokines: game_state.resource_system.get_cytokines(),
+            adjuvants: game_state.resource_system.get_adjuvants(),
+            biomass: game_state.resource_system.get_biomass()
+        };
+
+        Object.keys(this.animated_resource_values).forEach(resource_type => {
+            const current_animated = this.animated_resource_values[resource_type];
+            const target = target_values[resource_type];
+
+            if (current_animated !== target) {
+                if (current_animated < target) {
+                    this.animated_resource_values[resource_type] = Math.min(current_animated + 1, target);
+                } else {
+                    this.animated_resource_values[resource_type] = Math.max(current_animated - 1, target);
+                }
+            }
+        });
     }
 
     update_resource_container(resource_type, value) {
@@ -303,6 +352,15 @@ class UISystem {
         this.reset_intensity_display();
         this.initialize_selection_ui();
         this.initialize_resource_feedback();
+        this.clear_resource_feedback_states();
+    }
+
+    clear_resource_feedback_states() {
+        Object.values(this.resource_containers).forEach(container => {
+            if (container) {
+                container.classList.remove('feedback_active');
+            }
+        });
     }
 
     reset_intensity_display() {
