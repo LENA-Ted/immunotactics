@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Core Defense</title>
+    <title>ImmunoTactics</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/ui.css">
+    <link rel="stylesheet" href="styles/intensity_reward.css">
 </head>
 <body>
 
@@ -41,6 +42,31 @@
             <div id="selection_2" class="selection_pill pill">Mast Cell</div>
             <div id="selection_3" class="selection_pill pill">Interferon</div>
         </div>
+        <div id="intensity_reward_modal">
+            <div id="reward_cards_container">
+                <div id="reward_card_1" class="reward_card">
+                    <div class="adaptation_header">
+                        <div class="adaptation_name">Adaptation Name</div>
+                        <div class="adaptation_level">+1</div>
+                    </div>
+                    <p class="adaptation_description">Adaptation description goes here.</p>
+                </div>
+                <div id="reward_card_2" class="reward_card">
+                    <div class="adaptation_header">
+                        <div class="adaptation_name">Adaptation Name</div>
+                        <div class="adaptation_level">+1</div>
+                    </div>
+                    <p class="adaptation_description">Adaptation description goes here.</p>
+                </div>
+                <div id="reward_card_3" class="reward_card">
+                    <div class="adaptation_header">
+                        <div class="adaptation_name">Adaptation Name</div>
+                        <div class="adaptation_level">+1</div>
+                    </div>
+                    <p class="adaptation_description">Adaptation description goes here.</p>
+                </div>
+            </div>
+        </div>
         <div id="game_over_screen">
             <div>GAME OVER</div>
             <button onclick="handle_play_again_click(event)">Play Again</button>
@@ -53,12 +79,14 @@
     <script src="scripts/config/intensity_config.js"></script>
     <script src="scripts/config/immune_cell_configs.js"></script>
     <script src="scripts/config/resource_config.js"></script>
+    <script src="scripts/config/adaptation_configs.js"></script>
 
     <script src="scripts/utils/math_utils.js"></script>
     <script src="scripts/utils/screen_effects.js"></script>
 
     <script src="scripts/entities/status_effects/base_status_effect.js"></script>
     <script src="scripts/entities/status_effects/interfered_effect.js"></script>
+    <script src="scripts/entities/adaptation.js"></script>
     <script src="scripts/entities/damage_number.js"></script>
     <script src="scripts/entities/pop_effect.js"></script>
     <script src="scripts/entities/wave_effect.js"></script>
@@ -87,6 +115,8 @@
     <script src="scripts/systems/input_system.js"></script>
     <script src="scripts/systems/rendering_system.js"></script>
     <script src="scripts/systems/selection_system.js"></script>
+    <script src="scripts/systems/adaptation_system.js"></script>
+    <script src="scripts/systems/intensity_reward_system.js"></script>
     <script src="scripts/systems/game_loop.js"></script>
 
     <script src="scripts/main.js"></script>
