@@ -85,9 +85,9 @@ const ADAPTATION_CONFIGS = {
             2: { cytokine_multiplier: 1.36 }
         },
         descriptions: {
-            0: 'Increase Cytokines by 18%.',
-            1: 'Increase Cytokines by 27%.',
-            2: 'Increase Cytokines by 36%.'
+            0: 'Increase Cytokine Gain Rate by 18%.',
+            1: 'Increase Cytokine Gain Rate by 27%.',
+            2: 'Increase Cytokine Gain Rate by 36%.'
         }
     },
     ADJUVANT_BOLUS: {
@@ -98,9 +98,9 @@ const ADAPTATION_CONFIGS = {
             2: { adjuvant_multiplier: 1.36 }
         },
         descriptions: {
-            0: 'Increase Adjuvants by 18%.',
-            1: 'Increase Adjuvants by 27%.',
-            2: 'Increase Adjuvants by 36%.'
+            0: 'Increase Adjuvant Gain Rate by 18%.',
+            1: 'Increase Adjuvant Gain Rate by 27%.',
+            2: 'Increase Adjuvant Gain Rate by 36%.'
         }
     },
     NUTRIENT_GLUT: {

@@ -32,7 +32,6 @@ class AdaptationSystem {
             return leveled_up;
         } else {
             const adaptation = new Adaptation(adaptation_type);
-            adaptation.level_up();
             this.adaptations.set(adaptation_type, adaptation);
             this.apply_immediate_effects(adaptation);
             return true;
@@ -57,8 +56,8 @@ class AdaptationSystem {
     apply_hyperplasia_effect(adaptation) {
         const hp_increase = adaptation.get_max_hp_increase();
         if (hp_increase > 0 && window.game_state.core) {
-            window.game_state.core.increase_max_hp(hp_increase);
-            window.game_state.core.heal(hp_increase);
+            window.game_state.core.set_max_hp_bonus(hp_increase);
+            window.game_state.core.heal_to_max();
         }
     }
 

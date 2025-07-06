@@ -36,7 +36,7 @@ class SpawnSystem {
     }
 
     attempt_spawn() {
-        if (!window.game_state || window.game_state.is_game_over) {
+        if (!window.game_state || window.game_state.is_game_over || window.game_state.is_game_paused) {
             return;
         }
 

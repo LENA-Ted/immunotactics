@@ -75,9 +75,9 @@ class IntensityRewardSystem {
         }
 
         const current_adaptation = window.game_state.adaptation_system.get_adaptation(adaptation_type);
-        const next_level = current_adaptation ? current_adaptation.get_level() + 1 : 1;
-        const level_display = next_level > 0 ? `+${next_level}` : '';
-        const description = adaptation_config.descriptions[next_level - 1] || adaptation_config.descriptions[0];
+        const target_level = current_adaptation ? current_adaptation.get_level() + 1 : 0;
+        const level_display = target_level > 0 ? `+${target_level}` : '';
+        const description = adaptation_config.descriptions[target_level] || adaptation_config.descriptions[0];
 
         const name_element = card_element.querySelector('.adaptation_name');
         const level_element = card_element.querySelector('.adaptation_level');
