@@ -6,6 +6,11 @@ class UISystem {
         this.intensity_gauge_container = document.getElementById('intensity_gauge_container');
         this.intensity_gauge_canvas = document.getElementById('intensity_gauge_canvas');
         this.intensity_level_number = document.getElementById('intensity_level_number');
+        this.selection_elements = {
+            1: document.getElementById('selection_1'),
+            2: document.getElementById('selection_2'),
+            3: document.getElementById('selection_3')
+        };
         this.start_time = 0;
         this.intensity_ctx = null;
     }
@@ -14,6 +19,7 @@ class UISystem {
         this.start_time = performance.now();
         this.hide_game_over_screen();
         this.initialize_intensity_gauge();
+        this.initialize_selection_ui();
     }
 
     initialize_intensity_gauge() {
@@ -23,6 +29,10 @@ class UISystem {
 
         this.set_dynamic_gauge_sizing();
         this.intensity_ctx = this.intensity_gauge_canvas.getContext('2d');
+    }
+
+    initialize_selection_ui() {
+        this.update_selection_ui(IMMUNE_CELL_TYPES.B_CELL);
     }
 
     set_dynamic_gauge_sizing() {
@@ -43,6 +53,7 @@ class UISystem {
         this.update_core_hp_display(game_state.core);
         this.update_timer_display();
         this.update_intensity_display(game_state);
+        this.update_selection_ui_from_game_state();
         
         if (game_state.is_game_over) {
             this.show_game_over_screen();
@@ -150,6 +161,34 @@ class UISystem {
         this.intensity_level_number.style.transform = `scale(${level_scale})`;
     }
 
+    update_selection_ui_from_game_state() {
+        if (window.game_state && window.game_state.selection_system) {
+            const current_selection = window.game_state.selection_system.get_current_selection();
+            this.update_selection_ui(current_selection);
+        }
+    }
+
+    update_selection_ui(selected_type) {
+        const selection_map = {
+            [IMMUNE_CELL_TYPES.B_CELL]: 1,
+            [IMMUNE_CELL_TYPES.MAST_CELL]: 2,
+            [IMMUNE_CELL_TYPES.INTERFERON]: 3
+        };
+
+        const selected_number = selection_map[selected_type];
+
+        Object.keys(this.selection_elements).forEach(key => {
+            const element = this.selection_elements[key];
+            if (!element) return;
+
+            if (parseInt(key) === selected_number) {
+                element.classList.add('selected');
+            } else {
+                element.classList.remove('selected');
+            }
+        });
+    }
+
     show_game_over_screen() {
         if (this.game_over_screen) {
             this.game_over_screen.classList.add('active');
@@ -170,6 +209,7 @@ class UISystem {
         this.reset_timer();
         this.hide_game_over_screen();
         this.reset_intensity_display();
+        this.initialize_selection_ui();
     }
 
     reset_intensity_display() {
