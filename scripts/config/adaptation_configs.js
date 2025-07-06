@@ -6,10 +6,12 @@ const ADAPTATION_CONFIGS = {
             1: { damage_multiplier: 1.27 },
             2: { damage_multiplier: 1.36 }
         },
-        descriptions: {
-            0: 'Increase all Immune Cell DMG by 18%.',
-            1: 'Increase all Immune Cell DMG by 27%.',
-            2: 'Increase all Immune Cell DMG by 36%.'
+        get descriptions() {
+            return {
+                0: `Increase all Immune Cell DMG by ${Math.round((this.effects[0].damage_multiplier - 1) * 100)}%.`,
+                1: `Increase all Immune Cell DMG by ${Math.round((this.effects[1].damage_multiplier - 1) * 100)}%.`,
+                2: `Increase all Immune Cell DMG by ${Math.round((this.effects[2].damage_multiplier - 1) * 100)}%.`
+            };
         }
     },
     REGENERATIVE_CYCLE: {
@@ -19,10 +21,12 @@ const ADAPTATION_CONFIGS = {
             1: { core_heal_per_intensity: 2 },
             2: { core_heal_per_intensity: 3 }
         },
-        descriptions: {
-            0: 'Recover 1 Cell Core Health (HP) every Intensity level-up.',
-            1: 'Recover 2 Cell Core Health (HP) every Intensity level-up.',
-            2: 'Recover 3 Cell Core Health (HP) every Intensity level-up.'
+        get descriptions() {
+            return {
+                0: `Recover ${this.effects[0].core_heal_per_intensity} Cell Core Health (HP) every Intensity level-up.`,
+                1: `Recover ${this.effects[1].core_heal_per_intensity} Cell Core Health (HP) every Intensity level-up.`,
+                2: `Recover ${this.effects[2].core_heal_per_intensity} Cell Core Health (HP) every Intensity level-up.`
+            };
         }
     },
     HYPERPLASIA: {
@@ -32,10 +36,12 @@ const ADAPTATION_CONFIGS = {
             1: { max_hp_increase: 2 },
             2: { max_hp_increase: 3 }
         },
-        descriptions: {
-            0: 'Increase Max Cell Core HP by 1.',
-            1: 'Increase Max Cell Core HP by 2.',
-            2: 'Increase Max Cell Core HP by 3.'
+        get descriptions() {
+            return {
+                0: `Increase Max Cell Core HP by ${this.effects[0].max_hp_increase}.`,
+                1: `Increase Max Cell Core HP by ${this.effects[1].max_hp_increase}.`,
+                2: `Increase Max Cell Core HP by ${this.effects[2].max_hp_increase}.`
+            };
         }
     },
     NECROTIC_RECYCLING: {
@@ -45,10 +51,12 @@ const ADAPTATION_CONFIGS = {
             1: { energy_refund_percent: 0.27 },
             2: { energy_refund_percent: 0.36 }
         },
-        descriptions: {
-            0: 'When Immune Cells are destroyed, they refund 18% of their ATP cost.',
-            1: 'When Immune Cells are destroyed, they refund 27% of their ATP cost.',
-            2: 'When Immune Cells are destroyed, they refund 36% of their ATP cost.'
+        get descriptions() {
+            return {
+                0: `When Immune Cells are destroyed, they refund ${Math.round(this.effects[0].energy_refund_percent * 100)}% of their ATP cost.`,
+                1: `When Immune Cells are destroyed, they refund ${Math.round(this.effects[1].energy_refund_percent * 100)}% of their ATP cost.`,
+                2: `When Immune Cells are destroyed, they refund ${Math.round(this.effects[2].energy_refund_percent * 100)}% of their ATP cost.`
+            };
         }
     },
     ADRENAL_RESPONSE: {
@@ -58,10 +66,12 @@ const ADAPTATION_CONFIGS = {
             1: { energy_cost_reduction: 0.36 },
             2: { energy_cost_reduction: 0.48 }
         },
-        descriptions: {
-            0: 'When at 2 Cell Core HP or below, all Energy (ATP) costs are reduced by 24%.',
-            1: 'When at 2 Cell Core HP or below, all Energy (ATP) costs are reduced by 36%.',
-            2: 'When at 2 Cell Core HP or below, all Energy (ATP) costs are reduced by 48%.'
+        get descriptions() {
+            return {
+                0: `When at 2 Cell Core HP or below, all Energy (ATP) costs are reduced by ${Math.round(this.effects[0].energy_cost_reduction * 100)}%.`,
+                1: `When at 2 Cell Core HP or below, all Energy (ATP) costs are reduced by ${Math.round(this.effects[1].energy_cost_reduction * 100)}%.`,
+                2: `When at 2 Cell Core HP or below, all Energy (ATP) costs are reduced by ${Math.round(this.effects[2].energy_cost_reduction * 100)}%.`
+            };
         }
     },
     MITOCHONDRIAL_BOOST: {
@@ -71,10 +81,12 @@ const ADAPTATION_CONFIGS = {
             1: { energy_regen_multiplier: 1.18 },
             2: { energy_regen_multiplier: 1.24 }
         },
-        descriptions: {
-            0: 'Increase Energy (ATP) Regen Rate by 12%.',
-            1: 'Increase Energy (ATP) Regen Rate by 18%.',
-            2: 'Increase Energy (ATP) Regen Rate by 24%.'
+        get descriptions() {
+            return {
+                0: `Increase Energy (ATP) Regen Rate by ${Math.round((this.effects[0].energy_regen_multiplier - 1) * 100)}%.`,
+                1: `Increase Energy (ATP) Regen Rate by ${Math.round((this.effects[1].energy_regen_multiplier - 1) * 100)}%.`,
+                2: `Increase Energy (ATP) Regen Rate by ${Math.round((this.effects[2].energy_regen_multiplier - 1) * 100)}%.`
+            };
         }
     },
     CYTOKINE_INFUSION: {
@@ -84,10 +96,12 @@ const ADAPTATION_CONFIGS = {
             1: { cytokine_multiplier: 1.27 },
             2: { cytokine_multiplier: 1.36 }
         },
-        descriptions: {
-            0: 'Increase Cytokine Gain Rate by 18%.',
-            1: 'Increase Cytokine Gain Rate by 27%.',
-            2: 'Increase Cytokine Gain Rate by 36%.'
+        get descriptions() {
+            return {
+                0: `Increase Cytokine Gain Rate by ${Math.round((this.effects[0].cytokine_multiplier - 1) * 100)}%.`,
+                1: `Increase Cytokine Gain Rate by ${Math.round((this.effects[1].cytokine_multiplier - 1) * 100)}%.`,
+                2: `Increase Cytokine Gain Rate by ${Math.round((this.effects[2].cytokine_multiplier - 1) * 100)}%.`
+            };
         }
     },
     ADJUVANT_BOLUS: {
@@ -97,10 +111,12 @@ const ADAPTATION_CONFIGS = {
             1: { adjuvant_multiplier: 1.27 },
             2: { adjuvant_multiplier: 1.36 }
         },
-        descriptions: {
-            0: 'Increase Adjuvant Gain Rate by 18%.',
-            1: 'Increase Adjuvant Gain Rate by 27%.',
-            2: 'Increase Adjuvant Gain Rate by 36%.'
+        get descriptions() {
+            return {
+                0: `Increase Adjuvant Gain Rate by ${Math.round((this.effects[0].adjuvant_multiplier - 1) * 100)}%.`,
+                1: `Increase Adjuvant Gain Rate by ${Math.round((this.effects[1].adjuvant_multiplier - 1) * 100)}%.`,
+                2: `Increase Adjuvant Gain Rate by ${Math.round((this.effects[2].adjuvant_multiplier - 1) * 100)}%.`
+            };
         }
     },
     NUTRIENT_GLUT: {
@@ -110,10 +126,12 @@ const ADAPTATION_CONFIGS = {
             1: { biomass_gain: 200 },
             2: { biomass_gain: 200 }
         },
-        descriptions: {
-            0: 'Gain 200 Biomass.',
-            1: 'Gain 200 Biomass.',
-            2: 'Gain 200 Biomass.'
+        get descriptions() {
+            return {
+                0: `Gain ${this.effects[0].biomass_gain} Biomass.`,
+                1: `Gain ${this.effects[1].biomass_gain} Biomass.`,
+                2: `Gain ${this.effects[2].biomass_gain} Biomass.`
+            };
         }
     }
 };
