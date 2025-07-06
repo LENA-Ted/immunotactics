@@ -42,11 +42,21 @@ class InputSystem {
             return;
         }
 
+        if (window.game_state.is_game_paused || this.is_intensity_reward_modal_active()) {
+            return;
+        }
+
         if (!this.is_valid_game_click(event)) {
             return;
         }
 
         this.attempt_place_tower();
+    }
+
+    is_intensity_reward_modal_active() {
+        return window.game_state && 
+               window.game_state.intensity_reward_system && 
+               window.game_state.intensity_reward_system.is_reward_modal_active();
     }
 
     is_valid_game_click(event) {

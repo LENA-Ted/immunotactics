@@ -40,8 +40,7 @@ class GameLoop {
 
         const timestamp = performance.now();
         
-        this.update_game_state(timestamp);
-        this.clean_up_entities();
+        this.update_systems(timestamp);
         this.render_frame();
 
         if (!this.game_state.is_game_over) {
@@ -49,6 +48,21 @@ class GameLoop {
                 this.run_frame();
             });
         }
+    }
+
+    update_systems(timestamp) {
+        if (!this.is_game_paused()) {
+            this.update_game_state(timestamp);
+            this.clean_up_entities();
+        }
+
+        this.update_ui_systems(timestamp);
+        this.check_intensity_reward_modal_completion();
+    }
+
+    is_game_paused() {
+        return this.game_state.is_game_paused || 
+               (this.systems.intensity_reward && this.systems.intensity_reward.is_reward_modal_active());
     }
 
     update_game_state(timestamp) {
@@ -95,8 +109,18 @@ class GameLoop {
 
         const cursor_state = this.systems.input.get_cursor_state();
         this.systems.collision.handle_all_collisions(this.game_state, cursor_state);
+    }
 
+    update_ui_systems(timestamp) {
         this.systems.ui.update_ui(this.game_state);
+    }
+
+    check_intensity_reward_modal_completion() {
+        if (this.game_state.is_game_paused && 
+            this.systems.intensity_reward && 
+            !this.systems.intensity_reward.is_reward_modal_active()) {
+            this.game_state.is_game_paused = false;
+        }
     }
 
     clean_up_entities() {
@@ -105,6 +129,12 @@ class GameLoop {
                 if (this.game_state.last_tower_damage_time) {
                     delete this.game_state.last_tower_damage_time[tower.id];
                 }
+
+                if (this.game_state.adaptation_system && tower.get_cost) {
+                    const tower_cost = tower.get_cost();
+                    this.game_state.adaptation_system.apply_tower_destruction_refund(tower_cost);
+                }
+
                 return false;
             }
             return true;

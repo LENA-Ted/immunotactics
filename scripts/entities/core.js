@@ -4,7 +4,8 @@ class Core {
         this.y = canvas_height / 2;
         this.radius = 20;
         this.hp = GAME_CONFIG.CORE_START_HP;
-        this.max_hp = GAME_CONFIG.CORE_MAX_HP;
+        this.base_max_hp = GAME_CONFIG.CORE_MAX_HP;
+        this.max_hp = this.base_max_hp;
     }
 
     draw(ctx) {
@@ -32,6 +33,22 @@ class Core {
             return true;
         }
         return false;
+    }
+
+    heal(amount) {
+        if (amount <= 0) {
+            return;
+        }
+        
+        this.hp = Math.min(this.max_hp, this.hp + amount);
+    }
+
+    set_max_hp_bonus(bonus_amount) {
+        this.max_hp = this.base_max_hp + bonus_amount;
+    }
+
+    heal_to_max() {
+        this.hp = this.max_hp;
     }
 
     is_alive() {

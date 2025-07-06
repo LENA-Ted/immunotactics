@@ -1,0 +1,131 @@
+#intensity_reward_modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    backdrop-filter: blur(10px);
+    pointer-events: none;
+}
+
+#intensity_reward_modal.active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: all;
+}
+
+#reward_cards_container {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
+}
+
+.reward_card {
+    background-color: #F5F5DC;
+    border-radius: 20px;
+    padding: 30px;
+    width: 250px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    pointer-events: none;
+}
+
+.reward_card.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+.reward_card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.reward_card.faded {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.reward_card.selected {
+    animation: spring_selection 1s ease-out forwards;
+}
+
+@keyframes spring_selection {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    30% {
+        transform: translateY(-10px) scale(1.1);
+    }
+    60% {
+        transform: translateY(-5px) scale(1.05);
+    }
+    80% {
+        transform: translateY(-8px) scale(1.08);
+    }
+    100% {
+        transform: translateY(-6px) scale(1.06);
+    }
+}
+
+.adaptation_header {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.adaptation_name {
+    color: #2c3e50;
+    font-size: 1.4em;
+    font-weight: 700;
+    text-align: center;
+}
+
+.adaptation_level {
+    color: #2c3e50;
+    font-size: 1.1em;
+    font-weight: 600;
+    opacity: 0.8;
+    margin-left: 5px;
+}
+
+.adaptation_description {
+    color: #2c3e50;
+    font-size: 1em;
+    line-height: 1.4;
+    text-align: center;
+    margin: 0;
+}
+
+.reward_card:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.reward_card:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+.reward_card:nth-child(3) {
+    transition-delay: 0.3s;
+}

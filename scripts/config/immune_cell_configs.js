@@ -1,6 +1,6 @@
 const IMMUNE_CELL_CONFIGS = {
     B_CELL: {
-        cost: 25,
+        cost: 40,
         base_hp: 10,
         shoot_hp_cost: 1,
         shoot_interval_ms: 2000,
@@ -14,7 +14,7 @@ const IMMUNE_CELL_CONFIGS = {
         projectile_speed: 8
     },
     MAST_CELL: {
-        cost: 25,
+        cost: 40,
         base_hp: 10,
         shoot_hp_cost: 1,
         shoot_interval_ms: 1000,
@@ -29,7 +29,7 @@ const IMMUNE_CELL_CONFIGS = {
         cone_angle_degrees: 45
     },
     INTERFERON: {
-        cost: 25,
+        cost: 40,
         base_hp: 10,
         action_hp_cost: 1,
         action_interval_ms: 3000,
