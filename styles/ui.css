@@ -20,6 +20,17 @@
     pointer-events: none;
 }
 
+#bottom_left_ui_container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
 .pill {
     background-color: #F5F5DC;
     border-radius: 50px;
@@ -30,6 +41,38 @@
     height: 34px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     box-sizing: border-box;
+}
+
+.resource_pill {
+    background-color: transparent;
+    border: 2px solid #F5F5DC;
+    color: #F5F5DC;
+    border-radius: 50px;
+    padding: 6px 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 60px;
+    height: 34px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.resource_pill.feedback_active {
+    background-color: #F5F5DC;
+    color: #2c3e50;
+}
+
+.resource_symbol {
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.resource_value {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-left: 8px;
 }
 
 #core_hp_container {

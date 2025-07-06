@@ -13,6 +13,7 @@ class Game {
         this.rendering_system = null;
         this.selection_system = null;
         this.status_effect_system = null;
+        this.resource_system = null;
         this.game_loop = null;
         
         this.game_state = null;
@@ -52,6 +53,7 @@ class Game {
         this.ui_system = new UISystem();
         this.selection_system = new SelectionSystem();
         this.status_effect_system = new StatusEffectSystem();
+        this.resource_system = new ResourceSystem();
         this.input_system = new InputSystem(this.game_canvas, this.tower_factory, this.selection_system);
         this.rendering_system = new RenderingSystem(this.game_canvas, this.cursor_canvas);
         this.game_loop = new GameLoop();
@@ -66,6 +68,7 @@ class Game {
             projectiles: [],
             damage_numbers: [],
             effects: [],
+            resource_particles: [],
             screen_shake: new ScreenShake(),
             is_game_over: false,
             last_tower_damage_time: {},
@@ -78,7 +81,9 @@ class Game {
             intensity_level_pulsate: new PulsateEffect(),
             canvas_width: this.game_canvas.width,
             canvas_height: this.game_canvas.height,
-            selection_system: this.selection_system
+            selection_system: this.selection_system,
+            resource_system: this.resource_system,
+            ui_system: this.ui_system
         };
     }
 
@@ -94,7 +99,8 @@ class Game {
             input: this.input_system,
             rendering: this.rendering_system,
             selection: this.selection_system,
-            status_effects: this.status_effect_system
+            status_effects: this.status_effect_system,
+            resource: this.resource_system
         };
 
         this.game_loop.initialize(systems, this.game_state);
@@ -116,6 +122,7 @@ class Game {
         this.game_state.projectiles = [];
         this.game_state.damage_numbers = [];
         this.game_state.effects = [];
+        this.game_state.resource_particles = [];
         this.game_state.last_tower_damage_time = {};
 
         this.game_state.player = new Player();
@@ -137,6 +144,8 @@ class Game {
         this.game_state.canvas_width = this.game_canvas.width;
         this.game_state.canvas_height = this.game_canvas.height;
         this.game_state.selection_system = this.selection_system;
+        this.game_state.resource_system = this.resource_system;
+        this.game_state.ui_system = this.ui_system;
 
         if (this.spawn_system) {
             this.spawn_system.reset();
@@ -146,6 +155,9 @@ class Game {
         }
         if (this.selection_system) {
             this.selection_system.reset();
+        }
+        if (this.resource_system) {
+            this.resource_system.reset();
         }
     }
 

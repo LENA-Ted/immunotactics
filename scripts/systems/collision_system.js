@@ -2,10 +2,11 @@ class CollisionSystem {
     constructor() {
     }
 
-    handle_all_collisions(game_state) {
+    handle_all_collisions(game_state, cursor_state) {
         this.handle_projectile_enemy_collisions(game_state);
         this.handle_enemy_tower_collisions(game_state);
         this.handle_enemy_core_collisions(game_state);
+        this.handle_particle_cursor_collisions(game_state, cursor_state);
     }
 
     handle_projectile_enemy_collisions(game_state) {
@@ -60,6 +61,28 @@ class CollisionSystem {
         }
     }
 
+    handle_particle_cursor_collisions(game_state, cursor_state) {
+        if (!game_state.resource_particles || !cursor_state) {
+            return;
+        }
+
+        for (let i = game_state.resource_particles.length - 1; i >= 0; i--) {
+            const particle = game_state.resource_particles[i];
+            
+            if (particle.is_collected_by_cursor(cursor_state.x, cursor_state.y)) {
+                this.handle_particle_collected(particle, i, game_state);
+            }
+        }
+    }
+
+    handle_particle_collected(particle, particle_index, game_state) {
+        if (game_state.resource_system) {
+            game_state.resource_system.collect_particle(particle, game_state);
+        }
+        
+        game_state.resource_particles.splice(particle_index, 1);
+    }
+
     handle_projectile_hit_enemy(projectile, enemy, projectile_index, enemy_index, game_state) {
         const damage = projectile.get_damage();
         const is_enemy_destroyed = enemy.take_damage(damage);
@@ -70,6 +93,11 @@ class CollisionSystem {
 
         if (is_enemy_destroyed) {
             game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));
+            
+            if (game_state.resource_system) {
+                game_state.resource_system.spawn_particles_from_enemy(enemy, game_state);
+            }
+            
             game_state.enemies.splice(enemy_index, 1);
             this.handle_enemy_destroyed(game_state);
         }
@@ -78,6 +106,10 @@ class CollisionSystem {
     handle_enemy_hit_tower(enemy, tower, enemy_index, tower_index, game_state) {
         game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));
         game_state.effects.push(new PopEffect(tower.x, tower.y, '#cccccc'));
+
+        if (game_state.resource_system) {
+            game_state.resource_system.spawn_particles_from_enemy(enemy, game_state);
+        }
 
         game_state.enemies.splice(enemy_index, 1);
         game_state.towers.splice(tower_index, 1);
@@ -93,6 +125,10 @@ class CollisionSystem {
         const core_destroyed = core.take_damage(1);
         
         game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));
+        
+        if (game_state.resource_system) {
+            game_state.resource_system.spawn_particles_from_enemy(enemy, game_state);
+        }
         
         game_state.enemies.splice(enemy_index, 1);
 

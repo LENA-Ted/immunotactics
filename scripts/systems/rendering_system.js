@@ -47,6 +47,7 @@ class RenderingSystem {
         this.render_projectiles(game_state.projectiles);
         this.render_effects(game_state.effects);
         this.render_damage_numbers(game_state.damage_numbers);
+        this.render_resource_particles(game_state.resource_particles);
     }
 
     render_core(core) {
@@ -80,6 +81,16 @@ class RenderingSystem {
     render_damage_numbers(damage_numbers) {
         damage_numbers.forEach(damage_number => {
             damage_number.draw(this.game_ctx);
+        });
+    }
+
+    render_resource_particles(resource_particles) {
+        if (!resource_particles) {
+            return;
+        }
+        
+        resource_particles.forEach(particle => {
+            particle.draw(this.game_ctx);
         });
     }
 

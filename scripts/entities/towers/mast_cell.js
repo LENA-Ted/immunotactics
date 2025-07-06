@@ -98,7 +98,13 @@ class MastCell extends BaseTower {
         };
 
         const projectile = new Projectile(this.x, this.y, fake_target, this);
-        projectile.damage = this.config.projectile_damage;
+        
+        let base_damage = this.config.projectile_damage;
+        if (window.game_state.resource_system) {
+            base_damage = window.game_state.resource_system.apply_damage_bonus(base_damage);
+        }
+        
+        projectile.damage = base_damage;
         
         return projectile;
     }
