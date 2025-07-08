@@ -43,11 +43,21 @@ class SpawnSystem {
         const modified_spawn_chance = this.get_intensity_modified_spawn_chance();
 
         if (Math.random() < modified_spawn_chance) {
-            this.spawn_enemy();
+            const spawn_group_number = this.get_spawn_group_number();
+            
+            for (let i = 0; i < spawn_group_number; i++) {
+                this.spawn_enemy();
+            }
+            
             this.reset_spawn_chance();
         } else {
             this.increase_spawn_chance();
         }
+    }
+
+    get_spawn_group_number() {
+        const intensity_level = window.game_state ? window.game_state.intensity_level : 0;
+        return 1 + Math.floor(intensity_level / INTENSITY_CONFIG.SPAWN_GROUP_LEVEL_INTERVAL);
     }
 
     get_intensity_modified_spawn_chance() {
