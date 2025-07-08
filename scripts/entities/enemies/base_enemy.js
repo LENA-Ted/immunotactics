@@ -25,7 +25,7 @@ class BaseEnemy {
         }
 
         const intensity_level = window.game_state.intensity_level || 0;
-        const hp_multiplier = 1 + (intensity_level * INTENSITY_CONFIG.HP_MODIFIER_PER_LEVEL);
+        const hp_multiplier = Math.pow(1 + INTENSITY_CONFIG.HP_EXPONENTIAL_BASE, intensity_level);
         return Math.ceil(base_hp * hp_multiplier);
     }
 
