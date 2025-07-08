@@ -116,7 +116,7 @@ class ResourceSystem {
 
     calculate_resource_gain(intensity_level) {
         const min_gain = 1;
-        const max_gain = Math.max(1, intensity_level);
+        const max_gain = Math.max(1, 1);
         return MathUtils.get_random_int(min_gain, max_gain);
     }
 
