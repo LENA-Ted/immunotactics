@@ -90,7 +90,10 @@ class Game {
             resource_system: this.resource_system,
             adaptation_system: this.adaptation_system,
             intensity_reward_system: this.intensity_reward_system,
-            ui_system: this.ui_system
+            ui_system: this.ui_system,
+            total_pause_time_ms: 0,
+            pause_start_time: null,
+            is_currently_paused: false
         };
     }
 
@@ -159,6 +162,10 @@ class Game {
         this.game_state.adaptation_system = this.adaptation_system;
         this.game_state.intensity_reward_system = this.intensity_reward_system;
         this.game_state.ui_system = this.ui_system;
+
+        this.game_state.total_pause_time_ms = 0;
+        this.game_state.pause_start_time = null;
+        this.game_state.is_currently_paused = false;
 
         if (this.spawn_system) {
             this.spawn_system.reset();
