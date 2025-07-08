@@ -87,7 +87,7 @@ class UISystem {
 
     update_ui(game_state) {
         this.update_core_hp_display(game_state.core);
-        this.update_timer_display();
+        this.update_timer_display(game_state);
         this.update_intensity_display(game_state);
         this.update_selection_ui_from_game_state();
         this.update_animated_resource_values(game_state);
@@ -120,14 +120,21 @@ class UISystem {
         }
     }
 
-    update_timer_display() {
+    update_timer_display(game_state) {
         if (!this.timer_container) {
             return;
         }
 
-        const elapsed = Math.floor((performance.now() - this.start_time) / 1000);
-        const minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
-        const seconds = String(elapsed % 60).padStart(2, '0');
+        let elapsed_ms;
+        if (game_state && game_state.get_adjusted_elapsed_time) {
+            elapsed_ms = game_state.get_adjusted_elapsed_time(this.start_time);
+        } else {
+            elapsed_ms = performance.now() - this.start_time;
+        }
+
+        const elapsed_seconds = Math.floor(elapsed_ms / 1000);
+        const minutes = String(Math.floor(elapsed_seconds / 60)).padStart(2, '0');
+        const seconds = String(elapsed_seconds % 60).padStart(2, '0');
         
         this.timer_container.textContent = `${minutes}:${seconds}`;
     }
@@ -402,6 +409,9 @@ class UISystem {
     }
 
     get_elapsed_time_seconds() {
+        if (window.game_state && window.game_state.get_adjusted_elapsed_time) {
+            return Math.floor(window.game_state.get_adjusted_elapsed_time(this.start_time) / 1000);
+        }
         return Math.floor((performance.now() - this.start_time) / 1000);
     }
 
