@@ -72,8 +72,13 @@ class ResourceParticle {
             return false;
         }
         
-        const elapsed = performance.now() - this.spawn_time;
-        return elapsed >= RESOURCE_CONFIG.PARTICLE_LIFESPAN_MS;
+        if (!window.game_state || !window.game_state.get_adjusted_elapsed_time) {
+            const elapsed = performance.now() - this.spawn_time;
+            return elapsed >= RESOURCE_CONFIG.PARTICLE_LIFESPAN_MS;
+        }
+        
+        const adjusted_elapsed = window.game_state.get_adjusted_elapsed_time(this.spawn_time);
+        return adjusted_elapsed >= RESOURCE_CONFIG.PARTICLE_LIFESPAN_MS;
     }
 
     draw(ctx) {
