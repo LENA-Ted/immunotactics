@@ -10,6 +10,36 @@ class GameLoop {
         this.systems = systems;
         this.game_state = initial_game_state;
         window.game_state = this.game_state;
+        this.add_pause_methods_to_game_state();
+    }
+
+    add_pause_methods_to_game_state() {
+        this.game_state.start_pause = () => {
+            if (!this.game_state.is_currently_paused) {
+                this.game_state.pause_start_time = performance.now();
+                this.game_state.is_currently_paused = true;
+            }
+        };
+
+        this.game_state.end_pause = () => {
+            if (this.game_state.is_currently_paused && this.game_state.pause_start_time !== null) {
+                const pause_duration = performance.now() - this.game_state.pause_start_time;
+                this.game_state.total_pause_time_ms += pause_duration;
+                this.game_state.pause_start_time = null;
+                this.game_state.is_currently_paused = false;
+            }
+        };
+
+        this.game_state.get_adjusted_elapsed_time = (start_time) => {
+            const current_time = performance.now();
+            let total_pause_time = this.game_state.total_pause_time_ms;
+            
+            if (this.game_state.is_currently_paused && this.game_state.pause_start_time !== null) {
+                total_pause_time += current_time - this.game_state.pause_start_time;
+            }
+            
+            return current_time - start_time - total_pause_time;
+        };
     }
 
     start() {
@@ -51,6 +81,8 @@ class GameLoop {
     }
 
     update_systems(timestamp) {
+        this.handle_pause_state_changes();
+
         if (!this.is_game_paused()) {
             this.update_game_state(timestamp);
             this.clean_up_entities();
@@ -58,6 +90,17 @@ class GameLoop {
 
         this.update_ui_systems(timestamp);
         this.check_intensity_reward_modal_completion();
+    }
+
+    handle_pause_state_changes() {
+        const should_be_paused = this.game_state.is_game_paused || 
+                                (this.systems.intensity_reward && this.systems.intensity_reward.is_reward_modal_active());
+
+        if (should_be_paused && !this.game_state.is_currently_paused) {
+            this.game_state.start_pause();
+        } else if (!should_be_paused && this.game_state.is_currently_paused) {
+            this.game_state.end_pause();
+        }
     }
 
     is_game_paused() {
