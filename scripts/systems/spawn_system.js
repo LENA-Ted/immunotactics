@@ -43,9 +43,10 @@ class SpawnSystem {
         const modified_spawn_chance = this.get_intensity_modified_spawn_chance();
 
         if (Math.random() < modified_spawn_chance) {
-            const spawn_group_number = this.get_spawn_group_number();
+            const max_spawn_group_number = this.get_spawn_group_number();
+            const actual_spawn_count = MathUtils.get_random_int(1, max_spawn_group_number);
             
-            for (let i = 0; i < spawn_group_number; i++) {
+            for (let i = 0; i < actual_spawn_count; i++) {
                 this.spawn_enemy();
             }
             
