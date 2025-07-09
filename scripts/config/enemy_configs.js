@@ -13,7 +13,7 @@ const ENEMY_CONFIGS = {
 };
 
 const ENEMY_SPAWN_CONFIG = {
-    base_spawn_chance: 0.4,
+    base_spawn_chance: 0.25,
     spawn_chance_increment: 0.05,
     spawn_interval_ms: 1000
 };

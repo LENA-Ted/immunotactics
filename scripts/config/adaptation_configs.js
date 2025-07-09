@@ -2,9 +2,9 @@ const ADAPTATION_CONFIGS = {
     CYTOTOXIC_SURGE: {
         name: 'Cytotoxic Surge',
         effects: {
-            0: { damage_multiplier: 1.18 },
-            1: { damage_multiplier: 1.27 },
-            2: { damage_multiplier: 1.36 }
+            0: { damage_multiplier: 1.12 },
+            1: { damage_multiplier: 1.18 },
+            2: { damage_multiplier: 1.24 }
         },
         get descriptions() {
             return {
@@ -47,9 +47,9 @@ const ADAPTATION_CONFIGS = {
     NECROTIC_RECYCLING: {
         name: 'Necrotic Recycling',
         effects: {
-            0: { energy_refund_percent: 0.18 },
-            1: { energy_refund_percent: 0.27 },
-            2: { energy_refund_percent: 0.36 }
+            0: { energy_refund_percent: 0.08 },
+            1: { energy_refund_percent: 0.12 },
+            2: { energy_refund_percent: 0.16 }
         },
         get descriptions() {
             return {
@@ -62,9 +62,9 @@ const ADAPTATION_CONFIGS = {
     ADRENAL_RESPONSE: {
         name: 'Adrenal Response',
         effects: {
-            0: { energy_cost_reduction: 0.24 },
-            1: { energy_cost_reduction: 0.36 },
-            2: { energy_cost_reduction: 0.48 }
+            0: { energy_cost_reduction: 0.16 },
+            1: { energy_cost_reduction: 0.24 },
+            2: { energy_cost_reduction: 0.32 }
         },
         get descriptions() {
             return {
@@ -77,9 +77,9 @@ const ADAPTATION_CONFIGS = {
     MITOCHONDRIAL_BOOST: {
         name: 'Mitochondrial Boost',
         effects: {
-            0: { energy_regen_multiplier: 1.12 },
-            1: { energy_regen_multiplier: 1.18 },
-            2: { energy_regen_multiplier: 1.24 }
+            0: { energy_regen_multiplier: 1.06 },
+            1: { energy_regen_multiplier: 1.09 },
+            2: { energy_regen_multiplier: 1.12 }
         },
         get descriptions() {
             return {
@@ -92,9 +92,9 @@ const ADAPTATION_CONFIGS = {
     CYTOKINE_INFUSION: {
         name: 'Cytokine Infusion',
         effects: {
-            0: { cytokine_multiplier: 1.18 },
-            1: { cytokine_multiplier: 1.27 },
-            2: { cytokine_multiplier: 1.36 }
+            0: { cytokine_multiplier: 1.06 },
+            1: { cytokine_multiplier: 1.09 },
+            2: { cytokine_multiplier: 1.12 }
         },
         get descriptions() {
             return {
@@ -107,9 +107,9 @@ const ADAPTATION_CONFIGS = {
     ADJUVANT_BOLUS: {
         name: 'Adjuvant Bolus',
         effects: {
-            0: { adjuvant_multiplier: 1.18 },
-            1: { adjuvant_multiplier: 1.27 },
-            2: { adjuvant_multiplier: 1.36 }
+            0: { adjuvant_multiplier: 1.10 },
+            1: { adjuvant_multiplier: 1.15 },
+            2: { adjuvant_multiplier: 1.20 }
         },
         get descriptions() {
             return {
