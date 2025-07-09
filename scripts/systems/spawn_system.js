@@ -3,7 +3,7 @@ class SpawnSystem {
         this.enemy_factory = enemy_factory;
         this.canvas_width = canvas_width;
         this.canvas_height = canvas_height;
-        this.spawn_chance = PATHOGEN_SPAWN_CONFIG.standard_spawn_chance;
+        this.spawn_chance = PATHOGEN_SPAWN_CONFIG.base_spawn_chance;
         this.spawn_timer_handle = null;
         this.is_running = false;
         this.is_spawn_cooldown_active = false;
@@ -33,7 +33,7 @@ class SpawnSystem {
     }
 
     reset() {
-        this.spawn_chance = ENEMY_SPAWN_CONFIG.base_spawn_chance;
+        this.spawn_chance = PATHOGEN_SPAWN_CONFIG.base_spawn_chance;
         this.is_spawn_cooldown_active = false;
     }
 
@@ -114,11 +114,11 @@ class SpawnSystem {
     }
 
     reset_spawn_chance() {
-        this.spawn_chance = ENEMY_SPAWN_CONFIG.base_spawn_chance;
+        this.spawn_chance = PATHOGEN_SPAWN_CONFIG.base_spawn_chance;
     }
 
     increase_spawn_chance() {
-        this.spawn_chance += ENEMY_SPAWN_CONFIG.spawn_chance_increment;
+        this.spawn_chance += PATHOGEN_SPAWN_CONFIG.spawn_chance_increment;
         this.spawn_chance = MathUtils.clamp(this.spawn_chance, 0, 1);
     }
 

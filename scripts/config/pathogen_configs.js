@@ -72,8 +72,10 @@ const PATHOGEN_CONFIGS = {
 };
 
 const PATHOGEN_SPAWN_CONFIG = {
-    standard_spawn_chance: 0.8,
-    special_spawn_chance: 0.2,
+    base_spawn_chance: 0.25,
+    spawn_chance_increment: 0.05,
+    standard_spawn_chance: 0.9,
+    special_spawn_chance: 0.1,
     spawn_interval_ms: 1000
 };
 

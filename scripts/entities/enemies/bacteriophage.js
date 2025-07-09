@@ -21,6 +21,7 @@ class Bacteriophage extends BaseEnemy {
             const elapsed = performance.now() - this.spawn_time;
             const flicker_time = elapsed / 1000.0;
             this.suppression_opacity = 0.3 + Math.sin(flicker_time * this.suppression_flicker_frequency * Math.PI * 2) * 0.2;
+            this.suppression_opacity = MathUtils.clamp(this.suppression_opacity, 0.1, 0.5);
             return;
         }
 

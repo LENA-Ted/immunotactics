@@ -1,5 +1,5 @@
 class TargetingLine {
-    constructor(start_x, start_y, end_x, end_y, duration_ms) {
+    constructor(start_x, start_y, end_x, end_y, duration_ms, parent_entity = null) {
         this.start_x = start_x;
         this.start_y = start_y;
         this.end_x = end_x;
@@ -9,9 +9,16 @@ class TargetingLine {
         this.opacity = 0;
         this.flicker_frequency = 2.0;
         this.warning_start_time_ms = duration_ms - 1000;
+        this.parent_entity = parent_entity;
+        this.is_destroyed = false;
     }
 
     update(timestamp) {
+        if (this.is_destroyed) {
+            this.opacity = 0;
+            return;
+        }
+        
         if (!window.game_state || !window.game_state.get_adjusted_elapsed_time) {
             return;
         }
@@ -28,15 +35,15 @@ class TargetingLine {
         const current_frequency = is_warning_phase ? this.flicker_frequency * 3 : this.flicker_frequency;
         
         const flicker_time = elapsed / 1000.0;
-        const base_opacity = is_warning_phase ? 0.8 : 0.6;
-        const flicker_amplitude = is_warning_phase ? 0.4 : 0.3;
+        const base_opacity = is_warning_phase ? 0.4 : 0.3;
+        const flicker_amplitude = is_warning_phase ? 0.2 : 0.15;
         
         this.opacity = base_opacity + Math.sin(flicker_time * current_frequency * Math.PI * 2) * flicker_amplitude;
         this.opacity = MathUtils.clamp(this.opacity, 0.1, 1.0);
     }
 
     draw(ctx) {
-        if (this.opacity <= 0) {
+        if (this.opacity <= 0 || this.is_destroyed) {
             return;
         }
 
@@ -62,6 +69,10 @@ class TargetingLine {
     }
 
     is_expired() {
+        if (this.is_destroyed) {
+            return true;
+        }
+        
         if (!window.game_state || !window.game_state.get_adjusted_elapsed_time) {
             const elapsed = performance.now() - this.start_time;
             return elapsed >= this.duration_ms;
@@ -73,6 +84,11 @@ class TargetingLine {
 
     is_alive() {
         return !this.is_expired();
+    }
+
+    destroy() {
+        this.is_destroyed = true;
+        this.opacity = 0;
     }
 }
 

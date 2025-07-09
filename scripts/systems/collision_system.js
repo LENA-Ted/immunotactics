@@ -85,6 +85,11 @@ class CollisionSystem {
 
     handle_projectile_hit_enemy(projectile, enemy, projectile_index, enemy_index, game_state) {
         const damage = projectile.get_damage();
+        
+        if (enemy.cleanup_targeting_line) {
+            enemy.cleanup_targeting_line();
+        }
+        
         const is_enemy_destroyed = enemy.take_damage(damage);
 
         game_state.damage_numbers.push(new DamageNumber(enemy.x, enemy.y, damage));
@@ -104,6 +109,10 @@ class CollisionSystem {
     }
 
     handle_enemy_hit_tower(enemy, tower, enemy_index, tower_index, game_state) {
+        if (enemy.cleanup_targeting_line) {
+            enemy.cleanup_targeting_line();
+        }
+        
         game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));
         game_state.effects.push(new PopEffect(tower.x, tower.y, '#cccccc'));
 
@@ -124,6 +133,10 @@ class CollisionSystem {
     }
 
     handle_enemy_hit_core(enemy, core, enemy_index, game_state) {
+        if (enemy.cleanup_targeting_line) {
+            enemy.cleanup_targeting_line();
+        }
+        
         const core_destroyed = core.take_damage(1);
         
         game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));

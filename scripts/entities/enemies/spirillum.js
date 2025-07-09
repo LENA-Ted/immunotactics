@@ -58,7 +58,8 @@ class Spirillum extends BaseEnemy {
             this.y,
             this.target_position.x,
             this.target_position.y,
-            this.config.targeting_duration_ms
+            this.config.targeting_duration_ms,
+            this
         );
         
         if (window.game_state && window.game_state.effects) {
@@ -86,7 +87,11 @@ class Spirillum extends BaseEnemy {
     start_rushing_behavior() {
         this.behavior_state = 'RUSHING';
         this.has_fixed_speed = true;
-        this.targeting_line = null;
+        
+        if (this.targeting_line) {
+            this.targeting_line.destroy();
+            this.targeting_line = null;
+        }
     }
 
     handle_rushing_behavior() {
@@ -94,7 +99,17 @@ class Spirillum extends BaseEnemy {
             return;
         }
 
-        this.move_toward_target(this.target_position);
+        const distance_to_target = MathUtils.get_distance(this.x, this.y, this.target_position.x, this.target_position.y);
+        
+        if (distance_to_target <= this.fixed_speed_value) {
+            this.x = this.target_position.x;
+            this.y = this.target_position.y;
+            return;
+        }
+
+        const angle = MathUtils.get_angle_between(this.x, this.y, this.target_position.x, this.target_position.y);
+        this.x += Math.cos(angle) * this.fixed_speed_value;
+        this.y += Math.sin(angle) * this.fixed_speed_value;
     }
 
     move_toward_target(target) {
@@ -131,6 +146,28 @@ class Spirillum extends BaseEnemy {
 
     get_pathogen_class() {
         return this.pathogen_class;
+    }
+
+    cleanup_targeting_line() {
+        if (this.targeting_line) {
+            this.targeting_line.destroy();
+            this.targeting_line = null;
+        }
+    }
+
+    take_damage(amount) {
+        this.cleanup_targeting_line();
+        return super.take_damage(amount);
+    }
+
+    get_debug_info() {
+        return {
+            state: this.behavior_state,
+            has_fixed_speed: this.has_fixed_speed,
+            fixed_speed_value: this.fixed_speed_value,
+            target_position: this.target_position,
+            targeting_start_time: this.targeting_start_time
+        };
     }
 }
 

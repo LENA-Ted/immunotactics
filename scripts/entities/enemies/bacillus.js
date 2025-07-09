@@ -27,8 +27,18 @@ class Bacillus extends BaseEnemy {
         ctx.strokeStyle = this.config.stroke_color;
         ctx.lineWidth = this.config.stroke_width;
         
+        const half_width = this.width / 2;
+        const half_height = this.height / 2;
+        const corner_radius = this.height / 2;
+        
         ctx.beginPath();
-        ctx.rect(-this.width / 2, -this.height / 2, this.width, this.height);
+        ctx.moveTo(-half_width + corner_radius, -half_height);
+        ctx.lineTo(half_width - corner_radius, -half_height);
+        ctx.arc(half_width - corner_radius, 0, corner_radius, -Math.PI / 2, Math.PI / 2);
+        ctx.lineTo(-half_width + corner_radius, half_height);
+        ctx.arc(-half_width + corner_radius, 0, corner_radius, Math.PI / 2, -Math.PI / 2);
+        ctx.closePath();
+        
         ctx.fill();
         ctx.stroke();
         
