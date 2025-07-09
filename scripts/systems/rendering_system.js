@@ -48,6 +48,7 @@ class RenderingSystem {
         this.render_effects(game_state.effects);
         this.render_damage_numbers(game_state.damage_numbers);
         this.render_resource_particles(game_state.resource_particles);
+        this.render_targeting_lines(game_state.effects);
     }
 
     render_core(core) {
@@ -91,6 +92,18 @@ class RenderingSystem {
         
         resource_particles.forEach(particle => {
             particle.draw(this.game_ctx);
+        });
+    }
+
+    render_targeting_lines(effects) {
+        if (!effects) {
+            return;
+        }
+        
+        effects.forEach(effect => {
+            if (effect instanceof TargetingLine) {
+                effect.draw(this.game_ctx);
+            }
         });
     }
 
