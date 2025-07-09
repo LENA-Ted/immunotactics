@@ -33,7 +33,7 @@ const PATHOGEN_CONFIGS = {
         min_speed: 0.15,
         max_speed: 0.15,
         min_size_mod: 1.0,
-        max_size_mod: 1.0,
+        max_size_mod: 1.25,
         base_radius: 60,
         stroke_color: '#000000',
         stroke_width: 2,
@@ -41,8 +41,8 @@ const PATHOGEN_CONFIGS = {
     },
     BACTERIOPHAGE: {
         class: 'VIRUS',
-        min_hp: 50,
-        max_hp: 100,
+        min_hp: 20,
+        max_hp: 40,
         min_speed: 0.5,
         max_speed: 0.5,
         min_size_mod: 1.0,
@@ -65,8 +65,8 @@ const PATHOGEN_CONFIGS = {
         stroke_color: '#000000',
         stroke_width: 2,
         shape: 'CIRCLE',
-        targeting_distance: 500,
-        targeting_duration_ms: 4000,
+        targeting_distance: 400,
+        targeting_duration_ms: 3000,
         rush_speed: 1.5
     }
 };
