@@ -11,6 +11,8 @@ class BaseTower {
         this.last_action_time = 0;
         this.is_active = true;
         this.range = this.calculate_range();
+        this.status_effects = [];
+        this.is_suppressed = false;
     }
 
     calculate_range() {
@@ -42,10 +44,43 @@ class BaseTower {
         this.pulsate_effect.update();
     }
 
+    add_status_effect(effect) {
+        const existing_effect_index = this.status_effects.findIndex(
+            existing => existing.get_type() === effect.get_type()
+        );
+        
+        if (existing_effect_index !== -1) {
+            this.status_effects[existing_effect_index].remove_effect(this);
+            this.status_effects.splice(existing_effect_index, 1);
+        }
+        
+        this.status_effects.push(effect);
+        effect.apply_effect(this);
+    }
+
+    has_status_effect(effect_type) {
+        return this.status_effects.some(effect => effect.get_type() === effect_type);
+    }
+
+    update_status_effects(timestamp) {
+        this.status_effects = this.status_effects.filter(effect => {
+            effect.update(timestamp);
+            if (effect.is_expired()) {
+                effect.remove_effect(this);
+                return false;
+            }
+            return true;
+        });
+    }
+
     draw_base(ctx) {
         this.update_pulsate();
         
-        const display_color = this.is_active ? this.config.color : '#808080';
+        let display_color = this.config.color;
+        
+        if (!this.is_active || this.is_suppressed) {
+            display_color = '#808080';
+        }
         
         ctx.fillStyle = display_color;
         ctx.strokeStyle = this.config.stroke_color;
@@ -78,9 +113,10 @@ class BaseTower {
             this.last_action_time = timestamp;
         }
 
+        this.update_status_effects(timestamp);
         this.update_activity_state();
 
-        if (this.is_active && this.should_perform_action(timestamp)) {
+        if (this.is_active && !this.is_suppressed && this.should_perform_action(timestamp)) {
             this.perform_action(timestamp);
             this.last_action_time = timestamp;
         }
@@ -133,6 +169,15 @@ class BaseTower {
         
         const distance = MathUtils.get_distance(this.x, this.y, target.x, target.y);
         return distance <= this.range;
+    }
+
+    get_collision_bounds() {
+        return {
+            type: 'CIRCLE',
+            center_x: this.x,
+            center_y: this.y,
+            radius: this.radius
+        };
     }
 }
 
