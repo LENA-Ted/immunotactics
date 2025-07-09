@@ -16,16 +16,17 @@ class ResourceSystem {
             game_state.resource_particles = [];
         }
 
-        this.spawn_cytokine_particles(enemy, game_state);
-        this.spawn_adjuvant_particles(enemy, game_state);
-        this.spawn_biomass_particles(enemy, game_state);
+        const intensity_level = game_state.intensity_level || 0;
+        const drop_attempts = intensity_level + 1;
+
+        this.spawn_cytokine_particles(enemy, game_state, drop_attempts);
+        this.spawn_adjuvant_particles(enemy, game_state, drop_attempts);
+        this.spawn_biomass_particles(enemy, game_state, drop_attempts);
     }
 
-    spawn_cytokine_particles(enemy, game_state) {
-        const drop_opportunities = Math.floor(enemy.max_hp / RESOURCE_CONFIG.CYTOKINE_HP_THRESHOLD);
-        
-        for (let i = 0; i < drop_opportunities; i++) {
-            if (Math.random() < RESOURCE_CONFIG.CYTOKINE_DROP_CHANCE) {
+    spawn_cytokine_particles(enemy, game_state, drop_attempts) {
+        for (let i = 0; i < drop_attempts; i++) {
+            if (Math.random() < RESOURCE_CONFIG.CYTOKINE_DROP_CHANCE_PER_LEVEL) {
                 const position = this.get_random_spawn_position(enemy);
                 const particle = new ResourceParticle(position.x, position.y, RESOURCE_TYPES.CYTOKINES);
                 game_state.resource_particles.push(particle);
@@ -33,11 +34,9 @@ class ResourceSystem {
         }
     }
 
-    spawn_adjuvant_particles(enemy, game_state) {
-        const drop_opportunities = Math.floor(enemy.max_hp / RESOURCE_CONFIG.ADJUVANT_HP_THRESHOLD);
-        
-        for (let i = 0; i < drop_opportunities; i++) {
-            if (Math.random() < RESOURCE_CONFIG.ADJUVANT_DROP_CHANCE) {
+    spawn_adjuvant_particles(enemy, game_state, drop_attempts) {
+        for (let i = 0; i < drop_attempts; i++) {
+            if (Math.random() < RESOURCE_CONFIG.ADJUVANT_DROP_CHANCE_PER_LEVEL) {
                 const position = this.get_random_spawn_position(enemy);
                 const particle = new ResourceParticle(position.x, position.y, RESOURCE_TYPES.ADJUVANTS);
                 game_state.resource_particles.push(particle);
@@ -45,11 +44,9 @@ class ResourceSystem {
         }
     }
 
-    spawn_biomass_particles(enemy, game_state) {
-        const drop_opportunities = Math.floor(enemy.max_hp / RESOURCE_CONFIG.BIOMASS_HP_THRESHOLD);
-        
-        for (let i = 0; i < drop_opportunities; i++) {
-            if (Math.random() < RESOURCE_CONFIG.BIOMASS_DROP_CHANCE) {
+    spawn_biomass_particles(enemy, game_state, drop_attempts) {
+        for (let i = 0; i < drop_attempts; i++) {
+            if (Math.random() < RESOURCE_CONFIG.BIOMASS_DROP_CHANCE_PER_LEVEL) {
                 const position = this.get_random_spawn_position(enemy);
                 const particle = new ResourceParticle(position.x, position.y, RESOURCE_TYPES.BIOMASS);
                 game_state.resource_particles.push(particle);
@@ -69,22 +66,20 @@ class ResourceSystem {
 
     collect_particle(particle, game_state) {
         const resource_type = particle.get_resource_type();
-        const intensity_level = game_state.intensity_level || 0;
-        const base_amount = this.calculate_resource_gain(intensity_level);
 
         switch (resource_type) {
             case RESOURCE_TYPES.CYTOKINES:
-                const cytokine_amount = this.apply_cytokine_multiplier(base_amount);
+                const cytokine_amount = this.apply_cytokine_multiplier(1);
                 this.cytokines += cytokine_amount;
                 this.trigger_ui_feedback(RESOURCE_TYPES.CYTOKINES);
                 break;
             case RESOURCE_TYPES.ADJUVANTS:
-                const adjuvant_amount = this.apply_adjuvant_multiplier(base_amount);
+                const adjuvant_amount = this.apply_adjuvant_multiplier(1);
                 this.adjuvants += adjuvant_amount;
                 this.trigger_ui_feedback(RESOURCE_TYPES.ADJUVANTS);
                 break;
             case RESOURCE_TYPES.BIOMASS:
-                this.biomass += base_amount;
+                this.biomass += 1;
                 this.trigger_ui_feedback(RESOURCE_TYPES.BIOMASS);
                 break;
         }
@@ -112,12 +107,6 @@ class ResourceSystem {
             return window.game_state.adaptation_system.get_adjuvant_multiplier();
         }
         return 1.0;
-    }
-
-    calculate_resource_gain(intensity_level) {
-        const min_gain = 1;
-        const max_gain = Math.max(1, intensity_level);
-        return MathUtils.get_random_int(min_gain, max_gain);
     }
 
     trigger_ui_feedback(resource_type) {
