@@ -51,7 +51,7 @@ const PATHOGEN_CONFIGS = {
         stroke_color: '#000000',
         stroke_width: 2,
         shape: 'CIRCLE',
-        suppression_radius_multiplier: 3.0
+        suppression_radius_multiplier: 5.0
     },
     SPIRILLUM: {
         class: 'BACTERIA',
