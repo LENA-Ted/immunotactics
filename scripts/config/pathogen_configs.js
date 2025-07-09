@@ -2,7 +2,7 @@ const PATHOGEN_CONFIGS = {
     COCCUS: {
         class: 'BACTERIA',
         min_hp: 10,
-        max_hp: 30,
+        max_hp: 20,
         min_speed: 0.5,
         max_speed: 1.0,
         min_size_mod: 0.5,
@@ -15,10 +15,10 @@ const PATHOGEN_CONFIGS = {
     BACILLUS: {
         class: 'BACTERIA',
         min_hp: 10,
-        max_hp: 30,
+        max_hp: 20,
         min_speed: 0.5,
         max_speed: 1.0,
-        min_size_mod: 0.5,
+        min_size_mod: 1.0,
         max_size_mod: 1.5,
         base_radius: 10,
         stroke_color: '#000000',
@@ -29,7 +29,7 @@ const PATHOGEN_CONFIGS = {
     MYCETOMA: {
         class: 'FUNGUS',
         min_hp: 200,
-        max_hp: 600,
+        max_hp: 400,
         min_speed: 0.15,
         max_speed: 0.15,
         min_size_mod: 1.0,
@@ -41,8 +41,8 @@ const PATHOGEN_CONFIGS = {
     },
     BACTERIOPHAGE: {
         class: 'VIRUS',
-        min_hp: 100,
-        max_hp: 300,
+        min_hp: 50,
+        max_hp: 100,
         min_speed: 0.5,
         max_speed: 0.5,
         min_size_mod: 1.0,
@@ -56,7 +56,7 @@ const PATHOGEN_CONFIGS = {
     SPIRILLUM: {
         class: 'BACTERIA',
         min_hp: 20,
-        max_hp: 60,
+        max_hp: 40,
         min_speed: 0.75,
         max_speed: 0.75,
         min_size_mod: 1.0,
