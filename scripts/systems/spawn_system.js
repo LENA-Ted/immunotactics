@@ -47,7 +47,7 @@ class SpawnSystem {
         if (Math.random() < modified_spawn_chance) {
             let spawn_count;
             const intensity_level = window.game_state.intensity_level || 0;
-            const is_cooldown_disabled = intensity_level > 10;
+            const is_cooldown_disabled = intensity_level > INTENSITY_CONFIG.SPAWN_COOLDOWN_DISABLE_LEVEL;
             
             if (!is_cooldown_disabled && this.is_spawn_cooldown_active) {
                 spawn_count = 1;
