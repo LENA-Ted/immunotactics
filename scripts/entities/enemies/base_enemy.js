@@ -12,6 +12,9 @@ class BaseEnemy {
         this.color = this.generate_color();
         this.pulsate_effect = new PulsateEffect();
         this.status_effects = [];
+        this.pathogen_type = null;
+        this.pathogen_class = null;
+        this.is_suppressed = false;
     }
 
     generate_hp() {
@@ -152,6 +155,23 @@ class BaseEnemy {
 
     is_alive() {
         return this.hp > 0;
+    }
+
+    get_collision_bounds() {
+        return {
+            type: 'CIRCLE',
+            center_x: this.x,
+            center_y: this.y,
+            radius: this.radius
+        };
+    }
+
+    get_pathogen_type() {
+        return this.pathogen_type;
+    }
+
+    get_pathogen_class() {
+        return this.pathogen_class;
     }
 }
 
