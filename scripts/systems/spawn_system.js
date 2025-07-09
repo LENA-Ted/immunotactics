@@ -3,7 +3,7 @@ class SpawnSystem {
         this.enemy_factory = enemy_factory;
         this.canvas_width = canvas_width;
         this.canvas_height = canvas_height;
-        this.spawn_chance = ENEMY_SPAWN_CONFIG.base_spawn_chance;
+        this.spawn_chance = PATHOGEN_SPAWN_CONFIG.standard_spawn_chance;
         this.spawn_timer_handle = null;
         this.is_running = false;
         this.is_spawn_cooldown_active = false;
@@ -17,7 +17,7 @@ class SpawnSystem {
         this.is_running = true;
         this.spawn_timer_handle = setInterval(() => {
             this.attempt_spawn();
-        }, ENEMY_SPAWN_CONFIG.spawn_interval_ms);
+        }, PATHOGEN_SPAWN_CONFIG.spawn_interval_ms);
     }
 
     stop() {
@@ -60,7 +60,7 @@ class SpawnSystem {
             }
             
             for (let i = 0; i < spawn_count; i++) {
-                this.spawn_enemy();
+                this.spawn_pathogen();
             }
             
             this.reset_spawn_chance();
@@ -97,6 +97,20 @@ class SpawnSystem {
         }
 
         return enemy;
+    }
+
+    spawn_pathogen(pathogen_type = null) {
+        const pathogen = this.enemy_factory.spawn_pathogen_at_random_edge(
+            this.canvas_width, 
+            this.canvas_height, 
+            pathogen_type
+        );
+
+        if (pathogen && window.game_state && window.game_state.enemies) {
+            window.game_state.enemies.push(pathogen);
+        }
+
+        return pathogen;
     }
 
     reset_spawn_chance() {
