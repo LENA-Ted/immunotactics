@@ -19,7 +19,7 @@ class CollisionSystem {
             for (let j = enemies.length - 1; j >= 0; j--) {
                 const enemy = enemies[j];
 
-                if (this.is_circle_collision(projectile, enemy)) {
+                if (this.is_collision_between_entities(projectile, enemy)) {
                     this.handle_projectile_hit_enemy(projectile, enemy, i, j, game_state);
                     collision_found = true;
                     break;
@@ -41,7 +41,7 @@ class CollisionSystem {
             for (let j = towers.length - 1; j >= 0; j--) {
                 const tower = towers[j];
 
-                if (this.is_circle_collision(enemy, tower)) {
+                if (this.is_collision_between_entities(enemy, tower)) {
                     this.handle_enemy_hit_tower(enemy, tower, i, j, game_state);
                     break;
                 }
@@ -55,7 +55,7 @@ class CollisionSystem {
         for (let i = enemies.length - 1; i >= 0; i--) {
             const enemy = enemies[i];
 
-            if (this.is_circle_collision(enemy, core)) {
+            if (this.is_collision_between_entities(enemy, core)) {
                 this.handle_enemy_hit_core(enemy, core, i, game_state);
             }
         }
@@ -185,6 +185,62 @@ class CollisionSystem {
             game_state.is_game_paused = true;
             game_state.intensity_reward_system.show_intensity_reward_modal();
         }
+    }
+
+    is_collision_between_entities(entity1, entity2) {
+        const bounds1 = entity1.get_collision_bounds ? entity1.get_collision_bounds() : this.get_default_collision_bounds(entity1);
+        const bounds2 = entity2.get_collision_bounds ? entity2.get_collision_bounds() : this.get_default_collision_bounds(entity2);
+        
+        if (bounds1.type === 'CIRCLE' && bounds2.type === 'CIRCLE') {
+            return this.is_circle_circle_collision(bounds1, bounds2);
+        }
+        
+        if (bounds1.type === 'RECTANGLE' && bounds2.type === 'CIRCLE') {
+            return this.is_rectangle_circle_collision(bounds1, bounds2);
+        }
+        
+        if (bounds1.type === 'CIRCLE' && bounds2.type === 'RECTANGLE') {
+            return this.is_rectangle_circle_collision(bounds2, bounds1);
+        }
+        
+        if (bounds1.type === 'RECTANGLE' && bounds2.type === 'RECTANGLE') {
+            return this.is_rectangle_rectangle_collision(bounds1, bounds2);
+        }
+        
+        return false;
+    }
+
+    get_default_collision_bounds(entity) {
+        return {
+            type: 'CIRCLE',
+            center_x: entity.x,
+            center_y: entity.y,
+            radius: entity.radius
+        };
+    }
+
+    is_circle_circle_collision(bounds1, bounds2) {
+        const distance = MathUtils.get_distance(bounds1.center_x, bounds1.center_y, bounds2.center_x, bounds2.center_y);
+        return distance < bounds1.radius + bounds2.radius;
+    }
+
+    is_rectangle_circle_collision(rect_bounds, circle_bounds) {
+        const closest_x = MathUtils.clamp(circle_bounds.center_x, 
+            rect_bounds.center_x - rect_bounds.width / 2, 
+            rect_bounds.center_x + rect_bounds.width / 2);
+        const closest_y = MathUtils.clamp(circle_bounds.center_y, 
+            rect_bounds.center_y - rect_bounds.height / 2, 
+            rect_bounds.center_y + rect_bounds.height / 2);
+        
+        const distance = MathUtils.get_distance(circle_bounds.center_x, circle_bounds.center_y, closest_x, closest_y);
+        return distance < circle_bounds.radius;
+    }
+
+    is_rectangle_rectangle_collision(bounds1, bounds2) {
+        return (bounds1.center_x - bounds1.width / 2 < bounds2.center_x + bounds2.width / 2 &&
+                bounds1.center_x + bounds1.width / 2 > bounds2.center_x - bounds2.width / 2 &&
+                bounds1.center_y - bounds1.height / 2 < bounds2.center_y + bounds2.height / 2 &&
+                bounds1.center_y + bounds1.height / 2 > bounds2.center_y - bounds2.height / 2);
     }
 
     is_circle_collision(entity1, entity2) {
