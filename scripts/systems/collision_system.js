@@ -168,6 +168,10 @@ class CollisionSystem {
         game_state.killcount_required = Math.ceil(
             game_state.killcount_required * INTENSITY_CONFIG.KILLCOUNT_SCALING_FACTOR
         );
+        game_state.killcount_required = Math.min(
+            game_state.killcount_required, 
+            INTENSITY_CONFIG.MAX_KILLCOUNT_REQUIREMENT
+        );
         game_state.intensity_level_pulsate.trigger();
 
         this.apply_regenerative_cycle_healing(game_state);
