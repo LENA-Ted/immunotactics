@@ -33,11 +33,7 @@ class Interferon extends BaseTower {
             return;
         }
 
-        let effect_duration = this.config.interfered_duration_ms;
-        
-        if (window.game_state.resource_system) {
-            effect_duration = window.game_state.resource_system.apply_effect_bonus(effect_duration);
-        }
+        const effect_duration = this.config.interfered_duration_ms;
 
         window.game_state.enemies.forEach(enemy => {
             if (this.is_in_range(enemy)) {
