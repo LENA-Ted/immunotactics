@@ -22,6 +22,36 @@
     pointer-events: all;
 }
 
+#intensity_up_text {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #F5F5DC;
+    font-size: 4em;
+    font-weight: bold;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+#intensity_up_text.visible {
+    opacity: 1;
+}
+
+#intensity_up_text.flicker {
+    animation: flicker_effect 0.5s ease-in-out 2;
+}
+
+@keyframes flicker_effect {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.25;
+    }
+}
+
 #reward_cards_container {
     display: flex;
     gap: 30px;
