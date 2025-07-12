@@ -57,8 +57,11 @@ class IntensityRewardSystem {
             return;
         }
 
+        const duration_per_flicker_ms = INTENSITY_CONFIG.TELEGRAPH_DURATION_MS / INTENSITY_CONFIG.TELEGRAPH_FLICKER_COUNT;
+
         this.intensity_up_text_element.textContent = INTENSITY_CONFIG.TELEGRAPH_TEXT;
         this.intensity_up_text_element.style.animationIterationCount = INTENSITY_CONFIG.TELEGRAPH_FLICKER_COUNT;
+        this.intensity_up_text_element.style.animationDuration = `${duration_per_flicker_ms}ms`;
         this.intensity_up_text_element.classList.add('visible');
         this.intensity_up_text_element.classList.add('flicker');
 
@@ -66,6 +69,7 @@ class IntensityRewardSystem {
             if (this.intensity_up_text_element) {
                 this.intensity_up_text_element.classList.remove('flicker');
                 this.intensity_up_text_element.style.animationIterationCount = '';
+                this.intensity_up_text_element.style.animationDuration = '';
             }
             this.show_modal();
         }, INTENSITY_CONFIG.TELEGRAPH_DURATION_MS);
@@ -230,6 +234,7 @@ class IntensityRewardSystem {
             this.intensity_up_text_element.classList.remove('visible');
             this.intensity_up_text_element.classList.remove('flicker');
             this.intensity_up_text_element.style.animationIterationCount = '';
+            this.intensity_up_text_element.style.animationDuration = '';
         }
 
         this.card_elements.forEach(card => {
