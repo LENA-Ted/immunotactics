@@ -69,44 +69,72 @@ class ResourceSystem {
 
         switch (resource_type) {
             case RESOURCE_TYPES.CYTOKINES:
-                const cytokine_amount = this.apply_cytokine_multiplier(1);
-                this.cytokines += cytokine_amount;
-                this.trigger_ui_feedback(RESOURCE_TYPES.CYTOKINES);
+                this.collect_cytokine_particle();
                 break;
             case RESOURCE_TYPES.ADJUVANTS:
-                const adjuvant_amount = this.apply_adjuvant_multiplier(1);
-                this.adjuvants += adjuvant_amount;
-                this.trigger_ui_feedback(RESOURCE_TYPES.ADJUVANTS);
+                this.collect_adjuvant_particle();
                 break;
             case RESOURCE_TYPES.BIOMASS:
-                this.biomass += 1;
-                this.trigger_ui_feedback(RESOURCE_TYPES.BIOMASS);
+                this.collect_biomass_particle();
                 break;
         }
     }
 
-    apply_cytokine_multiplier(base_amount) {
-        const multiplier = this.get_adaptation_cytokine_multiplier();
-        return Math.ceil(base_amount * multiplier);
-    }
-
-    apply_adjuvant_multiplier(base_amount) {
-        const multiplier = this.get_adaptation_adjuvant_multiplier();
-        return Math.ceil(base_amount * multiplier);
-    }
-
-    get_adaptation_cytokine_multiplier() {
-        if (window.game_state && window.game_state.adaptation_system) {
-            return window.game_state.adaptation_system.get_cytokine_multiplier();
+    collect_cytokine_particle() {
+        let base_amount = 1;
+        
+        const double_chance = this.get_cytokine_double_chance();
+        if (double_chance > 0 && Math.random() < double_chance) {
+            base_amount *= 2;
         }
-        return 1.0;
+        
+        this.cytokines += base_amount;
+        this.trigger_ui_feedback(RESOURCE_TYPES.CYTOKINES);
     }
 
-    get_adaptation_adjuvant_multiplier() {
-        if (window.game_state && window.game_state.adaptation_system) {
-            return window.game_state.adaptation_system.get_adjuvant_multiplier();
+    collect_adjuvant_particle() {
+        let base_amount = 1;
+        
+        const double_chance = this.get_adjuvant_double_chance();
+        if (double_chance > 0 && Math.random() < double_chance) {
+            base_amount *= 2;
         }
-        return 1.0;
+        
+        this.adjuvants += base_amount;
+        this.trigger_ui_feedback(RESOURCE_TYPES.ADJUVANTS);
+    }
+
+    collect_biomass_particle() {
+        let base_amount = 1;
+        
+        const double_chance = this.get_biomass_double_chance();
+        if (double_chance > 0 && Math.random() < double_chance) {
+            base_amount *= 2;
+        }
+        
+        this.biomass += base_amount;
+        this.trigger_ui_feedback(RESOURCE_TYPES.BIOMASS);
+    }
+
+    get_cytokine_double_chance() {
+        if (window.game_state && window.game_state.adaptation_system) {
+            return window.game_state.adaptation_system.get_cytokine_double_chance();
+        }
+        return 0;
+    }
+
+    get_adjuvant_double_chance() {
+        if (window.game_state && window.game_state.adaptation_system) {
+            return window.game_state.adaptation_system.get_adjuvant_double_chance();
+        }
+        return 0;
+    }
+
+    get_biomass_double_chance() {
+        if (window.game_state && window.game_state.adaptation_system) {
+            return window.game_state.adaptation_system.get_biomass_double_chance();
+        }
+        return 0;
     }
 
     trigger_ui_feedback(resource_type) {
@@ -150,6 +178,16 @@ class ResourceSystem {
     add_biomass(amount) {
         this.biomass += amount;
         this.trigger_ui_feedback(RESOURCE_TYPES.BIOMASS);
+    }
+
+    add_cytokines(amount) {
+        this.cytokines += amount;
+        this.trigger_ui_feedback(RESOURCE_TYPES.CYTOKINES);
+    }
+
+    add_adjuvants(amount) {
+        this.adjuvants += amount;
+        this.trigger_ui_feedback(RESOURCE_TYPES.ADJUVANTS);
     }
 
     get_cytokines() {

@@ -98,12 +98,22 @@ class RenderingSystem {
         const gauge_radius = 25;
         const energy_angle = (cursor_state.displayed_energy / player.max_energy) * Math.PI * 2;
         const is_error = cursor_state.error_timer > 0 && Math.floor(cursor_state.error_timer / 5) % 2 === 0;
+        const is_free_placement = player.is_in_free_placement_state();
+
+        let background_color = `${GAME_CONFIG.COLOR_DARK_BLUE}40`;
+        let energy_color = GAME_CONFIG.COLOR_CREAM;
+
+        if (is_error) {
+            background_color = GAME_CONFIG.COLOR_INSUFFICIENT_ENERGY;
+            energy_color = GAME_CONFIG.COLOR_INSUFFICIENT_ENERGY;
+        } else if (is_free_placement) {
+            background_color = `${GAME_CONFIG.COLOR_FREE_PLACEMENT}40`;
+            energy_color = GAME_CONFIG.COLOR_FREE_PLACEMENT;
+        }
 
         this.cursor_ctx.beginPath();
         this.cursor_ctx.arc(cursor_state.x, cursor_state.y, gauge_radius, 0, Math.PI * 2);
-        this.cursor_ctx.strokeStyle = is_error ? 
-            GAME_CONFIG.COLOR_INSUFFICIENT_ENERGY : 
-            `${GAME_CONFIG.COLOR_DARK_BLUE}40`;
+        this.cursor_ctx.strokeStyle = background_color;
         this.cursor_ctx.lineWidth = 8;
         this.cursor_ctx.stroke();
 
@@ -116,9 +126,7 @@ class RenderingSystem {
                 -Math.PI / 2, 
                 -Math.PI / 2 + energy_angle
             );
-            this.cursor_ctx.strokeStyle = is_error ? 
-                GAME_CONFIG.COLOR_INSUFFICIENT_ENERGY : 
-                GAME_CONFIG.COLOR_CREAM;
+            this.cursor_ctx.strokeStyle = energy_color;
             this.cursor_ctx.lineWidth = 8;
             this.cursor_ctx.lineCap = 'round';
             this.cursor_ctx.stroke();

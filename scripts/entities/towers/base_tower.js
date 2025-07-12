@@ -14,20 +14,34 @@ class BaseTower {
     }
 
     calculate_range() {
-        if (this.config.range === null) {
-            return null;
-        }
+        let base_range = null;
         
-        if (this.config.range_factor) {
+        if (this.config.range === null) {
+            base_range = null;
+        } else if (this.config.range_factor) {
             const canvas_width = window.game_state ? 
                 (window.game_state.canvas_width || 800) : 800;
             const canvas_height = window.game_state ? 
                 (window.game_state.canvas_height || 600) : 600;
             const canvas_length = Math.min(canvas_width, canvas_height);
-            return canvas_length * this.config.range_factor;
+            base_range = canvas_length * this.config.range_factor;
+        } else {
+            base_range = this.config.range;
         }
-        
-        return this.config.range;
+
+        if (base_range === null) {
+            return null;
+        }
+
+        const range_multiplier = this.get_range_multiplier();
+        return base_range * range_multiplier;
+    }
+
+    get_range_multiplier() {
+        if (window.game_state && window.game_state.adaptation_system) {
+            return window.game_state.adaptation_system.get_range_multiplier();
+        }
+        return 1.0;
     }
 
     update_range() {
@@ -81,6 +95,7 @@ class BaseTower {
         this.update_activity_state();
 
         if (this.is_active && this.should_perform_action(timestamp)) {
+            this.update_range();
             this.perform_action(timestamp);
             this.last_action_time = timestamp;
         }

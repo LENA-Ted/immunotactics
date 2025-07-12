@@ -153,6 +153,10 @@ class CollisionSystem {
         game_state.total_killcount++;
         game_state.intensity_gauge_pulsate.trigger();
 
+        if (game_state.adaptation_system) {
+            game_state.adaptation_system.handle_enemy_killed();
+        }
+
         if (game_state.killcount >= game_state.killcount_required) {
             this.handle_intensity_level_up(game_state);
         }
