@@ -3,6 +3,7 @@ class Player {
         this.energy = GAME_CONFIG.PLAYER_MAX_ENERGY;
         this.max_energy = GAME_CONFIG.PLAYER_MAX_ENERGY;
         this.last_energy_regen_time = 0;
+        this.has_free_placement = false;
     }
 
     update(timestamp) {
@@ -31,11 +32,20 @@ class Player {
     }
 
     can_afford(cost) {
+        if (this.has_free_placement) {
+            return true;
+        }
+        
         const modified_cost = this.apply_energy_cost_reduction(cost);
         return this.energy >= modified_cost;
     }
 
     spend_energy(amount) {
+        if (this.has_free_placement) {
+            this.has_free_placement = false;
+            return true;
+        }
+        
         const modified_cost = this.apply_energy_cost_reduction(amount);
         if (this.can_afford_raw_cost(modified_cost)) {
             this.energy -= modified_cost;
@@ -66,6 +76,28 @@ class Player {
 
     get_energy_percentage() {
         return this.energy / this.max_energy;
+    }
+
+    check_spontaneous_generation() {
+        if (!window.game_state || !window.game_state.adaptation_system) {
+            return false;
+        }
+
+        const chance = window.game_state.adaptation_system.get_free_placement_chance();
+        if (chance > 0 && Math.random() < chance) {
+            this.has_free_placement = true;
+            return true;
+        }
+        
+        return false;
+    }
+
+    is_in_free_placement_state() {
+        return this.has_free_placement;
+    }
+
+    clear_free_placement_state() {
+        this.has_free_placement = false;
     }
 }
 
