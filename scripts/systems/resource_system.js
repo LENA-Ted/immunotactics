@@ -129,8 +129,17 @@ class ResourceSystem {
             return 1.0;
         }
         
-        const reduction_percentage = (2 * this.adjuvants) / (1000 + this.adjuvants);
+        const reduction_percentage = (this.adjuvants * RESOURCE_CONFIG.ADJUVANT_COOLDOWN_MULTIPLIER) / (RESOURCE_CONFIG.ADJUVANT_COOLDOWN_DENOMINATOR + this.adjuvants);
         return 1 - reduction_percentage;
+    }
+
+    get_adjuvant_hp_multiplier() {
+        if (this.adjuvants === 0) {
+            return 1.0;
+        }
+        
+        const bonus_percentage = (this.adjuvants * RESOURCE_CONFIG.ADJUVANT_COOLDOWN_MULTIPLIER) / (RESOURCE_CONFIG.ADJUVANT_COOLDOWN_DENOMINATOR + this.adjuvants);
+        return 1 + bonus_percentage;
     }
 
     apply_damage_bonus(base_damage) {
