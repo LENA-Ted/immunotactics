@@ -1,6 +1,15 @@
 class MastCell extends BaseTower {
     constructor(x, y, id) {
         super(x, y, id, IMMUNE_CELL_CONFIGS.MAST_CELL);
+        this.apply_adjuvant_hp_bonus();
+    }
+
+    apply_adjuvant_hp_bonus() {
+        if (window.game_state && window.game_state.resource_system) {
+            const hp_multiplier = window.game_state.resource_system.get_adjuvant_hp_multiplier();
+            this.hp = Math.ceil(this.config.base_hp * hp_multiplier);
+            this.max_hp = this.hp;
+        }
     }
 
     check_activity_criteria() {
