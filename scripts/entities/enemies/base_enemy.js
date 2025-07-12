@@ -3,20 +3,46 @@ class BaseEnemy {
         this.x = x;
         this.y = y;
         this.config = config;
-        this.hp = this.generate_hp();
+        this.size_modifier = this.generate_size_modifier();
+        this.hp = this.generate_hp_from_size();
         this.max_hp = this.hp;
         this.displayed_hp = this.hp;
-        this.base_speed = this.generate_speed();
+        this.base_speed = this.generate_speed_from_size();
         this.current_speed = this.base_speed;
-        this.radius = this.generate_radius();
+        this.radius = this.generate_radius_from_size();
         this.color = this.generate_color();
         this.pulsate_effect = new PulsateEffect();
         this.status_effects = [];
     }
 
-    generate_hp() {
-        const base_hp = MathUtils.get_random_int(this.config.min_hp, this.config.max_hp);
-        return this.apply_intensity_hp_modifier(base_hp);
+    generate_size_modifier() {
+        return MathUtils.get_random_float(this.config.min_size_mod, this.config.max_size_mod);
+    }
+
+    get_size_baseline() {
+        return (this.config.min_size_mod + this.config.max_size_mod) / 2;
+    }
+
+    get_size_deviation_factor() {
+        const baseline = this.get_size_baseline();
+        return (this.size_modifier - baseline) / baseline;
+    }
+
+    generate_hp_from_size() {
+        const hp_baseline = (this.config.min_hp + this.config.max_hp) / 2;
+        const deviation_factor = this.get_size_deviation_factor();
+        const size_modified_hp = hp_baseline * (1 + deviation_factor);
+        return this.apply_intensity_hp_modifier(size_modified_hp);
+    }
+
+    generate_speed_from_size() {
+        const speed_baseline = (this.config.min_speed + this.config.max_speed) / 2;
+        const deviation_factor = this.get_size_deviation_factor();
+        return speed_baseline * (1 - deviation_factor);
+    }
+
+    generate_radius_from_size() {
+        return this.config.base_radius * this.size_modifier;
     }
 
     apply_intensity_hp_modifier(base_hp) {
@@ -27,15 +53,6 @@ class BaseEnemy {
         const intensity_level = window.game_state.intensity_level || 0;
         const hp_multiplier = Math.pow(1 + INTENSITY_CONFIG.HP_EXPONENTIAL_BASE, intensity_level);
         return Math.ceil(base_hp * hp_multiplier);
-    }
-
-    generate_speed() {
-        return MathUtils.get_random_float(this.config.min_speed, this.config.max_speed);
-    }
-
-    generate_radius() {
-        const size_modifier = MathUtils.get_random_float(this.config.min_size_mod, this.config.max_size_mod);
-        return this.config.base_radius * size_modifier;
     }
 
     generate_color() {
