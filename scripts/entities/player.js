@@ -21,7 +21,7 @@ class Player {
 
     apply_energy_regen_multiplier(base_regen) {
         const multiplier = this.get_energy_regen_multiplier();
-        return Math.ceil(base_regen * multiplier);
+        return base_regen * multiplier;
     }
 
     get_energy_regen_multiplier() {
