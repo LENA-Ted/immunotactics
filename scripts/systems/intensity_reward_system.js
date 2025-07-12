@@ -43,11 +43,12 @@ class IntensityRewardSystem {
         
         this.generate_reward_choices();
         this.update_modal_content();
-        this.play_telegraph_animation();
         
         if (window.game_state && window.game_state.ui_system) {
             window.game_state.ui_system.hide_all_gameplay_ui();
         }
+
+        this.play_telegraph_animation();
     }
 
     play_telegraph_animation() {
@@ -129,15 +130,15 @@ class IntensityRewardSystem {
     show_modal() {
         if (this.modal_element) {
             this.modal_element.classList.add('active');
-            
-            setTimeout(() => {
-                this.card_elements.forEach(card => {
-                    if (card) {
-                        card.classList.add('visible');
-                    }
-                });
-            }, 100);
         }
+        
+        setTimeout(() => {
+            this.card_elements.forEach(card => {
+                if (card) {
+                    card.classList.add('visible');
+                }
+            });
+        }, 100);
     }
 
     handle_card_selection(card_index) {
