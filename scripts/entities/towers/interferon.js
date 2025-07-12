@@ -1,6 +1,15 @@
 class Interferon extends BaseTower {
     constructor(x, y, id) {
         super(x, y, id, IMMUNE_CELL_CONFIGS.INTERFERON);
+        this.apply_adjuvant_hp_bonus();
+    }
+
+    apply_adjuvant_hp_bonus() {
+        if (window.game_state && window.game_state.resource_system) {
+            const hp_multiplier = window.game_state.resource_system.get_adjuvant_hp_multiplier();
+            this.hp = Math.ceil(this.config.base_hp * hp_multiplier);
+            this.max_hp = this.hp;
+        }
     }
 
     check_activity_criteria() {
@@ -33,11 +42,7 @@ class Interferon extends BaseTower {
             return;
         }
 
-        let effect_duration = this.config.interfered_duration_ms;
-        
-        if (window.game_state.resource_system) {
-            effect_duration = window.game_state.resource_system.apply_effect_bonus(effect_duration);
-        }
+        const effect_duration = this.config.interfered_duration_ms;
 
         window.game_state.enemies.forEach(enemy => {
             if (this.is_in_range(enemy)) {
