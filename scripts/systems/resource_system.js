@@ -124,23 +124,18 @@ class ResourceSystem {
         return 1 + (bonus_percentage / 100);
     }
 
-    get_current_effect_multiplier() {
+    get_action_cooldown_multiplier() {
         if (this.adjuvants === 0) {
             return 1.0;
         }
         
-        const multiplier = this.adjuvants / (RESOURCE_CONFIG.ADJUVANT_DENOMINATOR + this.adjuvants);
-        return 1 + multiplier;
+        const reduction_percentage = (2 * this.adjuvants) / (1000 + this.adjuvants);
+        return 1 - reduction_percentage;
     }
 
     apply_damage_bonus(base_damage) {
         const multiplier = this.get_current_damage_multiplier();
         return Math.ceil(base_damage * multiplier);
-    }
-
-    apply_effect_bonus(base_value) {
-        const multiplier = this.get_current_effect_multiplier();
-        return Math.ceil(base_value * multiplier);
     }
 
     add_biomass(amount) {
