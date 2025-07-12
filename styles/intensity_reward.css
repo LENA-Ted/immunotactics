@@ -43,7 +43,7 @@
 }
 
 #intensity_up_text.flicker {
-    animation: flicker_effect 0.5s ease-in-out 2;
+    animation: flicker_effect 0.5s ease-in-out;
 }
 
 @keyframes flicker_effect {
