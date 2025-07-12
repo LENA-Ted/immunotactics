@@ -77,9 +77,9 @@ const ADAPTATION_CONFIGS = {
     MITOCHONDRIAL_BOOST: {
         name: 'Mitochondrial Boost',
         effects: {
-            0: { energy_regen_multiplier: 1.06 },
-            1: { energy_regen_multiplier: 1.09 },
-            2: { energy_regen_multiplier: 1.12 }
+            0: { energy_regen_multiplier: 1.08 },
+            1: { energy_regen_multiplier: 1.12 },
+            2: { energy_regen_multiplier: 1.16 }
         },
         get descriptions() {
             return {
