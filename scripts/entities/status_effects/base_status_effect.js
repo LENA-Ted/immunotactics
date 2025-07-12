@@ -1,8 +1,17 @@
 class BaseStatusEffect {
     constructor(duration_ms) {
-        this.duration_ms = duration_ms;
-        this.remaining_time_ms = duration_ms;
+        this.base_duration_ms = duration_ms;
+        this.duration_ms = this.apply_duration_modifier(duration_ms);
+        this.remaining_time_ms = this.duration_ms;
         this.start_time = performance.now();
+    }
+
+    apply_duration_modifier(base_duration) {
+        if (window.game_state && window.game_state.adaptation_system) {
+            const multiplier = window.game_state.adaptation_system.get_status_effect_duration_multiplier();
+            return Math.ceil(base_duration * multiplier);
+        }
+        return base_duration;
     }
 
     update(timestamp) {
