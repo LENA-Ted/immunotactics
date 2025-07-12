@@ -24,7 +24,7 @@
 
 #intensity_up_text {
     position: absolute;
-    top: 25%;
+    top: 20%;
     left: 50%;
     transform: translateX(-50%);
     color: #F5F5DC;
@@ -33,10 +33,13 @@
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease-in-out;
+    visibility: hidden;
+    z-index: 11;
 }
 
 #intensity_up_text.visible {
     opacity: 1;
+    visibility: visible;
 }
 
 #intensity_up_text.flicker {
