@@ -5,6 +5,7 @@ class IntensityRewardSystem {
         this.is_selection_in_progress = false;
         this.modal_element = null;
         this.card_elements = [];
+        this.intensity_up_text_element = null;
     }
 
     initialize() {
@@ -14,6 +15,7 @@ class IntensityRewardSystem {
 
     create_modal_elements() {
         this.modal_element = document.getElementById('intensity_reward_modal');
+        this.intensity_up_text_element = document.getElementById('intensity_up_text');
         this.card_elements = [
             document.getElementById('reward_card_1'),
             document.getElementById('reward_card_2'),
@@ -41,11 +43,36 @@ class IntensityRewardSystem {
         
         this.generate_reward_choices();
         this.update_modal_content();
-        this.show_modal();
         
         if (window.game_state && window.game_state.ui_system) {
             window.game_state.ui_system.hide_all_gameplay_ui();
         }
+
+        this.play_telegraph_animation();
+    }
+
+    play_telegraph_animation() {
+        if (!this.intensity_up_text_element) {
+            this.show_modal();
+            return;
+        }
+
+        const duration_per_flicker_ms = INTENSITY_CONFIG.TELEGRAPH_DURATION_MS / INTENSITY_CONFIG.TELEGRAPH_FLICKER_COUNT;
+
+        this.intensity_up_text_element.textContent = INTENSITY_CONFIG.TELEGRAPH_TEXT;
+        this.intensity_up_text_element.style.animationIterationCount = INTENSITY_CONFIG.TELEGRAPH_FLICKER_COUNT;
+        this.intensity_up_text_element.style.animationDuration = `${duration_per_flicker_ms}ms`;
+        this.intensity_up_text_element.classList.add('visible');
+        this.intensity_up_text_element.classList.add('flicker');
+
+        setTimeout(() => {
+            if (this.intensity_up_text_element) {
+                this.intensity_up_text_element.classList.remove('flicker');
+                this.intensity_up_text_element.style.animationIterationCount = '';
+                this.intensity_up_text_element.style.animationDuration = '';
+            }
+            this.show_modal();
+        }, INTENSITY_CONFIG.TELEGRAPH_DURATION_MS);
     }
 
     generate_reward_choices() {
@@ -109,15 +136,15 @@ class IntensityRewardSystem {
     show_modal() {
         if (this.modal_element) {
             this.modal_element.classList.add('active');
-            
-            setTimeout(() => {
-                this.card_elements.forEach(card => {
-                    if (card) {
-                        card.classList.add('visible');
-                    }
-                });
-            }, 100);
         }
+        
+        setTimeout(() => {
+            this.card_elements.forEach(card => {
+                if (card) {
+                    card.classList.add('visible');
+                }
+            });
+        }, 100);
     }
 
     handle_card_selection(card_index) {
@@ -163,6 +190,10 @@ class IntensityRewardSystem {
             this.modal_element.classList.remove('active');
         }
 
+        if (this.intensity_up_text_element) {
+            this.intensity_up_text_element.classList.remove('visible');
+        }
+
         this.card_elements.forEach(card => {
             if (card) {
                 card.classList.remove('visible', 'selected', 'faded');
@@ -197,6 +228,13 @@ class IntensityRewardSystem {
         
         if (this.modal_element) {
             this.modal_element.classList.remove('active');
+        }
+
+        if (this.intensity_up_text_element) {
+            this.intensity_up_text_element.classList.remove('visible');
+            this.intensity_up_text_element.classList.remove('flicker');
+            this.intensity_up_text_element.style.animationIterationCount = '';
+            this.intensity_up_text_element.style.animationDuration = '';
         }
 
         this.card_elements.forEach(card => {
