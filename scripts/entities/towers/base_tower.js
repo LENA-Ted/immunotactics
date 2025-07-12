@@ -95,8 +95,21 @@ class BaseTower {
     }
 
     should_perform_action(timestamp) {
-        const interval_key = this.config.shoot_interval_ms || this.config.action_interval_ms;
-        return timestamp - this.last_action_time >= interval_key;
+        const modified_interval = this.get_modified_action_interval();
+        return timestamp - this.last_action_time >= modified_interval;
+    }
+
+    get_modified_action_interval() {
+        const base_interval = this.config.shoot_interval_ms || this.config.action_interval_ms;
+        const cooldown_multiplier = this.get_action_cooldown_multiplier();
+        return Math.ceil(base_interval * cooldown_multiplier);
+    }
+
+    get_action_cooldown_multiplier() {
+        if (window.game_state && window.game_state.resource_system) {
+            return window.game_state.resource_system.get_action_cooldown_multiplier();
+        }
+        return 1.0;
     }
 
     perform_action(timestamp) {
