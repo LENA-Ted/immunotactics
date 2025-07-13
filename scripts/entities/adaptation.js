@@ -81,19 +81,64 @@ class Adaptation {
         return effect.energy_regen_multiplier || 1.0;
     }
 
-    get_cytokine_multiplier() {
+    get_cytokine_double_chance() {
         const effect = this.get_effect();
-        return effect.cytokine_multiplier || 1.0;
+        return effect.cytokine_double_chance || 0;
     }
 
-    get_adjuvant_multiplier() {
+    get_adjuvant_double_chance() {
         const effect = this.get_effect();
-        return effect.adjuvant_multiplier || 1.0;
+        return effect.adjuvant_double_chance || 0;
+    }
+
+    get_free_placement_chance() {
+        const effect = this.get_effect();
+        return effect.free_placement_chance || 0;
+    }
+
+    get_status_effect_duration_multiplier() {
+        const effect = this.get_effect();
+        return effect.status_effect_duration_multiplier || 1.0;
+    }
+
+    get_energy_per_kill() {
+        const effect = this.get_effect();
+        return effect.energy_per_kill || 0;
+    }
+
+    get_range_multiplier() {
+        const effect = this.get_effect();
+        return effect.range_multiplier || 1.0;
+    }
+
+    get_hp_per_ten_kills() {
+        const effect = this.get_effect();
+        return effect.hp_per_ten_kills || 0;
+    }
+
+    get_biomass_double_chance() {
+        const effect = this.get_effect();
+        return effect.biomass_double_chance || 0;
+    }
+
+    get_damage_per_core_hp_percent() {
+        const effect = this.get_effect();
+        return effect.damage_per_core_hp_percent || 0;
     }
 
     get_biomass_gain() {
         const effect = this.get_effect();
         return effect.biomass_gain || 0;
+    }
+
+    get_cytokine_gain() {
+        const effect = this.get_effect();
+        return effect.cytokine_gain || 0;
+    }
+
+    get_adjuvant_gain() {
+        const effect = this.get_effect();
+        return effect.adjuvant_gain || 0;
     }
 }
 

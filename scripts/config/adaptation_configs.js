@@ -77,9 +77,9 @@ const ADAPTATION_CONFIGS = {
     MITOCHONDRIAL_BOOST: {
         name: 'Mitochondrial Boost',
         effects: {
-            0: { energy_regen_multiplier: 1.06 },
-            1: { energy_regen_multiplier: 1.09 },
-            2: { energy_regen_multiplier: 1.12 }
+            0: { energy_regen_multiplier: 1.08 },
+            1: { energy_regen_multiplier: 1.12 },
+            2: { energy_regen_multiplier: 1.16 }
         },
         get descriptions() {
             return {
@@ -92,30 +92,135 @@ const ADAPTATION_CONFIGS = {
     CYTOKINE_INFUSION: {
         name: 'Cytokine Infusion',
         effects: {
-            0: { cytokine_multiplier: 1.06 },
-            1: { cytokine_multiplier: 1.09 },
-            2: { cytokine_multiplier: 1.12 }
+            0: { cytokine_double_chance: 0.10 },
+            1: { cytokine_double_chance: 0.15 },
+            2: { cytokine_double_chance: 0.20 }
         },
         get descriptions() {
             return {
-                0: `Increase Cytokine Gain Rate by ${Math.round((this.effects[0].cytokine_multiplier - 1) * 100)}%.`,
-                1: `Increase Cytokine Gain Rate by ${Math.round((this.effects[1].cytokine_multiplier - 1) * 100)}%.`,
-                2: `Increase Cytokine Gain Rate by ${Math.round((this.effects[2].cytokine_multiplier - 1) * 100)}%.`
+                0: `Gain a ${Math.round(this.effects[0].cytokine_double_chance * 100)}% chance to gain double Cytokine upon pickup.`,
+                1: `Gain a ${Math.round(this.effects[1].cytokine_double_chance * 100)}% chance to gain double Cytokine upon pickup.`,
+                2: `Gain a ${Math.round(this.effects[2].cytokine_double_chance * 100)}% chance to gain double Cytokine upon pickup.`
             };
         }
     },
     ADJUVANT_BOLUS: {
         name: 'Adjuvant Bolus',
         effects: {
-            0: { adjuvant_multiplier: 1.10 },
-            1: { adjuvant_multiplier: 1.15 },
-            2: { adjuvant_multiplier: 1.20 }
+            0: { adjuvant_double_chance: 0.10 },
+            1: { adjuvant_double_chance: 0.15 },
+            2: { adjuvant_double_chance: 0.20 }
         },
         get descriptions() {
             return {
-                0: `Increase Adjuvant Gain Rate by ${Math.round((this.effects[0].adjuvant_multiplier - 1) * 100)}%.`,
-                1: `Increase Adjuvant Gain Rate by ${Math.round((this.effects[1].adjuvant_multiplier - 1) * 100)}%.`,
-                2: `Increase Adjuvant Gain Rate by ${Math.round((this.effects[2].adjuvant_multiplier - 1) * 100)}%.`
+                0: `Gain a ${Math.round(this.effects[0].adjuvant_double_chance * 100)}% chance to gain double Adjuvant upon pickup.`,
+                1: `Gain a ${Math.round(this.effects[1].adjuvant_double_chance * 100)}% chance to gain double Adjuvant upon pickup.`,
+                2: `Gain a ${Math.round(this.effects[2].adjuvant_double_chance * 100)}% chance to gain double Adjuvant upon pickup.`
+            };
+        }
+    },
+    SPONTANEOUS_GENERATION: {
+        name: 'Spontaneous Generation',
+        effects: {
+            0: { free_placement_chance: 0.10 },
+            1: { free_placement_chance: 0.15 },
+            2: { free_placement_chance: 0.20 }
+        },
+        get descriptions() {
+            return {
+                0: `Gain a ${Math.round(this.effects[0].free_placement_chance * 100)}% chance to place an Immune Cell for no cost.`,
+                1: `Gain a ${Math.round(this.effects[1].free_placement_chance * 100)}% chance to place an Immune Cell for no cost.`,
+                2: `Gain a ${Math.round(this.effects[2].free_placement_chance * 100)}% chance to place an Immune Cell for no cost.`
+            };
+        }
+    },
+    CHRONIC_INFLAMMATION: {
+        name: 'Chronic Inflammation',
+        effects: {
+            0: { status_effect_duration_multiplier: 1.16 },
+            1: { status_effect_duration_multiplier: 1.24 },
+            2: { status_effect_duration_multiplier: 1.32 }
+        },
+        get descriptions() {
+            return {
+                0: `Increase status effect durations by ${Math.round((this.effects[0].status_effect_duration_multiplier - 1) * 100)}%.`,
+                1: `Increase status effect durations by ${Math.round((this.effects[1].status_effect_duration_multiplier - 1) * 100)}%.`,
+                2: `Increase status effect durations by ${Math.round((this.effects[2].status_effect_duration_multiplier - 1) * 100)}%.`
+            };
+        }
+    },
+    CATABOLIC_CONVERSION: {
+        name: 'Catabolic Conversion',
+        effects: {
+            0: { energy_per_kill: 2 },
+            1: { energy_per_kill: 3 },
+            2: { energy_per_kill: 4 }
+        },
+        get descriptions() {
+            return {
+                0: `Gain ${this.effects[0].energy_per_kill} ATP per kill.`,
+                1: `Gain ${this.effects[1].energy_per_kill} ATP per kill.`,
+                2: `Gain ${this.effects[2].energy_per_kill} ATP per kill.`
+            };
+        }
+    },
+    EXTENDED_CHEMOTAXIS: {
+        name: 'Extended Chemotaxis',
+        effects: {
+            0: { range_multiplier: 1.12 },
+            1: { range_multiplier: 1.18 },
+            2: { range_multiplier: 1.24 }
+        },
+        get descriptions() {
+            return {
+                0: `Increase Immune Cell action range by ${Math.round((this.effects[0].range_multiplier - 1) * 100)}%.`,
+                1: `Increase Immune Cell action range by ${Math.round((this.effects[1].range_multiplier - 1) * 100)}%.`,
+                2: `Increase Immune Cell action range by ${Math.round((this.effects[2].range_multiplier - 1) * 100)}%.`
+            };
+        }
+    },
+    NECROTROPHIC_REPAIR: {
+        name: 'Necrotrophic Repair',
+        effects: {
+            0: { hp_per_ten_kills: 1 },
+            1: { hp_per_ten_kills: 2 },
+            2: { hp_per_ten_kills: 3 }
+        },
+        get descriptions() {
+            return {
+                0: `Recover ${this.effects[0].hp_per_ten_kills} HP for all Immune Cells for every 10 Pathogens killed.`,
+                1: `Recover ${this.effects[1].hp_per_ten_kills} HP for all Immune Cells for every 10 Pathogens killed.`,
+                2: `Recover ${this.effects[2].hp_per_ten_kills} HP for all Immune Cells for every 10 Pathogens killed.`
+            };
+        }
+    },
+    BIOMASS_INJECTION: {
+        name: 'Biomass Injection',
+        effects: {
+            0: { biomass_double_chance: 0.10 },
+            1: { biomass_double_chance: 0.15 },
+            2: { biomass_double_chance: 0.20 }
+        },
+        get descriptions() {
+            return {
+                0: `Gain a ${Math.round(this.effects[0].biomass_double_chance * 100)}% chance to gain double Biomass upon pickup.`,
+                1: `Gain a ${Math.round(this.effects[1].biomass_double_chance * 100)}% chance to gain double Biomass upon pickup.`,
+                2: `Gain a ${Math.round(this.effects[2].biomass_double_chance * 100)}% chance to gain double Biomass upon pickup.`
+            };
+        }
+    },
+    HOMEOSTATIC_POTENTIATION: {
+        name: 'Homeostatic Potentiation',
+        effects: {
+            0: { damage_per_core_hp_percent: 0.02 },
+            1: { damage_per_core_hp_percent: 0.03 },
+            2: { damage_per_core_hp_percent: 0.04 }
+        },
+        get descriptions() {
+            return {
+                0: `For each Cell Core HP you have, gain ${Math.round(this.effects[0].damage_per_core_hp_percent * 100)}% increased Immune Cell DMG.`,
+                1: `For each Cell Core HP you have, gain ${Math.round(this.effects[1].damage_per_core_hp_percent * 100)}% increased Immune Cell DMG.`,
+                2: `For each Cell Core HP you have, gain ${Math.round(this.effects[2].damage_per_core_hp_percent * 100)}% increased Immune Cell DMG.`
             };
         }
     },
@@ -133,6 +238,36 @@ const ADAPTATION_CONFIGS = {
                 2: `Gain ${this.effects[2].biomass_gain} Biomass.`
             };
         }
+    },
+    CYTOKINE_CACHE: {
+        name: 'Cytokine Cache',
+        effects: {
+            0: { cytokine_gain: 100 },
+            1: { cytokine_gain: 100 },
+            2: { cytokine_gain: 100 }
+        },
+        get descriptions() {
+            return {
+                0: `Gain ${this.effects[0].cytokine_gain} Cytokines.`,
+                1: `Gain ${this.effects[1].cytokine_gain} Cytokines.`,
+                2: `Gain ${this.effects[2].cytokine_gain} Cytokines.`
+            };
+        }
+    },
+    ADJUVANT_HOARD: {
+        name: 'Adjuvant Hoard',
+        effects: {
+            0: { adjuvant_gain: 100 },
+            1: { adjuvant_gain: 100 },
+            2: { adjuvant_gain: 100 }
+        },
+        get descriptions() {
+            return {
+                0: `Gain ${this.effects[0].adjuvant_gain} Adjuvants.`,
+                1: `Gain ${this.effects[1].adjuvant_gain} Adjuvants.`,
+                2: `Gain ${this.effects[2].adjuvant_gain} Adjuvants.`
+            };
+        }
     }
 };
 
@@ -145,7 +280,16 @@ const ADAPTATION_TYPES = {
     MITOCHONDRIAL_BOOST: 'MITOCHONDRIAL_BOOST',
     CYTOKINE_INFUSION: 'CYTOKINE_INFUSION',
     ADJUVANT_BOLUS: 'ADJUVANT_BOLUS',
-    NUTRIENT_GLUT: 'NUTRIENT_GLUT'
+    SPONTANEOUS_GENERATION: 'SPONTANEOUS_GENERATION',
+    CHRONIC_INFLAMMATION: 'CHRONIC_INFLAMMATION',
+    CATABOLIC_CONVERSION: 'CATABOLIC_CONVERSION',
+    EXTENDED_CHEMOTAXIS: 'EXTENDED_CHEMOTAXIS',
+    NECROTROPHIC_REPAIR: 'NECROTROPHIC_REPAIR',
+    BIOMASS_INJECTION: 'BIOMASS_INJECTION',
+    HOMEOSTATIC_POTENTIATION: 'HOMEOSTATIC_POTENTIATION',
+    NUTRIENT_GLUT: 'NUTRIENT_GLUT',
+    CYTOKINE_CACHE: 'CYTOKINE_CACHE',
+    ADJUVANT_HOARD: 'ADJUVANT_HOARD'
 };
 
 const ADAPTATION_POOL = [
@@ -156,7 +300,20 @@ const ADAPTATION_POOL = [
     ADAPTATION_TYPES.ADRENAL_RESPONSE,
     ADAPTATION_TYPES.MITOCHONDRIAL_BOOST,
     ADAPTATION_TYPES.CYTOKINE_INFUSION,
-    ADAPTATION_TYPES.ADJUVANT_BOLUS
+    ADAPTATION_TYPES.ADJUVANT_BOLUS,
+    ADAPTATION_TYPES.SPONTANEOUS_GENERATION,
+    ADAPTATION_TYPES.CHRONIC_INFLAMMATION,
+    ADAPTATION_TYPES.CATABOLIC_CONVERSION,
+    ADAPTATION_TYPES.EXTENDED_CHEMOTAXIS,
+    ADAPTATION_TYPES.NECROTROPHIC_REPAIR,
+    ADAPTATION_TYPES.BIOMASS_INJECTION,
+    ADAPTATION_TYPES.HOMEOSTATIC_POTENTIATION
+];
+
+const GENERIC_ADAPTATIONS = [
+    ADAPTATION_TYPES.NUTRIENT_GLUT,
+    ADAPTATION_TYPES.CYTOKINE_CACHE,
+    ADAPTATION_TYPES.ADJUVANT_HOARD
 ];
 
 const ADAPTATION_CONFIG = {
@@ -167,4 +324,5 @@ const ADAPTATION_CONFIG = {
 window.ADAPTATION_CONFIGS = ADAPTATION_CONFIGS;
 window.ADAPTATION_TYPES = ADAPTATION_TYPES;
 window.ADAPTATION_POOL = ADAPTATION_POOL;
+window.GENERIC_ADAPTATIONS = GENERIC_ADAPTATIONS;
 window.ADAPTATION_CONFIG = ADAPTATION_CONFIG;

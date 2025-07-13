@@ -1,7 +1,7 @@
 const ENEMY_CONFIGS = {
     BASIC: {
         min_hp: 10,
-        max_hp: 30,
+        max_hp: 20,
         min_speed: 0.5,
         max_speed: 1.0,
         min_size_mod: 0.5,
