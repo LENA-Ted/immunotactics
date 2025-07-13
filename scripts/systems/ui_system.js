@@ -269,13 +269,37 @@ class UISystem {
             const target = target_values[resource_type];
 
             if (current_animated !== target) {
+                const step_size = this.calculate_animation_step_size(current_animated, target);
+                
                 if (current_animated < target) {
-                    this.animated_resource_values[resource_type] = Math.min(current_animated + 1, target);
+                    this.animated_resource_values[resource_type] = Math.min(current_animated + step_size, target);
                 } else {
-                    this.animated_resource_values[resource_type] = Math.max(current_animated - 1, target);
+                    this.animated_resource_values[resource_type] = Math.max(current_animated - step_size, target);
                 }
             }
         });
+    }
+
+    calculate_animation_step_size(current_value, target_value) {
+        const difference = Math.abs(target_value - current_value);
+        
+        if (difference <= 1) {
+            return 1;
+        }
+        
+        if (difference <= 5) {
+            return 2;
+        }
+        
+        if (difference <= 20) {
+            return Math.ceil(difference * 0.3);
+        }
+        
+        if (difference <= 100) {
+            return Math.ceil(difference * 0.2);
+        }
+        
+        return Math.ceil(difference * 0.15);
     }
 
     update_resource_container(resource_type, value) {
@@ -288,7 +312,7 @@ class UISystem {
         const value_element = container.querySelector('.resource_value');
 
         if (symbol_element && value_element) {
-            value_element.textContent = value;
+            value_element.textContent = Math.floor(value);
         }
     }
 
