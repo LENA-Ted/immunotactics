@@ -95,6 +95,11 @@ class RenderingSystem {
     }
 
     render_cursor(cursor_state, player) {
+        this.render_energy_gauge(cursor_state, player);
+        this.render_phenotype_cooldown_gauge(cursor_state);
+    }
+
+    render_energy_gauge(cursor_state, player) {
         const gauge_radius = 25;
         const energy_angle = (cursor_state.displayed_energy / player.max_energy) * Math.PI * 2;
         const is_error = cursor_state.error_timer > 0 && Math.floor(cursor_state.error_timer / 5) % 2 === 0;
@@ -128,6 +133,45 @@ class RenderingSystem {
             );
             this.cursor_ctx.strokeStyle = energy_color;
             this.cursor_ctx.lineWidth = 8;
+            this.cursor_ctx.lineCap = 'round';
+            this.cursor_ctx.stroke();
+        }
+    }
+
+    render_phenotype_cooldown_gauge(cursor_state) {
+        if (!window.game_state || !window.game_state.phenotype_system) {
+            return;
+        }
+
+        const phenotype_system = window.game_state.phenotype_system;
+        const cooldown_progress = phenotype_system.get_cooldown_progress();
+        
+        if (phenotype_system.is_action_ready()) {
+            return;
+        }
+
+        const inner_radius = 25 + PHENOTYPE_CONFIG.GAUGE_SPACING;
+        const gauge_thickness = 8 * PHENOTYPE_CONFIG.GAUGE_THICKNESS_RATIO;
+        const cooldown_angle = cooldown_progress * Math.PI * 2;
+        const gauge_color = phenotype_system.get_current_gauge_color();
+
+        this.cursor_ctx.beginPath();
+        this.cursor_ctx.arc(cursor_state.x, cursor_state.y, inner_radius, 0, Math.PI * 2);
+        this.cursor_ctx.strokeStyle = `${gauge_color}40`;
+        this.cursor_ctx.lineWidth = gauge_thickness;
+        this.cursor_ctx.stroke();
+
+        if (cooldown_progress > 0) {
+            this.cursor_ctx.beginPath();
+            this.cursor_ctx.arc(
+                cursor_state.x, 
+                cursor_state.y, 
+                inner_radius, 
+                -Math.PI / 2, 
+                -Math.PI / 2 + cooldown_angle
+            );
+            this.cursor_ctx.strokeStyle = gauge_color;
+            this.cursor_ctx.lineWidth = gauge_thickness;
             this.cursor_ctx.lineCap = 'round';
             this.cursor_ctx.stroke();
         }
