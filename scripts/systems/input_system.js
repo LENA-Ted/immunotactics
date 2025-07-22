@@ -29,6 +29,10 @@ class InputSystem {
         document.addEventListener('click', (event) => {
             this.handle_mouse_click(event);
         });
+
+        document.addEventListener('contextmenu', (event) => {
+            this.handle_right_click(event);
+        });
     }
 
     handle_mouse_move(event) {
@@ -51,6 +55,35 @@ class InputSystem {
         }
 
         this.attempt_place_tower();
+    }
+
+    handle_right_click(event) {
+        event.preventDefault();
+        
+        if (!window.game_state || window.game_state.is_game_over) {
+            return;
+        }
+
+        if (window.game_state.is_game_paused || this.is_intensity_reward_modal_active()) {
+            return;
+        }
+
+        if (!this.is_valid_game_click(event)) {
+            return;
+        }
+
+        this.attempt_phenotype_action();
+    }
+
+    attempt_phenotype_action() {
+        if (!window.game_state || !window.game_state.phenotype_system) {
+            return false;
+        }
+
+        return window.game_state.phenotype_system.perform_action(
+            this.cursor_state.x, 
+            this.cursor_state.y
+        );
     }
 
     is_intensity_reward_modal_active() {
