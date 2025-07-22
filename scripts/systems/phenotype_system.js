@@ -4,7 +4,8 @@ class PhenotypeSystem {
         this.phenotype_level = 0;
         this.error_timer = 0;
         this.error_blink_duration = 30;
-        this.glow_timer = 0;
+        this.gauge_opacity = 0.0;
+        this.opacity_transition_speed = 0.1;
     }
 
     initialize() {
@@ -15,7 +16,7 @@ class PhenotypeSystem {
     reset() {
         this.phenotype_level = 0;
         this.error_timer = 0;
-        this.glow_timer = 0;
+        this.gauge_opacity = 0.0;
         
         if (this.active_phenotype) {
             this.active_phenotype.reset();
@@ -40,7 +41,7 @@ class PhenotypeSystem {
         }
         
         this.update_error_timer();
-        this.update_glow_timer();
+        this.update_gauge_opacity();
     }
 
     update_error_timer() {
@@ -49,8 +50,13 @@ class PhenotypeSystem {
         }
     }
 
-    update_glow_timer() {
-        this.glow_timer = (this.glow_timer + 1) % (PHENOTYPE_CONFIG.GLOW_CYCLE_DURATION_MS / 16);
+    update_gauge_opacity() {
+        const target_opacity = this.should_show_gauge() ? 1.0 : 0.0;
+        this.gauge_opacity = MathUtils.lerp(this.gauge_opacity, target_opacity, this.opacity_transition_speed);
+    }
+
+    should_show_gauge() {
+        return !this.is_action_ready();
     }
 
     perform_action(cursor_x, cursor_y) {
@@ -122,48 +128,20 @@ class PhenotypeSystem {
         return this.active_phenotype.get_gauge_color();
     }
 
-    get_gauge_color_light() {
-        if (!this.active_phenotype) {
-            return '#FFFFCC';
-        }
-        
-        return this.active_phenotype.get_gauge_color_light();
-    }
-
-    get_glow_intensity() {
-        const cycle_progress = this.glow_timer / (PHENOTYPE_CONFIG.GLOW_CYCLE_DURATION_MS / 16);
-        return 0.5 + 0.5 * Math.sin(cycle_progress * Math.PI * 2);
-    }
-
     get_current_gauge_color() {
         if (this.is_error_active()) {
             return GAME_CONFIG.COLOR_INSUFFICIENT_ENERGY;
         }
         
-        const base_color = this.get_gauge_color();
-        const light_color = this.get_gauge_color_light();
-        const glow_intensity = this.get_glow_intensity();
-        
-        return this.interpolate_color(base_color, light_color, glow_intensity);
+        return this.get_gauge_color();
     }
 
-    interpolate_color(color1, color2, factor) {
-        const hex1 = color1.replace('#', '');
-        const hex2 = color2.replace('#', '');
-        
-        const r1 = parseInt(hex1.substr(0, 2), 16);
-        const g1 = parseInt(hex1.substr(2, 2), 16);
-        const b1 = parseInt(hex1.substr(4, 2), 16);
-        
-        const r2 = parseInt(hex2.substr(0, 2), 16);
-        const g2 = parseInt(hex2.substr(2, 2), 16);
-        const b2 = parseInt(hex2.substr(4, 2), 16);
-        
-        const r = Math.round(r1 + (r2 - r1) * factor);
-        const g = Math.round(g1 + (g2 - g1) * factor);
-        const b = Math.round(b1 + (b2 - b1) * factor);
-        
-        return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    get_gauge_opacity() {
+        return this.gauge_opacity;
+    }
+
+    should_render_gauge() {
+        return this.gauge_opacity > 0.01;
     }
 }
 

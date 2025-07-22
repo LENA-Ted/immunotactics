@@ -46,10 +46,14 @@ class BasePhenotype {
             return 1.0;
         }
         
-        const current_time = performance.now();
-        const elapsed_time = current_time - this.last_action_time;
-        const progress = elapsed_time / this.config.cooldown_ms;
+        let elapsed_time;
+        if (window.game_state && window.game_state.get_adjusted_elapsed_time) {
+            elapsed_time = window.game_state.get_adjusted_elapsed_time(this.last_action_time);
+        } else {
+            elapsed_time = performance.now() - this.last_action_time;
+        }
         
+        const progress = elapsed_time / this.config.cooldown_ms;
         return Math.min(progress, 1.0);
     }
 
