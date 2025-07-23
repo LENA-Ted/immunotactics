@@ -10,7 +10,7 @@ class RenderingSystem {
         this.clear_canvases();
         this.apply_screen_shake(game_state.screen_shake);
         this.render_game_entities(game_state);
-        this.render_cursor(cursor_state, game_state.player);
+        this.render_cursor(cursor_state, game_state.player, game_state);
         this.restore_context();
     }
 
@@ -94,7 +94,7 @@ class RenderingSystem {
         });
     }
 
-    render_cursor(cursor_state, player) {
+    render_cursor(cursor_state, player, game_state) {
         const gauge_radius = 25;
         const energy_angle = (cursor_state.displayed_energy / player.max_energy) * Math.PI * 2;
         const is_error = cursor_state.error_timer > 0 && Math.floor(cursor_state.error_timer / 5) % 2 === 0;
@@ -111,6 +111,11 @@ class RenderingSystem {
             energy_color = GAME_CONFIG.COLOR_FREE_PLACEMENT;
         }
 
+        this.render_energy_gauge(cursor_state, gauge_radius, energy_angle, background_color, energy_color);
+        this.render_phenotype_cooldown_gauge(cursor_state, gauge_radius, game_state);
+    }
+
+    render_energy_gauge(cursor_state, gauge_radius, energy_angle, background_color, energy_color) {
         this.cursor_ctx.beginPath();
         this.cursor_ctx.arc(cursor_state.x, cursor_state.y, gauge_radius, 0, Math.PI * 2);
         this.cursor_ctx.strokeStyle = background_color;
@@ -131,6 +136,60 @@ class RenderingSystem {
             this.cursor_ctx.lineCap = 'round';
             this.cursor_ctx.stroke();
         }
+    }
+
+    render_phenotype_cooldown_gauge(cursor_state, energy_gauge_radius, game_state) {
+        if (!game_state.phenotype_system) {
+            return;
+        }
+
+        const current_time = performance.now();
+        const cooldown_progress = game_state.phenotype_system.get_cooldown_progress(current_time);
+        const gauge_opacity = game_state.phenotype_system.get_cooldown_gauge_opacity();
+        
+        if (gauge_opacity <= 0.01) {
+            return;
+        }
+
+        const active_phenotype = game_state.phenotype_system.get_active_phenotype();
+        if (!active_phenotype) {
+            return;
+        }
+
+        const cooldown_radius = energy_gauge_radius + PHENOTYPE_UI_CONFIG.COOLDOWN_GAUGE_GAP;
+        const cooldown_angle = cooldown_progress * Math.PI * 2;
+        const is_error_blink = game_state.phenotype_system.is_error_blink_active();
+        
+        let gauge_color = active_phenotype.get_gauge_color_primary();
+        if (is_error_blink) {
+            gauge_color = GAME_CONFIG.COLOR_INSUFFICIENT_ENERGY;
+        }
+
+        this.cursor_ctx.save();
+        this.cursor_ctx.globalAlpha = gauge_opacity;
+
+        this.cursor_ctx.beginPath();
+        this.cursor_ctx.arc(cursor_state.x, cursor_state.y, cooldown_radius, 0, Math.PI * 2);
+        this.cursor_ctx.strokeStyle = `${gauge_color}40`;
+        this.cursor_ctx.lineWidth = PHENOTYPE_UI_CONFIG.COOLDOWN_GAUGE_LINE_WIDTH;
+        this.cursor_ctx.stroke();
+
+        if (cooldown_angle > 0) {
+            this.cursor_ctx.beginPath();
+            this.cursor_ctx.arc(
+                cursor_state.x, 
+                cursor_state.y, 
+                cooldown_radius, 
+                -Math.PI / 2, 
+                -Math.PI / 2 + cooldown_angle
+            );
+            this.cursor_ctx.strokeStyle = gauge_color;
+            this.cursor_ctx.lineWidth = PHENOTYPE_UI_CONFIG.COOLDOWN_GAUGE_LINE_WIDTH;
+            this.cursor_ctx.lineCap = 'round';
+            this.cursor_ctx.stroke();
+        }
+
+        this.cursor_ctx.restore();
     }
 
     set_canvas_sizes(width, height) {

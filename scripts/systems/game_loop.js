@@ -115,6 +115,10 @@ class GameLoop {
             this.systems.selection.update(timestamp);
         }
 
+        if (this.systems.phenotype) {
+            this.systems.phenotype.update(timestamp);
+        }
+
         this.game_state.towers.forEach(tower => {
             tower.update(timestamp);
         });
