@@ -13,8 +13,8 @@ class PhenotypeProjectile {
     }
 
     draw(ctx) {
-        ctx.fillStyle = '#FFE135';
-        ctx.strokeStyle = '#FFF176';
+        ctx.fillStyle = '#F7DC6F';
+        ctx.strokeStyle = '#F4D03F';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);

@@ -6,8 +6,7 @@ const PHENOTYPE_CONFIGS = {
         base_cooldown_ms: 1000,
         projectile_speed: 8,
         projectile_radius: 4,
-        gauge_color_primary: '#FFE135',
-        gauge_color_secondary: '#FFF176'
+        gauge_color: '#F7DC6F'
     }
 };
 

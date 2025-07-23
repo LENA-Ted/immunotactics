@@ -147,6 +147,7 @@ class PhenotypeSystem {
         if (this.active_phenotype) {
             this.active_phenotype.last_activation_time = 0;
             this.active_phenotype.cooldown_remaining_ms = 0;
+            this.active_phenotype.is_first_activation = true;
         }
     }
 }

@@ -160,7 +160,7 @@ class RenderingSystem {
         const cooldown_angle = cooldown_progress * Math.PI * 2;
         const is_error_blink = game_state.phenotype_system.is_error_blink_active();
         
-        let gauge_color = active_phenotype.get_gauge_color_primary();
+        let gauge_color = active_phenotype.get_gauge_color();
         if (is_error_blink) {
             gauge_color = GAME_CONFIG.COLOR_INSUFFICIENT_ENERGY;
         }

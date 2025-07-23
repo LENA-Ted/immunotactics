@@ -4,6 +4,7 @@ class BasePhenotype {
         this.config = PHENOTYPE_CONFIGS[phenotype_type];
         this.last_activation_time = 0;
         this.cooldown_remaining_ms = 0;
+        this.is_first_activation = true;
         
         if (!this.config) {
             console.error(`Unknown phenotype type: ${phenotype_type}`);
@@ -18,12 +19,8 @@ class BasePhenotype {
         return this.config ? this.config.base_cooldown_ms : 1000;
     }
 
-    get_gauge_color_primary() {
-        return this.config ? this.config.gauge_color_primary : '#FFE135';
-    }
-
-    get_gauge_color_secondary() {
-        return this.config ? this.config.gauge_color_secondary : '#FFF176';
+    get_gauge_color() {
+        return this.config ? this.config.gauge_color : '#F7DC6F';
     }
 
     can_activate(current_time) {
@@ -31,8 +28,19 @@ class BasePhenotype {
             return false;
         }
 
-        const elapsed_since_activation = current_time - this.last_activation_time;
-        return elapsed_since_activation >= this.get_cooldown_ms();
+        if (this.is_first_activation) {
+            return true;
+        }
+
+        const adjusted_elapsed = this.get_adjusted_elapsed_time_since_activation(current_time);
+        return adjusted_elapsed >= this.get_cooldown_ms();
+    }
+
+    get_adjusted_elapsed_time_since_activation(current_time) {
+        if (window.game_state && window.game_state.get_adjusted_elapsed_time) {
+            return window.game_state.get_adjusted_elapsed_time(this.last_activation_time);
+        }
+        return current_time - this.last_activation_time;
     }
 
     get_cooldown_progress(current_time) {
@@ -40,22 +48,31 @@ class BasePhenotype {
             return 1.0;
         }
 
-        const elapsed_since_activation = current_time - this.last_activation_time;
+        if (this.is_first_activation) {
+            return 1.0;
+        }
+
+        const adjusted_elapsed = this.get_adjusted_elapsed_time_since_activation(current_time);
         const cooldown_ms = this.get_cooldown_ms();
         
-        if (elapsed_since_activation >= cooldown_ms) {
+        if (adjusted_elapsed >= cooldown_ms) {
             return 1.0;
         }
         
-        return elapsed_since_activation / cooldown_ms;
+        return adjusted_elapsed / cooldown_ms;
     }
 
     update_cooldown(current_time) {
-        const elapsed_since_activation = current_time - this.last_activation_time;
+        if (this.is_first_activation) {
+            this.cooldown_remaining_ms = 0;
+            return;
+        }
+
+        const adjusted_elapsed = this.get_adjusted_elapsed_time_since_activation(current_time);
         const cooldown_ms = this.get_cooldown_ms();
         
-        if (elapsed_since_activation < cooldown_ms) {
-            this.cooldown_remaining_ms = cooldown_ms - elapsed_since_activation;
+        if (adjusted_elapsed < cooldown_ms) {
+            this.cooldown_remaining_ms = cooldown_ms - adjusted_elapsed;
         } else {
             this.cooldown_remaining_ms = 0;
         }
@@ -67,6 +84,7 @@ class BasePhenotype {
         }
 
         this.last_activation_time = current_time;
+        this.is_first_activation = false;
         this.perform_action(cursor_x, cursor_y, phenotype_level);
         return true;
     }
