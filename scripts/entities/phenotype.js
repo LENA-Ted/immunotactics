@@ -36,11 +36,16 @@ class BasePhenotype {
         return adjusted_elapsed >= this.get_cooldown_ms();
     }
 
-    get_adjusted_elapsed_time_since_activation(current_time) {
+    get_current_adjusted_time(current_time) {
         if (window.game_state && window.game_state.get_adjusted_elapsed_time) {
-            return window.game_state.get_adjusted_elapsed_time(this.last_activation_time);
+            return window.game_state.get_adjusted_elapsed_time(0);
         }
-        return current_time - this.last_activation_time;
+        return current_time;
+    }
+
+    get_adjusted_elapsed_time_since_activation(current_time) {
+        const current_adjusted_time = this.get_current_adjusted_time(current_time);
+        return current_adjusted_time - this.last_activation_time;
     }
 
     get_cooldown_progress(current_time) {
@@ -83,7 +88,8 @@ class BasePhenotype {
             return false;
         }
 
-        this.last_activation_time = current_time;
+        const adjusted_time = this.get_current_adjusted_time(current_time);
+        this.last_activation_time = adjusted_time;
         this.is_first_activation = false;
         this.perform_action(cursor_x, cursor_y, phenotype_level);
         return true;
