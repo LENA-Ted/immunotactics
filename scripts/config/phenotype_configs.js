@@ -3,7 +3,7 @@ const PHENOTYPE_CONFIGS = {
         name: 'Perforin Pulse',
         base_damage: 10,
         damage_per_level: 2,
-        base_cooldown_ms: 1000,
+        base_cooldown_ms: 500,
         projectile_speed: 8,
         projectile_radius: 4,
         gauge_color: '#F7DC6F'
