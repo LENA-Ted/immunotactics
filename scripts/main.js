@@ -16,6 +16,7 @@ class Game {
         this.resource_system = null;
         this.adaptation_system = null;
         this.intensity_reward_system = null;
+        this.phenotype_system = null;
         this.game_loop = null;
         
         this.game_state = null;
@@ -58,6 +59,7 @@ class Game {
         this.resource_system = new ResourceSystem();
         this.adaptation_system = new AdaptationSystem();
         this.intensity_reward_system = new IntensityRewardSystem();
+        this.phenotype_system = new PhenotypeSystem();
         this.input_system = new InputSystem(this.game_canvas, this.tower_factory, this.selection_system);
         this.rendering_system = new RenderingSystem(this.game_canvas, this.cursor_canvas);
         this.game_loop = new GameLoop();
@@ -90,6 +92,7 @@ class Game {
             resource_system: this.resource_system,
             adaptation_system: this.adaptation_system,
             intensity_reward_system: this.intensity_reward_system,
+            phenotype_system: this.phenotype_system,
             ui_system: this.ui_system,
             total_pause_time_ms: 0,
             pause_start_time: null,
@@ -113,7 +116,8 @@ class Game {
             status_effects: this.status_effect_system,
             resource: this.resource_system,
             adaptation: this.adaptation_system,
-            intensity_reward: this.intensity_reward_system
+            intensity_reward: this.intensity_reward_system,
+            phenotype: this.phenotype_system
         };
 
         this.game_loop.initialize(systems, this.game_state);
@@ -161,6 +165,7 @@ class Game {
         this.game_state.resource_system = this.resource_system;
         this.game_state.adaptation_system = this.adaptation_system;
         this.game_state.intensity_reward_system = this.intensity_reward_system;
+        this.game_state.phenotype_system = this.phenotype_system;
         this.game_state.ui_system = this.ui_system;
 
         this.game_state.total_pause_time_ms = 0;
@@ -184,6 +189,9 @@ class Game {
         }
         if (this.intensity_reward_system) {
             this.intensity_reward_system.reset();
+        }
+        if (this.phenotype_system) {
+            this.phenotype_system.reset();
         }
     }
 

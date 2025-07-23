@@ -4,6 +4,7 @@ class Player {
         this.max_energy = GAME_CONFIG.PLAYER_MAX_ENERGY;
         this.last_energy_regen_time = 0;
         this.has_free_placement = false;
+        this.phenotype_level = PHENOTYPE_GAMEPLAY_CONFIG.DEFAULT_PHENOTYPE_LEVEL;
     }
 
     update(timestamp) {
@@ -98,6 +99,21 @@ class Player {
 
     clear_free_placement_state() {
         this.has_free_placement = false;
+    }
+
+    get_phenotype_level() {
+        return this.phenotype_level;
+    }
+
+    increase_phenotype_level(amount = 1) {
+        this.phenotype_level = Math.min(
+            this.phenotype_level + amount,
+            PHENOTYPE_GAMEPLAY_CONFIG.MAX_PHENOTYPE_LEVEL
+        );
+        
+        if (window.game_state && window.game_state.phenotype_system) {
+            window.game_state.phenotype_system.phenotype_level = this.phenotype_level;
+        }
     }
 }
 
