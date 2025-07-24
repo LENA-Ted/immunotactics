@@ -40,6 +40,19 @@ class UISystem {
         this.initialize_intensity_gauge();
         this.initialize_selection_ui();
         this.initialize_resource_feedback();
+        this.initialize_diagonal_stripes();
+    }
+
+    initialize_diagonal_stripes() {
+        if (this.core_hp_container) {
+            this.core_hp_container.classList.add('diagonal-stripes');
+        }
+        if (this.timer_container) {
+            this.timer_container.classList.add('diagonal-stripes');
+        }
+        if (this.intensity_gauge_container) {
+            this.intensity_gauge_container.classList.add('diagonal-stripes');
+        }
     }
 
     initialize_intensity_gauge() {
@@ -147,10 +160,11 @@ class UISystem {
 
     update_displayed_progress(game_state) {
         const target_progress = game_state.killcount / game_state.killcount_required;
-        game_state.displayed_killcount_progress = MathUtils.lerp(
+        game_state.displayed_killcount_progress = MathUtils.dynamic_ease_lerp(
             game_state.displayed_killcount_progress,
             target_progress,
-            0.2
+            GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
+            GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
         );
     }
 
@@ -407,6 +421,7 @@ class UISystem {
         this.initialize_resource_feedback();
         this.clear_resource_feedback_states();
         this.show_all_gameplay_ui();
+        this.initialize_diagonal_stripes();
     }
 
     clear_resource_feedback_states() {
