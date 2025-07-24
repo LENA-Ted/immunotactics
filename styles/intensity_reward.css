@@ -79,10 +79,12 @@
     opacity: 0;
     transform: translateY(20px) scale(0.9);
     pointer-events: none;
+    will-change: transform, opacity;
 }
 
 .reward_card.diagonal-stripes {
     background-color: #F5F5DC;
+    will-change: transform, opacity, background-position;
 }
 
 .reward_card.visible {

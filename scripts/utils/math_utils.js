@@ -45,7 +45,7 @@ function cubic_bezier_ease_out(t) {
 function dynamic_ease_lerp(current, target, base_speed, distance_multiplier) {
     const distance = Math.abs(target - current);
     const dynamic_speed = base_speed + (distance * distance_multiplier);
-    const clamped_speed = Math.min(dynamic_speed, 1.0);
+    const clamped_speed = Math.min(dynamic_speed, 0.8);
     
     const linear_progress = clamped_speed;
     const eased_progress = cubic_bezier_ease_out(linear_progress);

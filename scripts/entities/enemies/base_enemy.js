@@ -109,12 +109,19 @@ class BaseEnemy {
     }
 
     draw_hp_gauge(ctx) {
-        this.displayed_hp = MathUtils.dynamic_ease_lerp(
-            this.displayed_hp,
-            this.hp,
-            GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
-            GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
-        );
+        const target_hp = this.hp;
+        const hp_difference = Math.abs(this.displayed_hp - target_hp);
+        
+        if (hp_difference > 0.1) {
+            this.displayed_hp = MathUtils.dynamic_ease_lerp(
+                this.displayed_hp,
+                target_hp,
+                GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
+                GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
+            );
+        } else {
+            this.displayed_hp = target_hp;
+        }
         
         const hp_angle = (this.displayed_hp / this.max_hp) * Math.PI * 2;
         const gauge_radius = this.radius + 5;

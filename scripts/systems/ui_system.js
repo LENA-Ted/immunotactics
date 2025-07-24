@@ -44,6 +44,8 @@ class UISystem {
     }
 
     initialize_diagonal_stripes() {
+        this.set_css_variables();
+        
         if (this.core_hp_container) {
             this.core_hp_container.classList.add('diagonal-stripes');
         }
@@ -53,6 +55,15 @@ class UISystem {
         if (this.intensity_gauge_container) {
             this.intensity_gauge_container.classList.add('diagonal-stripes');
         }
+    }
+
+    set_css_variables() {
+        const root = document.documentElement;
+        root.style.setProperty('--diagonal-stripes-opacity', GAME_CONFIG.DIAGONAL_STRIPES_OPACITY);
+        root.style.setProperty('--diagonal-stripes-thickness', `${GAME_CONFIG.DIAGONAL_STRIPES_THICKNESS_PX}px`);
+        root.style.setProperty('--diagonal-stripes-spacing', `${GAME_CONFIG.DIAGONAL_STRIPES_SPACING_PX}px`);
+        root.style.setProperty('--diagonal-stripes-duration', `${GAME_CONFIG.DIAGONAL_STRIPES_ANIMATION_DURATION_S}s`);
+        root.style.setProperty('--frosted-glass-blur', `${GAME_CONFIG.FROSTED_GLASS_BLUR_PX}px`);
     }
 
     initialize_intensity_gauge() {
