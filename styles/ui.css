@@ -1,3 +1,30 @@
+:root {
+    --diagonal-stripes-opacity: 0.15;
+    --diagonal-stripes-duration: 8s;
+    --frosted-glass-blur: 12px;
+}
+
+@keyframes diagonal-stripes {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 40px 0;
+    }
+}
+
+.diagonal-stripes {
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(0, 0, 0, var(--diagonal-stripes-opacity)) 10px,
+        rgba(0, 0, 0, var(--diagonal-stripes-opacity)) 20px
+    );
+    background-size: 40px 40px;
+    animation: diagonal-stripes var(--diagonal-stripes-duration) linear infinite;
+}
+
 #top_left_ui_container {
     position: absolute;
     top: 20px;
@@ -43,6 +70,10 @@
     box-sizing: border-box;
 }
 
+.pill.diagonal-stripes {
+    background-color: #F5F5DC;
+}
+
 .resource_pill {
     background-color: transparent;
     border: 2px solid #F5F5DC;
@@ -57,6 +88,7 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     box-sizing: border-box;
     transition: background-color 0.5s ease, color 0.5s ease;
+    backdrop-filter: blur(var(--frosted-glass-blur));
 }
 
 .resource_pill.feedback_active {
@@ -109,6 +141,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+#intensity_gauge_container.diagonal-stripes {
+    background-color: #F5F5DC;
 }
 
 #intensity_gauge_canvas {
