@@ -116,8 +116,8 @@ class BaseEnemy {
             this.displayed_hp = MathUtils.dynamic_ease_lerp(
                 this.displayed_hp,
                 target_hp,
-                GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
-                GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
+                GAME_CONFIG.ENEMY_HP_GAUGE_ANIMATION_SPEED,
+                GAME_CONFIG.ENEMY_HP_GAUGE_EASING_STRENGTH
             );
         } else {
             this.displayed_hp = target_hp;
