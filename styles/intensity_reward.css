@@ -107,6 +107,8 @@
 
 .reward_card.diagonal-stripes {
     background-color: #F5F5DC;
+    background-image: none;
+    animation: none;
 }
 
 .reward_card.visible {
