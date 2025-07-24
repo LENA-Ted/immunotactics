@@ -11,6 +11,15 @@ class IntensityRewardSystem {
     initialize() {
         this.create_modal_elements();
         this.setup_event_listeners();
+        this.initialize_diagonal_stripes();
+    }
+
+    initialize_diagonal_stripes() {
+        this.card_elements.forEach(card => {
+            if (card) {
+                card.classList.add('diagonal-stripes');
+            }
+        });
     }
 
     create_modal_elements() {
@@ -242,6 +251,8 @@ class IntensityRewardSystem {
                 card.classList.remove('visible', 'selected', 'faded');
             }
         });
+
+        this.initialize_diagonal_stripes();
     }
 }
 
