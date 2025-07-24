@@ -79,6 +79,36 @@
     opacity: 0;
     transform: translateY(20px) scale(0.9);
     pointer-events: none;
+    will-change: transform, opacity;
+    position: relative;
+    overflow: hidden;
+}
+
+.reward_card.diagonal-stripes::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent 0,
+        transparent var(--diagonal-stripes-thickness),
+        rgba(0, 0, 0, var(--diagonal-stripes-opacity)) var(--diagonal-stripes-thickness),
+        rgba(0, 0, 0, var(--diagonal-stripes-opacity)) calc(var(--diagonal-stripes-thickness) + var(--diagonal-stripes-spacing))
+    );
+    background-size: calc((var(--diagonal-stripes-thickness) + var(--diagonal-stripes-spacing)) * 1.414) calc((var(--diagonal-stripes-thickness) + var(--diagonal-stripes-spacing)) * 1.414);
+    animation: diagonal-stripes var(--diagonal-stripes-duration) linear infinite;
+    will-change: background-position;
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+.reward_card.diagonal-stripes {
+    background-color: #F5F5DC;
+    background-image: none;
+    animation: none;
 }
 
 .reward_card.visible {

@@ -11,6 +11,25 @@ class IntensityRewardSystem {
     initialize() {
         this.create_modal_elements();
         this.setup_event_listeners();
+        this.initialize_diagonal_stripes();
+    }
+
+    initialize_diagonal_stripes() {
+        this.set_css_variables();
+        
+        this.card_elements.forEach(card => {
+            if (card) {
+                card.classList.add('diagonal-stripes');
+            }
+        });
+    }
+
+    set_css_variables() {
+        const root = document.documentElement;
+        root.style.setProperty('--diagonal-stripes-opacity', GAME_CONFIG.DIAGONAL_STRIPES_OPACITY);
+        root.style.setProperty('--diagonal-stripes-thickness', `${GAME_CONFIG.DIAGONAL_STRIPES_THICKNESS_PX}px`);
+        root.style.setProperty('--diagonal-stripes-spacing', `${GAME_CONFIG.DIAGONAL_STRIPES_SPACING_PX}px`);
+        root.style.setProperty('--diagonal-stripes-duration', `${GAME_CONFIG.DIAGONAL_STRIPES_ANIMATION_DURATION_S}s`);
     }
 
     create_modal_elements() {
@@ -242,6 +261,8 @@ class IntensityRewardSystem {
                 card.classList.remove('visible', 'selected', 'faded');
             }
         });
+
+        this.initialize_diagonal_stripes();
     }
 }
 
