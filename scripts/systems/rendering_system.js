@@ -4,6 +4,8 @@ class RenderingSystem {
         this.cursor_canvas = cursor_canvas;
         this.game_ctx = game_canvas.getContext('2d');
         this.cursor_ctx = cursor_canvas.getContext('2d');
+        this.animated_energy_progress = 1.0;
+        this.animated_phenotype_progress = 1.0;
     }
 
     render_frame(game_state, cursor_state) {
@@ -96,7 +98,11 @@ class RenderingSystem {
 
     render_cursor(cursor_state, player, game_state) {
         const gauge_radius = 25;
-        const energy_angle = (cursor_state.displayed_energy / player.max_energy) * Math.PI * 2;
+        
+        this.update_animated_energy_progress(player);
+        this.update_animated_phenotype_progress(game_state, performance.now());
+        
+        const energy_angle = this.animated_energy_progress * Math.PI * 2;
         const is_error = cursor_state.error_timer > 0 && Math.floor(cursor_state.error_timer / 5) % 2 === 0;
         const is_free_placement = player.is_in_free_placement_state();
 
@@ -113,6 +119,30 @@ class RenderingSystem {
 
         this.render_energy_gauge(cursor_state, gauge_radius, energy_angle, background_color, energy_color);
         this.render_phenotype_cooldown_gauge(cursor_state, gauge_radius, game_state);
+    }
+
+    update_animated_energy_progress(player) {
+        const target_progress = player.get_energy_percentage();
+        this.animated_energy_progress = MathUtils.dynamic_ease_lerp(
+            this.animated_energy_progress,
+            target_progress,
+            GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
+            GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
+        );
+    }
+
+    update_animated_phenotype_progress(game_state, current_time) {
+        if (!game_state.phenotype_system) {
+            return;
+        }
+
+        const target_progress = game_state.phenotype_system.get_cooldown_progress(current_time);
+        this.animated_phenotype_progress = MathUtils.dynamic_ease_lerp(
+            this.animated_phenotype_progress,
+            target_progress,
+            GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
+            GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
+        );
     }
 
     render_energy_gauge(cursor_state, gauge_radius, energy_angle, background_color, energy_color) {
@@ -143,8 +173,6 @@ class RenderingSystem {
             return;
         }
 
-        const current_time = performance.now();
-        const cooldown_progress = game_state.phenotype_system.get_cooldown_progress(current_time);
         const gauge_opacity = game_state.phenotype_system.get_cooldown_gauge_opacity();
         
         if (gauge_opacity <= 0.01) {
@@ -157,7 +185,7 @@ class RenderingSystem {
         }
 
         const cooldown_radius = energy_gauge_radius + PHENOTYPE_UI_CONFIG.COOLDOWN_GAUGE_GAP;
-        const cooldown_angle = cooldown_progress * Math.PI * 2;
+        const cooldown_angle = this.animated_phenotype_progress * Math.PI * 2;
         const is_error_blink = game_state.phenotype_system.is_error_blink_active();
         
         let gauge_color = active_phenotype.get_gauge_color();
