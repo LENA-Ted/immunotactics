@@ -1,6 +1,6 @@
 class BasicEnemy extends BaseEnemy {
     constructor(x, y) {
-        super(x, y, ENEMY_CONFIGS.BASIC);
+        super(x, y, ENEMY_CONFIGS.BASIC, ENEMY_CATEGORIES.MICROBE, ENEMY_TYPES.BASIC);
     }
 
     update(target) {

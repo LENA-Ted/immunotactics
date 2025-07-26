@@ -42,7 +42,11 @@ class CollisionSystem {
                 const tower = towers[j];
 
                 if (this.is_circle_collision(enemy, tower)) {
-                    this.handle_enemy_hit_tower(enemy, tower, i, j, game_state);
+                    if (enemy.is_pathogen()) {
+                        this.handle_pathogen_hit_tower(enemy, tower, i, j, game_state);
+                    } else {
+                        this.handle_enemy_hit_tower(enemy, tower, i, j, game_state);
+                    }
                     break;
                 }
             }
@@ -121,6 +125,37 @@ class CollisionSystem {
         }
 
         this.handle_enemy_destroyed(game_state);
+    }
+
+    handle_pathogen_hit_tower(pathogen, tower, pathogen_index, tower_index, game_state) {
+        const contact_damage = this.calculate_pathogen_contact_damage(pathogen);
+        const is_pathogen_destroyed = pathogen.take_damage(contact_damage);
+
+        game_state.damage_numbers.push(new DamageNumber(pathogen.x, pathogen.y, contact_damage));
+        game_state.effects.push(new PopEffect(tower.x, tower.y, '#cccccc'));
+
+        if (game_state.resource_system) {
+            game_state.resource_system.spawn_particles_from_enemy(pathogen, game_state);
+        }
+
+        this.apply_necrotic_recycling_refund(tower, game_state);
+
+        game_state.towers.splice(tower_index, 1);
+
+        if (window.game_state && window.game_state.last_tower_damage_time) {
+            delete window.game_state.last_tower_damage_time[tower.id];
+        }
+
+        if (is_pathogen_destroyed) {
+            game_state.effects.push(new PopEffect(pathogen.x, pathogen.y, pathogen.color));
+            game_state.enemies.splice(pathogen_index, 1);
+            this.handle_enemy_destroyed(game_state);
+        }
+    }
+
+    calculate_pathogen_contact_damage(pathogen) {
+        const percentage_damage = Math.ceil(pathogen.max_hp * PATHOGEN_SYSTEM_CONFIG.PATHOGEN_CONTACT_DAMAGE_PERCENTAGE);
+        return Math.max(PATHOGEN_SYSTEM_CONFIG.MINIMUM_CONTACT_DAMAGE, percentage_damage);
     }
 
     handle_enemy_hit_core(enemy, core, enemy_index, game_state) {

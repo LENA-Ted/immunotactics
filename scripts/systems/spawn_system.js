@@ -60,13 +60,73 @@ class SpawnSystem {
             }
             
             for (let i = 0; i < spawn_count; i++) {
-                this.spawn_enemy();
+                this.spawn_enemy_by_category();
             }
             
             this.reset_spawn_chance();
         } else {
             this.increase_spawn_chance();
         }
+    }
+
+    spawn_enemy_by_category() {
+        const pathogen_system = this.get_pathogen_system();
+        
+        if (!pathogen_system) {
+            this.spawn_microbe();
+            return;
+        }
+
+        if (pathogen_system.should_spawn_microbe()) {
+            this.spawn_microbe();
+        } else {
+            this.spawn_pathogen();
+        }
+    }
+
+    get_pathogen_system() {
+        return window.game_state && window.game_state.pathogen_system ? window.game_state.pathogen_system : null;
+    }
+
+    spawn_microbe() {
+        const enemy = this.enemy_factory.spawn_microbe_at_random_edge(
+            this.canvas_width,
+            this.canvas_height
+        );
+
+        if (enemy && window.game_state && window.game_state.enemies) {
+            window.game_state.enemies.push(enemy);
+        }
+
+        return enemy;
+    }
+
+    spawn_pathogen() {
+        const pathogen_system = this.get_pathogen_system();
+        
+        if (!pathogen_system) {
+            this.spawn_microbe();
+            return;
+        }
+
+        const pathogen_type = pathogen_system.get_random_active_pathogen_type();
+        
+        if (!pathogen_type) {
+            this.spawn_microbe();
+            return;
+        }
+
+        const enemy = this.enemy_factory.spawn_pathogen_at_random_edge(
+            this.canvas_width,
+            this.canvas_height,
+            pathogen_type
+        );
+
+        if (enemy && window.game_state && window.game_state.enemies) {
+            window.game_state.enemies.push(enemy);
+        }
+
+        return enemy;
     }
 
     get_spawn_group_number() {
