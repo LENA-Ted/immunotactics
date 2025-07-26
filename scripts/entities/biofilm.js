@@ -10,9 +10,13 @@ class Biofilm {
         this.despawn_time_ms = this.harvesting_time_ms * BIOFILM_CONFIG.DESPAWN_TIME_MULTIPLIER;
         
         this.spawn_time = performance.now();
+        this.total_harvesting_time_ms = 0;
         this.harvesting_progress = 0;
-        this.harvesting_start_time = null;
-        this.accumulated_harvesting_time = 0;
+        this.displayed_progress = 0;
+        this.last_harvest_update_time = 0;
+        
+        this.despawn_progress = 0;
+        this.displayed_despawn_progress = 0;
         
         this.is_being_harvested = false;
         this.is_completed = false;
@@ -58,18 +62,6 @@ class Biofilm {
         return window.game_state.get_adjusted_elapsed_time(this.spawn_time);
     }
 
-    get_adjusted_harvesting_time() {
-        if (!this.harvesting_start_time) {
-            return 0;
-        }
-        
-        if (!window.game_state || !window.game_state.get_adjusted_elapsed_time) {
-            return performance.now() - this.harvesting_start_time;
-        }
-        
-        return window.game_state.get_adjusted_elapsed_time(this.harvesting_start_time);
-    }
-
     start_harvesting() {
         if (this.is_completed || this.is_expired) {
             return;
@@ -77,18 +69,35 @@ class Biofilm {
         
         if (!this.is_being_harvested) {
             this.is_being_harvested = true;
-            this.harvesting_start_time = performance.now();
+            this.last_harvest_update_time = performance.now();
             this.start_despawn_pause();
         }
     }
 
     stop_harvesting() {
         if (this.is_being_harvested) {
+            this.update_harvesting_time();
             this.is_being_harvested = false;
-            this.accumulated_harvesting_time += this.get_adjusted_harvesting_time();
-            this.harvesting_start_time = null;
             this.end_despawn_pause();
         }
+    }
+
+    update_harvesting_time() {
+        if (!this.is_being_harvested) {
+            return;
+        }
+
+        const current_time = performance.now();
+        const elapsed_this_session = current_time - this.last_harvest_update_time;
+        
+        let adjusted_elapsed = elapsed_this_session;
+        if (window.game_state && window.game_state.get_adjusted_elapsed_time) {
+            adjusted_elapsed = window.game_state.get_adjusted_elapsed_time(this.last_harvest_update_time);
+        }
+
+        this.total_harvesting_time_ms += Math.max(0, adjusted_elapsed);
+        this.total_harvesting_time_ms = Math.min(this.total_harvesting_time_ms, this.harvesting_time_ms);
+        this.last_harvest_update_time = current_time;
     }
 
     start_despawn_pause() {
@@ -104,23 +113,32 @@ class Biofilm {
         }
     }
 
-    get_total_harvesting_time() {
-        let total = this.accumulated_harvesting_time;
-        
-        if (this.is_being_harvested && this.harvesting_start_time) {
-            total += this.get_adjusted_harvesting_time();
-        }
-        
-        return total;
-    }
-
     update_harvesting_progress() {
-        const total_harvesting_time = this.get_total_harvesting_time();
-        this.harvesting_progress = Math.min(total_harvesting_time / this.harvesting_time_ms, 1.0);
+        if (this.is_being_harvested) {
+            this.update_harvesting_time();
+        }
+
+        const new_progress = Math.min(this.total_harvesting_time_ms / this.harvesting_time_ms, 1.0);
+        this.harvesting_progress = Math.max(this.harvesting_progress, new_progress);
         
         if (this.harvesting_progress >= 1.0) {
             this.complete_harvesting();
         }
+    }
+
+    update_despawn_progress() {
+        if (this.is_completed || this.is_expired) {
+            return;
+        }
+
+        const elapsed_time = this.get_adjusted_spawn_time();
+        let adjusted_despawn_time = this.despawn_time_ms + this.total_despawn_pause_time;
+        
+        if (this.despawn_pause_start_time) {
+            adjusted_despawn_time += performance.now() - this.despawn_pause_start_time;
+        }
+
+        this.despawn_progress = Math.min(elapsed_time / adjusted_despawn_time, 1.0);
     }
 
     complete_harvesting() {
@@ -134,18 +152,35 @@ class Biofilm {
     }
 
     update_visual_state() {
+        this.update_displayed_progress();
         this.update_size_from_progress();
         this.update_shake_effect();
     }
 
+    update_displayed_progress() {
+        this.displayed_progress = MathUtils.dynamic_ease_lerp(
+            this.displayed_progress,
+            this.harvesting_progress,
+            GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
+            GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
+        );
+
+        this.displayed_despawn_progress = MathUtils.dynamic_ease_lerp(
+            this.displayed_despawn_progress,
+            this.despawn_progress,
+            GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
+            GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
+        );
+    }
+
     update_size_from_progress() {
-        const size_factor = 1 - (this.harvesting_progress * BIOFILM_CONFIG.SHRINK_COMPLETION_PERCENTAGE);
-        this.current_radius = this.base_radius * size_factor;
+        const size_factor = 1 - (this.displayed_progress * BIOFILM_CONFIG.SHRINK_COMPLETION_PERCENTAGE);
+        this.current_radius = this.base_radius * Math.max(size_factor, BIOFILM_CONFIG.SHRINK_COMPLETION_PERCENTAGE);
     }
 
     update_shake_effect() {
         if (this.is_being_harvested && !this.is_completed) {
-            const shake_intensity = this.harvesting_progress * BIOFILM_CONFIG.SHAKE_INTENSITY_MAX;
+            const shake_intensity = this.displayed_progress * BIOFILM_CONFIG.SHAKE_INTENSITY_MAX;
             this.shake_offset_x = (Math.random() - 0.5) * shake_intensity;
             this.shake_offset_y = (Math.random() - 0.5) * shake_intensity;
         } else {
@@ -159,14 +194,7 @@ class Biofilm {
             return;
         }
         
-        const elapsed_time = this.get_adjusted_spawn_time();
-        let adjusted_despawn_time = this.despawn_time_ms + this.total_despawn_pause_time;
-        
-        if (this.despawn_pause_start_time) {
-            adjusted_despawn_time += performance.now() - this.despawn_pause_start_time;
-        }
-        
-        if (elapsed_time >= adjusted_despawn_time) {
+        if (this.despawn_progress >= 1.0) {
             this.is_expired = true;
         }
     }
@@ -177,6 +205,7 @@ class Biofilm {
         }
         
         this.update_harvesting_progress();
+        this.update_despawn_progress();
         this.update_visual_state();
         this.check_despawn_expiry();
     }
@@ -190,13 +219,38 @@ class Biofilm {
         return this.is_completed || this.is_expired;
     }
 
-    draw(ctx) {
-        if (this.should_be_removed()) {
+    draw_despawn_gauge(ctx) {
+        if (this.should_be_removed() || this.displayed_despawn_progress <= 0.01) {
             return;
         }
         
+        const despawn_angle = this.displayed_despawn_progress * Math.PI * 2;
+        const gauge_radius = this.current_radius + 8;
+        
         ctx.save();
         
+        const display_x = this.x + this.shake_offset_x;
+        const display_y = this.y + this.shake_offset_y;
+        
+        ctx.beginPath();
+        ctx.arc(display_x, display_y, gauge_radius, 0, Math.PI * 2);
+        ctx.strokeStyle = '#00000040';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        
+        if (despawn_angle > 0) {
+            ctx.beginPath();
+            ctx.arc(display_x, display_y, gauge_radius, -Math.PI / 2, -Math.PI / 2 + despawn_angle);
+            ctx.strokeStyle = GAME_CONFIG.COLOR_ENEMY_HP;
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+        
+        ctx.restore();
+    }
+
+    draw_body(ctx) {
         const display_x = this.x + this.shake_offset_x;
         const display_y = this.y + this.shake_offset_y;
         
@@ -208,8 +262,15 @@ class Biofilm {
         ctx.arc(display_x, display_y, this.current_radius, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
+    }
+
+    draw(ctx) {
+        if (this.should_be_removed()) {
+            return;
+        }
         
-        ctx.restore();
+        this.draw_body(ctx);
+        this.draw_despawn_gauge(ctx);
     }
 
     generate_resource_particles() {
