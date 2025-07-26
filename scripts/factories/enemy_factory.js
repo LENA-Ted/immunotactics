@@ -6,10 +6,14 @@ class EnemyFactory {
 
     register_default_enemies() {
         this.register_enemy_type(ENEMY_TYPES.BASIC, BasicEnemy);
+        this.register_enemy_type(ENEMY_CATEGORIES.MICROBE, Microbe);
+        this.register_enemy_type(PATHOGEN_TYPES.MYCETOMA, Mycetoma);
     }
 
     register_enemy_type(type_name, enemy_class) {
-        if (!ENEMY_CONFIGS[type_name]) {
+        const config = ENEMY_CONFIGS[type_name] || PATHOGEN_CONFIGS[type_name];
+        
+        if (!config && type_name !== ENEMY_CATEGORIES.MICROBE) {
             console.error(`Enemy config not found for type: ${type_name}`);
             return false;
         }
@@ -32,9 +36,27 @@ class EnemyFactory {
         return this.create_enemy(type_name, x, y);
     }
 
+    create_microbe(x, y) {
+        return this.create_enemy(ENEMY_CATEGORIES.MICROBE, x, y);
+    }
+
+    create_pathogen(pathogen_type, x, y) {
+        return this.create_enemy(pathogen_type, x, y);
+    }
+
     spawn_enemy_at_random_edge(canvas_width, canvas_height, type_name = ENEMY_TYPES.BASIC) {
         const spawn_position = this.get_random_edge_position(canvas_width, canvas_height);
         return this.create_enemy(type_name, spawn_position.x, spawn_position.y);
+    }
+
+    spawn_microbe_at_random_edge(canvas_width, canvas_height) {
+        const spawn_position = this.get_random_edge_position(canvas_width, canvas_height);
+        return this.create_microbe(spawn_position.x, spawn_position.y);
+    }
+
+    spawn_pathogen_at_random_edge(canvas_width, canvas_height, pathogen_type) {
+        const spawn_position = this.get_random_edge_position(canvas_width, canvas_height);
+        return this.create_pathogen(pathogen_type, spawn_position.x, spawn_position.y);
     }
 
     get_random_edge_position(canvas_width, canvas_height) {
