@@ -1,8 +1,10 @@
 class BaseEnemy {
-    constructor(x, y, config) {
+    constructor(x, y, config, category, type) {
         this.x = x;
         this.y = y;
         this.config = config;
+        this.category = category;
+        this.type = type;
         this.size_modifier = this.generate_size_modifier();
         this.hp = this.generate_hp_from_size();
         this.max_hp = this.hp;
@@ -56,7 +58,26 @@ class BaseEnemy {
     }
 
     generate_color() {
+        if (this.config.color) {
+            return this.config.color;
+        }
         return `hsl(${Math.random() * 360}, 70%, 50%)`;
+    }
+
+    get_category() {
+        return this.category;
+    }
+
+    get_type() {
+        return this.type;
+    }
+
+    is_microbe() {
+        return this.category === ENEMY_CATEGORIES.MICROBE;
+    }
+
+    is_pathogen() {
+        return this.category === ENEMY_CATEGORIES.PATHOGEN;
     }
 
     trigger_pulsate() {
