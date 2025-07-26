@@ -17,6 +17,7 @@ class Game {
         this.adaptation_system = null;
         this.intensity_reward_system = null;
         this.phenotype_system = null;
+        this.biofilm_system = null;
         this.game_loop = null;
         
         this.game_state = null;
@@ -60,6 +61,7 @@ class Game {
         this.adaptation_system = new AdaptationSystem();
         this.intensity_reward_system = new IntensityRewardSystem();
         this.phenotype_system = new PhenotypeSystem();
+        this.biofilm_system = new BiofilmSystem();
         this.input_system = new InputSystem(this.game_canvas, this.tower_factory, this.selection_system);
         this.rendering_system = new RenderingSystem(this.game_canvas, this.cursor_canvas);
         this.game_loop = new GameLoop();
@@ -75,6 +77,7 @@ class Game {
             damage_numbers: [],
             effects: [],
             resource_particles: [],
+            biofilms: [],
             screen_shake: new ScreenShake(),
             is_game_over: false,
             is_game_paused: false,
@@ -93,6 +96,7 @@ class Game {
             adaptation_system: this.adaptation_system,
             intensity_reward_system: this.intensity_reward_system,
             phenotype_system: this.phenotype_system,
+            biofilm_system: this.biofilm_system,
             ui_system: this.ui_system,
             total_pause_time_ms: 0,
             pause_start_time: null,
@@ -117,7 +121,8 @@ class Game {
             resource: this.resource_system,
             adaptation: this.adaptation_system,
             intensity_reward: this.intensity_reward_system,
-            phenotype: this.phenotype_system
+            phenotype: this.phenotype_system,
+            biofilm: this.biofilm_system
         };
 
         this.game_loop.initialize(systems, this.game_state);
@@ -140,6 +145,7 @@ class Game {
         this.game_state.damage_numbers = [];
         this.game_state.effects = [];
         this.game_state.resource_particles = [];
+        this.game_state.biofilms = [];
         this.game_state.last_tower_damage_time = {};
 
         this.game_state.player = new Player();
@@ -166,6 +172,7 @@ class Game {
         this.game_state.adaptation_system = this.adaptation_system;
         this.game_state.intensity_reward_system = this.intensity_reward_system;
         this.game_state.phenotype_system = this.phenotype_system;
+        this.game_state.biofilm_system = this.biofilm_system;
         this.game_state.ui_system = this.ui_system;
 
         this.game_state.total_pause_time_ms = 0;
@@ -192,6 +199,9 @@ class Game {
         }
         if (this.phenotype_system) {
             this.phenotype_system.reset();
+        }
+        if (this.biofilm_system) {
+            this.biofilm_system.reset();
         }
     }
 
