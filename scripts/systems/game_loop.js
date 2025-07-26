@@ -119,6 +119,10 @@ class GameLoop {
             this.systems.phenotype.update(timestamp);
         }
 
+        if (this.systems.pathogen) {
+            this.systems.pathogen.update(timestamp);
+        }
+
         this.game_state.towers.forEach(tower => {
             tower.update(timestamp);
         });
