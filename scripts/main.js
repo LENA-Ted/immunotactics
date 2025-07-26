@@ -17,6 +17,7 @@ class Game {
         this.adaptation_system = null;
         this.intensity_reward_system = null;
         this.phenotype_system = null;
+        this.pathogen_system = null;
         this.game_loop = null;
         
         this.game_state = null;
@@ -60,6 +61,7 @@ class Game {
         this.adaptation_system = new AdaptationSystem();
         this.intensity_reward_system = new IntensityRewardSystem();
         this.phenotype_system = new PhenotypeSystem();
+        this.pathogen_system = new PathogenSystem();
         this.input_system = new InputSystem(this.game_canvas, this.tower_factory, this.selection_system);
         this.rendering_system = new RenderingSystem(this.game_canvas, this.cursor_canvas);
         this.game_loop = new GameLoop();
@@ -93,6 +95,7 @@ class Game {
             adaptation_system: this.adaptation_system,
             intensity_reward_system: this.intensity_reward_system,
             phenotype_system: this.phenotype_system,
+            pathogen_system: this.pathogen_system,
             ui_system: this.ui_system,
             total_pause_time_ms: 0,
             pause_start_time: null,
@@ -105,6 +108,7 @@ class Game {
         this.input_system.initialize();
         this.selection_system.initialize();
         this.intensity_reward_system.initialize();
+        this.pathogen_system.initialize();
 
         const systems = {
             spawn: this.spawn_system,
@@ -117,7 +121,8 @@ class Game {
             resource: this.resource_system,
             adaptation: this.adaptation_system,
             intensity_reward: this.intensity_reward_system,
-            phenotype: this.phenotype_system
+            phenotype: this.phenotype_system,
+            pathogen: this.pathogen_system
         };
 
         this.game_loop.initialize(systems, this.game_state);
@@ -166,6 +171,7 @@ class Game {
         this.game_state.adaptation_system = this.adaptation_system;
         this.game_state.intensity_reward_system = this.intensity_reward_system;
         this.game_state.phenotype_system = this.phenotype_system;
+        this.game_state.pathogen_system = this.pathogen_system;
         this.game_state.ui_system = this.ui_system;
 
         this.game_state.total_pause_time_ms = 0;
@@ -192,6 +198,9 @@ class Game {
         }
         if (this.phenotype_system) {
             this.phenotype_system.reset();
+        }
+        if (this.pathogen_system) {
+            this.pathogen_system.reset();
         }
     }
 
