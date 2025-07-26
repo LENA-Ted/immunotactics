@@ -43,6 +43,7 @@ class RenderingSystem {
     }
 
     render_game_entities(game_state) {
+        this.render_biofilms(game_state.biofilms);
         this.render_core(game_state.core);
         this.render_towers(game_state.towers);
         this.render_enemies(game_state.enemies);
@@ -50,6 +51,16 @@ class RenderingSystem {
         this.render_effects(game_state.effects);
         this.render_damage_numbers(game_state.damage_numbers);
         this.render_resource_particles(game_state.resource_particles);
+    }
+
+    render_biofilms(biofilms) {
+        if (!biofilms) {
+            return;
+        }
+        
+        biofilms.forEach(biofilm => {
+            biofilm.draw(this.game_ctx);
+        });
     }
 
     render_core(core) {
