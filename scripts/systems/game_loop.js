@@ -119,6 +119,11 @@ class GameLoop {
             this.systems.phenotype.update(timestamp);
         }
 
+        if (this.systems.biofilm) {
+            const cursor_state = this.systems.input.get_cursor_state();
+            this.systems.biofilm.update(cursor_state.x, cursor_state.y, timestamp);
+        }
+
         this.game_state.towers.forEach(tower => {
             tower.update(timestamp);
         });
@@ -142,6 +147,12 @@ class GameLoop {
         this.game_state.effects.forEach(effect => {
             effect.update();
         });
+
+        if (this.game_state.biofilms) {
+            this.game_state.biofilms.forEach(biofilm => {
+                biofilm.update();
+            });
+        }
 
         if (this.game_state.resource_particles) {
             const cursor_state = this.systems.input.get_cursor_state();
@@ -198,6 +209,12 @@ class GameLoop {
         if (this.game_state.resource_particles) {
             this.game_state.resource_particles = this.game_state.resource_particles.filter(particle => 
                 !particle.is_expired()
+            );
+        }
+
+        if (this.game_state.biofilms) {
+            this.game_state.biofilms = this.game_state.biofilms.filter(biofilm => 
+                !biofilm.should_be_removed()
             );
         }
 
