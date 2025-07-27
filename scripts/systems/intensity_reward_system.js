@@ -30,6 +30,13 @@ class IntensityRewardSystem {
         root.style.setProperty('--diagonal-stripes-thickness', `${GAME_CONFIG.DIAGONAL_STRIPES_THICKNESS_PX}px`);
         root.style.setProperty('--diagonal-stripes-spacing', `${GAME_CONFIG.DIAGONAL_STRIPES_SPACING_PX}px`);
         root.style.setProperty('--diagonal-stripes-duration', `${GAME_CONFIG.DIAGONAL_STRIPES_ANIMATION_DURATION_S}s`);
+        root.style.setProperty('--reward-card-border-thickness', `${REWARD_CARD_CONFIG.BORDER_THICKNESS}px`);
+        root.style.setProperty('--reward-card-adaptation-border-color', REWARD_CARD_CONFIG.ADAPTATION_BORDER_COLOR);
+        root.style.setProperty('--reward-card-description-height', `${REWARD_CARD_CONFIG.DESCRIPTION_HEIGHT}px`);
+        root.style.setProperty('--reward-card-name-container-height', `${REWARD_CARD_CONFIG.NAME_CONTAINER_HEIGHT}px`);
+        root.style.setProperty('--reward-card-name-font-size-base', `${REWARD_CARD_CONFIG.NAME_FONT_SIZE_BASE}em`);
+        root.style.setProperty('--reward-card-name-font-size-min', `${REWARD_CARD_CONFIG.NAME_FONT_SIZE_MIN}em`);
+        root.style.setProperty('--intensity-up-text-size', `${REWARD_CARD_CONFIG.INTENSITY_UP_TEXT_SIZE}em`);
     }
 
     create_modal_elements() {
@@ -62,6 +69,7 @@ class IntensityRewardSystem {
         
         this.generate_reward_choices();
         this.update_modal_content();
+        this.reset_card_scroll_positions();
         
         if (window.game_state && window.game_state.ui_system) {
             window.game_state.ui_system.hide_all_gameplay_ui();
@@ -87,10 +95,14 @@ class IntensityRewardSystem {
         setTimeout(() => {
             if (this.intensity_up_text_element) {
                 this.intensity_up_text_element.classList.remove('flicker');
+                this.intensity_up_text_element.classList.remove('visible');
                 this.intensity_up_text_element.style.animationIterationCount = '';
                 this.intensity_up_text_element.style.animationDuration = '';
             }
-            this.show_modal();
+            
+            setTimeout(() => {
+                this.show_modal();
+            }, 200);
         }, INTENSITY_CONFIG.TELEGRAPH_DURATION_MS);
     }
 
@@ -120,36 +132,92 @@ class IntensityRewardSystem {
             return;
         }
 
-        let target_level;
-        let level_display;
-
-        if (adaptation_type === ADAPTATION_TYPES.NUTRIENT_GLUT) {
-            target_level = 0;
-            level_display = '';
-        } else {
-            const current_adaptation = window.game_state.adaptation_system.get_adaptation(adaptation_type);
-            target_level = current_adaptation ? current_adaptation.get_level() + 1 : 0;
-            level_display = target_level > 0 ? `+${target_level}` : '';
-        }
-
+        const is_generic_adaptation = this.is_generic_adaptation(adaptation_type);
+        const current_adaptation = window.game_state.adaptation_system.get_adaptation(adaptation_type);
+        const target_level = current_adaptation ? current_adaptation.get_level() + 1 : 0;
         const description = adaptation_config.descriptions[target_level] || adaptation_config.descriptions[0];
 
+        this.update_level_circles(card_element, target_level, is_generic_adaptation);
+        this.update_adaptation_name(card_element, adaptation_config.name);
+        this.update_description(card_element, description);
+        this.update_card_classes(card_element, is_generic_adaptation);
+    }
+
+    update_level_circles(card_element, target_level, is_generic_adaptation) {
+        const level_circles_container = card_element.querySelector('.level_circles_container');
+        const level_circles = card_element.querySelectorAll('.level_circle');
+
+        if (is_generic_adaptation) {
+            card_element.classList.add('generic');
+            return;
+        } else {
+            card_element.classList.remove('generic');
+        }
+
+        const filled_circles = target_level + 1;
+
+        level_circles.forEach((circle, index) => {
+            if (index < filled_circles) {
+                circle.classList.add('filled');
+            } else {
+                circle.classList.remove('filled');
+            }
+        });
+    }
+
+    update_adaptation_name(card_element, name) {
         const name_element = card_element.querySelector('.adaptation_name');
-        const level_element = card_element.querySelector('.adaptation_level');
-        const description_element = card_element.querySelector('.adaptation_description');
-
         if (name_element) {
-            name_element.textContent = adaptation_config.name;
+            name_element.textContent = name;
+            this.adjust_name_font_size(name_element, name);
         }
+    }
 
-        if (level_element) {
-            level_element.textContent = level_display;
-            level_element.style.display = level_display ? 'inline' : 'none';
+    adjust_name_font_size(name_element, name) {
+        const base_font_size = REWARD_CARD_CONFIG.NAME_FONT_SIZE_BASE;
+        const min_font_size = REWARD_CARD_CONFIG.NAME_FONT_SIZE_MIN;
+        const max_length_for_base_size = 15;
+        const max_length_for_min_size = 25;
+
+        if (name.length <= max_length_for_base_size) {
+            name_element.style.fontSize = `${base_font_size}em`;
+        } else if (name.length <= max_length_for_min_size) {
+            const ratio = (name.length - max_length_for_base_size) / (max_length_for_min_size - max_length_for_base_size);
+            const font_size = base_font_size - (ratio * (base_font_size - min_font_size));
+            name_element.style.fontSize = `${font_size}em`;
+        } else {
+            name_element.style.fontSize = `${min_font_size}em`;
         }
+    }
 
+    update_description(card_element, description) {
+        const description_element = card_element.querySelector('.adaptation_description');
         if (description_element) {
             description_element.textContent = description;
         }
+    }
+
+    update_card_classes(card_element, is_generic_adaptation) {
+        if (is_generic_adaptation) {
+            card_element.classList.add('generic');
+        } else {
+            card_element.classList.remove('generic');
+        }
+    }
+
+    is_generic_adaptation(adaptation_type) {
+        return GENERIC_ADAPTATIONS.includes(adaptation_type);
+    }
+
+    reset_card_scroll_positions() {
+        this.card_elements.forEach(card => {
+            if (card) {
+                const description_element = card.querySelector('.adaptation_description');
+                if (description_element) {
+                    description_element.scrollTop = 0;
+                }
+            }
+        });
     }
 
     show_modal() {
@@ -215,7 +283,11 @@ class IntensityRewardSystem {
 
         this.card_elements.forEach(card => {
             if (card) {
-                card.classList.remove('visible', 'selected', 'faded');
+                card.classList.remove('visible', 'selected', 'faded', 'generic');
+                const name_element = card.querySelector('.adaptation_name');
+                if (name_element) {
+                    name_element.style.fontSize = '';
+                }
             }
         });
 
@@ -258,10 +330,15 @@ class IntensityRewardSystem {
 
         this.card_elements.forEach(card => {
             if (card) {
-                card.classList.remove('visible', 'selected', 'faded');
+                card.classList.remove('visible', 'selected', 'faded', 'generic');
+                const name_element = card.querySelector('.adaptation_name');
+                if (name_element) {
+                    name_element.style.fontSize = '';
+                }
             }
         });
 
+        this.reset_card_scroll_positions();
         this.initialize_diagonal_stripes();
     }
 }

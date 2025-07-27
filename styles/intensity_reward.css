@@ -1,3 +1,13 @@
+:root {
+    --reward-card-border-thickness: 10px;
+    --reward-card-adaptation-border-color: #4A90E2;
+    --reward-card-description-height: 120px;
+    --reward-card-name-container-height: 60px;
+    --reward-card-name-font-size-base: 1.4em;
+    --reward-card-name-font-size-min: 1.1em;
+    --intensity-up-text-size: 4em;
+}
+
 #intensity_reward_modal {
     position: absolute;
     top: 0;
@@ -24,17 +34,18 @@
 
 #intensity_up_text {
     position: absolute;
-    top: 10%;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     color: #F5F5DC;
-    font-size: 4em;
+    font-size: var(--intensity-up-text-size);
     font-weight: bold;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease-in-out;
     visibility: hidden;
     z-index: 11;
+    white-space: nowrap;
 }
 
 #intensity_up_text.visible {
@@ -58,20 +69,20 @@
 #reward_cards_container {
     display: flex;
     gap: 30px;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
 }
 
 .reward_card {
     background-color: #F5F5DC;
+    border: var(--reward-card-border-thickness) solid var(--reward-card-adaptation-border-color);
     border-radius: 20px;
-    padding: 30px;
+    padding: calc(25px + var(--reward-card-border-thickness));
     width: 250px;
-    min-height: 200px;
+    height: 380px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     text-align: center;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     cursor: pointer;
@@ -82,6 +93,7 @@
     will-change: transform, opacity;
     position: relative;
     overflow: hidden;
+    gap: 8px;
 }
 
 .reward_card.diagonal-stripes::before {
@@ -149,36 +161,106 @@
     }
 }
 
-.adaptation_header {
+.level_circles_container {
+    background-color: #F5F5DC;
+    border: 2px solid #2c3e50;
+    border-radius: 25px;
+    padding: 8px 16px;
     display: flex;
-    align-items: baseline;
     justify-content: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 8px;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+.level_circles {
+    display: flex;
+    gap: 10px;
+    height: 24px;
+}
+
+.level_circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #2c3e50;
+}
+
+.level_circle.filled {
+    background-color: #2c3e50;
 }
 
 .adaptation_name {
     color: #2c3e50;
-    font-size: 1.4em;
+    font-size: var(--reward-card-name-font-size-base);
     font-weight: 700;
+    margin: 8px 0;
+    flex-shrink: 0;
+    height: var(--reward-card-name-container-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    line-height: 1.2;
+    overflow: hidden;
+    word-wrap: break-word;
+    hyphens: auto;
 }
 
-.adaptation_level {
-    color: #2c3e50;
-    font-size: 1.1em;
-    font-weight: 600;
-    opacity: 0.8;
-    margin-left: 5px;
+.icon_placeholder {
+    width: 90px;
+    height: 90px;
+    border: 2px solid #2c3e50;
+    border-radius: 10px;
+    background-color: rgba(44, 62, 80, 0.1);
+    margin: 8px 0;
+    flex-shrink: 0;
+}
+
+.description_container {
+    background-color: #F5F5DC;
+    border: 2px solid #2c3e50;
+    border-radius: 12px;
+    padding: 12px;
+    height: var(--reward-card-description-height);
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .adaptation_description {
     color: #2c3e50;
     font-size: 1em;
     line-height: 1.4;
-    text-align: center;
+    text-align: left;
     margin: 0;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.adaptation_description::-webkit-scrollbar {
+    width: 6px;
+}
+
+.adaptation_description::-webkit-scrollbar-track {
+    background: rgba(44, 62, 80, 0.1);
+    border-radius: 3px;
+}
+
+.adaptation_description::-webkit-scrollbar-thumb {
+    background: rgba(44, 62, 80, 0.3);
+    border-radius: 3px;
+}
+
+.adaptation_description::-webkit-scrollbar-thumb:hover {
+    background: rgba(44, 62, 80, 0.5);
+}
+
+.reward_card.generic .level_circles_container {
+    display: none;
 }
 
 .reward_card:nth-child(1) {
