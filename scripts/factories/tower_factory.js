@@ -9,6 +9,7 @@ class TowerFactory {
         this.register_tower_type(IMMUNE_CELL_TYPES.B_CELL, BCell);
         this.register_tower_type(IMMUNE_CELL_TYPES.MAST_CELL, MastCell);
         this.register_tower_type(IMMUNE_CELL_TYPES.INTERFERON, Interferon);
+        this.register_tower_type(IMMUNE_CELL_TYPES.NEUTROPHIL, Neutrophil);
     }
 
     register_tower_type(type_name, tower_class) {

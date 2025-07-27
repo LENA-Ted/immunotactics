@@ -179,6 +179,8 @@
     align-items: center;
     gap: 10px;
     pointer-events: none;
+    width: auto;
+    max-width: 90vw;
 }
 
 .selection_pill {
@@ -189,6 +191,8 @@
     transition: opacity 0.5s ease, transform 0.5s ease;
     opacity: 0.5;
     transform: translateY(0px);
+    white-space: nowrap;
+    min-width: fit-content;
 }
 
 .selection_pill.selected {

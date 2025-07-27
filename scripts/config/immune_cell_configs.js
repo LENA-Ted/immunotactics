@@ -1,6 +1,6 @@
 const IMMUNE_CELL_CONFIGS = {
     B_CELL: {
-        cost: 30,
+        cost: 25,
         base_hp: 10,
         shoot_hp_cost: 1,
         shoot_interval_ms: 2000,
@@ -10,11 +10,11 @@ const IMMUNE_CELL_CONFIGS = {
         stroke_width: 2,
         range: null,
         projectile_count: 1,
-        projectile_damage: 10,
+        projectile_damage: 12,
         projectile_speed: 8
     },
     MAST_CELL: {
-        cost: 30,
+        cost: 25,
         base_hp: 10,
         shoot_hp_cost: 1,
         shoot_interval_ms: 1000,
@@ -29,7 +29,7 @@ const IMMUNE_CELL_CONFIGS = {
         cone_angle_degrees: 45
     },
     INTERFERON: {
-        cost: 30,
+        cost: 25,
         base_hp: 10,
         action_hp_cost: 1,
         action_interval_ms: 3000,
@@ -39,19 +39,32 @@ const IMMUNE_CELL_CONFIGS = {
         stroke_width: 2,
         range_factor: 2/3,
         interfered_duration_ms: 3000
+    },
+    NEUTROPHIL: {
+        cost: 25,
+        base_hp: 1,
+        radius: 15,
+        color: '#FF69B4',
+        stroke_color: '#ffffff',
+        stroke_width: 2,
+        base_damage: 100,
+        explosion_radius: 300,
+        countdown_duration_ms: 2000
     }
 };
 
 const IMMUNE_CELL_TYPES = {
     B_CELL: 'B_CELL',
     MAST_CELL: 'MAST_CELL',
-    INTERFERON: 'INTERFERON'
+    INTERFERON: 'INTERFERON',
+    NEUTROPHIL: 'NEUTROPHIL'
 };
 
 const IMMUNE_CELL_NAMES = {
     B_CELL: 'B-Cell',
     MAST_CELL: 'Mast Cell',
-    INTERFERON: 'Interferon'
+    INTERFERON: 'Interferon',
+    NEUTROPHIL: 'Neutrophil'
 };
 
 window.IMMUNE_CELL_CONFIGS = IMMUNE_CELL_CONFIGS;

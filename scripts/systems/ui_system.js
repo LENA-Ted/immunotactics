@@ -9,7 +9,8 @@ class UISystem {
         this.selection_elements = {
             1: document.getElementById('selection_1'),
             2: document.getElementById('selection_2'),
-            3: document.getElementById('selection_3')
+            3: document.getElementById('selection_3'),
+            4: document.getElementById('selection_4')
         };
         this.resource_containers = {
             cytokines: document.getElementById('cytokines_container'),
@@ -243,7 +244,8 @@ class UISystem {
         const selection_map = {
             [IMMUNE_CELL_TYPES.B_CELL]: 1,
             [IMMUNE_CELL_TYPES.MAST_CELL]: 2,
-            [IMMUNE_CELL_TYPES.INTERFERON]: 3
+            [IMMUNE_CELL_TYPES.INTERFERON]: 3,
+            [IMMUNE_CELL_TYPES.NEUTROPHIL]: 4
         };
 
         const selected_number = selection_map[selected_type];
