@@ -32,6 +32,10 @@ class IntensityRewardSystem {
         root.style.setProperty('--diagonal-stripes-duration', `${GAME_CONFIG.DIAGONAL_STRIPES_ANIMATION_DURATION_S}s`);
         root.style.setProperty('--reward-card-border-thickness', `${REWARD_CARD_CONFIG.BORDER_THICKNESS}px`);
         root.style.setProperty('--reward-card-adaptation-border-color', REWARD_CARD_CONFIG.ADAPTATION_BORDER_COLOR);
+        root.style.setProperty('--reward-card-description-height', `${REWARD_CARD_CONFIG.DESCRIPTION_HEIGHT}px`);
+        root.style.setProperty('--reward-card-name-container-height', `${REWARD_CARD_CONFIG.NAME_CONTAINER_HEIGHT}px`);
+        root.style.setProperty('--reward-card-name-font-size-base', `${REWARD_CARD_CONFIG.NAME_FONT_SIZE_BASE}em`);
+        root.style.setProperty('--reward-card-name-font-size-min', `${REWARD_CARD_CONFIG.NAME_FONT_SIZE_MIN}em`);
     }
 
     create_modal_elements() {
@@ -90,10 +94,14 @@ class IntensityRewardSystem {
         setTimeout(() => {
             if (this.intensity_up_text_element) {
                 this.intensity_up_text_element.classList.remove('flicker');
+                this.intensity_up_text_element.classList.remove('visible');
                 this.intensity_up_text_element.style.animationIterationCount = '';
                 this.intensity_up_text_element.style.animationDuration = '';
             }
-            this.show_modal();
+            
+            setTimeout(() => {
+                this.show_modal();
+            }, 200);
         }, INTENSITY_CONFIG.TELEGRAPH_DURATION_MS);
     }
 
@@ -160,6 +168,24 @@ class IntensityRewardSystem {
         const name_element = card_element.querySelector('.adaptation_name');
         if (name_element) {
             name_element.textContent = name;
+            this.adjust_name_font_size(name_element, name);
+        }
+    }
+
+    adjust_name_font_size(name_element, name) {
+        const base_font_size = REWARD_CARD_CONFIG.NAME_FONT_SIZE_BASE;
+        const min_font_size = REWARD_CARD_CONFIG.NAME_FONT_SIZE_MIN;
+        const max_length_for_base_size = 15;
+        const max_length_for_min_size = 25;
+
+        if (name.length <= max_length_for_base_size) {
+            name_element.style.fontSize = `${base_font_size}em`;
+        } else if (name.length <= max_length_for_min_size) {
+            const ratio = (name.length - max_length_for_base_size) / (max_length_for_min_size - max_length_for_base_size);
+            const font_size = base_font_size - (ratio * (base_font_size - min_font_size));
+            name_element.style.fontSize = `${font_size}em`;
+        } else {
+            name_element.style.fontSize = `${min_font_size}em`;
         }
     }
 
@@ -257,6 +283,10 @@ class IntensityRewardSystem {
         this.card_elements.forEach(card => {
             if (card) {
                 card.classList.remove('visible', 'selected', 'faded', 'generic');
+                const name_element = card.querySelector('.adaptation_name');
+                if (name_element) {
+                    name_element.style.fontSize = '';
+                }
             }
         });
 
@@ -300,6 +330,10 @@ class IntensityRewardSystem {
         this.card_elements.forEach(card => {
             if (card) {
                 card.classList.remove('visible', 'selected', 'faded', 'generic');
+                const name_element = card.querySelector('.adaptation_name');
+                if (name_element) {
+                    name_element.style.fontSize = '';
+                }
             }
         });
 

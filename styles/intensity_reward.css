@@ -1,6 +1,10 @@
 :root {
     --reward-card-border-thickness: 10px;
     --reward-card-adaptation-border-color: #4A90E2;
+    --reward-card-description-height: 120px;
+    --reward-card-name-container-height: 60px;
+    --reward-card-name-font-size-base: 1.4em;
+    --reward-card-name-font-size-min: 1.1em;
 }
 
 #intensity_reward_modal {
@@ -186,10 +190,19 @@
 
 .adaptation_name {
     color: #2c3e50;
-    font-size: 1.4em;
+    font-size: var(--reward-card-name-font-size-base);
     font-weight: 700;
     margin: 8px 0;
     flex-shrink: 0;
+    height: var(--reward-card-name-container-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
+    overflow: hidden;
+    word-wrap: break-word;
+    hyphens: auto;
 }
 
 .icon_placeholder {
@@ -207,7 +220,7 @@
     border: 2px solid #2c3e50;
     border-radius: 12px;
     padding: 12px;
-    height: 105px;
+    height: var(--reward-card-description-height);
     position: relative;
     z-index: 2;
     flex-shrink: 0;
