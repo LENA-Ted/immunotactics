@@ -4,7 +4,8 @@ class SelectionSystem {
         this.selection_map = {
             1: IMMUNE_CELL_TYPES.B_CELL,
             2: IMMUNE_CELL_TYPES.MAST_CELL,
-            3: IMMUNE_CELL_TYPES.INTERFERON
+            3: IMMUNE_CELL_TYPES.INTERFERON,
+            4: IMMUNE_CELL_TYPES.NEUTROPHIL
         };
         this.input_blocked = false;
         this.input_block_duration_ms = 500;
