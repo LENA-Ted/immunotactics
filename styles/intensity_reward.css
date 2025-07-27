@@ -5,6 +5,7 @@
     --reward-card-name-container-height: 60px;
     --reward-card-name-font-size-base: 1.4em;
     --reward-card-name-font-size-min: 1.1em;
+    --intensity-up-text-size: 4em;
 }
 
 #intensity_reward_modal {
@@ -37,13 +38,14 @@
     left: 50%;
     transform: translate(-50%, -50%);
     color: #F5F5DC;
-    font-size: 4em;
+    font-size: var(--intensity-up-text-size);
     font-weight: bold;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease-in-out;
     visibility: hidden;
     z-index: 11;
+    white-space: nowrap;
 }
 
 #intensity_up_text.visible {

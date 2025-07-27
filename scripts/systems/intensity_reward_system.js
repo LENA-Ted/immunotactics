@@ -36,6 +36,7 @@ class IntensityRewardSystem {
         root.style.setProperty('--reward-card-name-container-height', `${REWARD_CARD_CONFIG.NAME_CONTAINER_HEIGHT}px`);
         root.style.setProperty('--reward-card-name-font-size-base', `${REWARD_CARD_CONFIG.NAME_FONT_SIZE_BASE}em`);
         root.style.setProperty('--reward-card-name-font-size-min', `${REWARD_CARD_CONFIG.NAME_FONT_SIZE_MIN}em`);
+        root.style.setProperty('--intensity-up-text-size', `${REWARD_CARD_CONFIG.INTENSITY_UP_TEXT_SIZE}em`);
     }
 
     create_modal_elements() {
