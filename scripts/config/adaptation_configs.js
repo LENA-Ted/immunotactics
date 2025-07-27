@@ -2,9 +2,9 @@ const ADAPTATION_CONFIGS = {
     CYTOTOXIC_SURGE: {
         name: 'Cytotoxic Surge',
         effects: {
-            0: { damage_multiplier: 1.12 },
-            1: { damage_multiplier: 1.18 },
-            2: { damage_multiplier: 1.24 }
+            0: { damage_multiplier: 1.16 },
+            1: { damage_multiplier: 1.24 },
+            2: { damage_multiplier: 1.32 }
         },
         get descriptions() {
             return {
@@ -17,9 +17,9 @@ const ADAPTATION_CONFIGS = {
     REGENERATIVE_CYCLE: {
         name: 'Regenerative Cycle',
         effects: {
-            0: { core_heal_per_intensity: 1 },
-            1: { core_heal_per_intensity: 2 },
-            2: { core_heal_per_intensity: 3 }
+            0: { core_heal_per_intensity: 2 },
+            1: { core_heal_per_intensity: 3 },
+            2: { core_heal_per_intensity: 4 }
         },
         get descriptions() {
             return {
@@ -167,9 +167,9 @@ const ADAPTATION_CONFIGS = {
     EXTENDED_CHEMOTAXIS: {
         name: 'Extended Chemotaxis',
         effects: {
-            0: { range_multiplier: 1.12 },
-            1: { range_multiplier: 1.18 },
-            2: { range_multiplier: 1.24 }
+            0: { range_multiplier: 1.16 },
+            1: { range_multiplier: 1.24 },
+            2: { range_multiplier: 1.32 }
         },
         get descriptions() {
             return {
@@ -182,9 +182,9 @@ const ADAPTATION_CONFIGS = {
     NECROTROPHIC_REPAIR: {
         name: 'Necrotrophic Repair',
         effects: {
-            0: { hp_per_ten_kills: 1 },
-            1: { hp_per_ten_kills: 2 },
-            2: { hp_per_ten_kills: 3 }
+            0: { hp_per_ten_kills: 2 },
+            1: { hp_per_ten_kills: 3 },
+            2: { hp_per_ten_kills: 4 }
         },
         get descriptions() {
             return {
@@ -212,9 +212,9 @@ const ADAPTATION_CONFIGS = {
     HOMEOSTATIC_POTENTIATION: {
         name: 'Homeostatic Potentiation',
         effects: {
-            0: { damage_per_core_hp_percent: 0.02 },
-            1: { damage_per_core_hp_percent: 0.03 },
-            2: { damage_per_core_hp_percent: 0.04 }
+            0: { damage_per_core_hp_percent: 0.04 },
+            1: { damage_per_core_hp_percent: 0.06 },
+            2: { damage_per_core_hp_percent: 0.08 }
         },
         get descriptions() {
             return {
