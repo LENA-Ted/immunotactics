@@ -230,6 +230,48 @@ class CollisionSystem {
         }
     }
 
+    handle_explosion_damage(explosion_x, explosion_y, explosion_radius, damage, game_state) {
+        if (!game_state.enemies) {
+            return [];
+        }
+
+        const affected_enemies = game_state.enemies.filter(enemy => {
+            const distance = MathUtils.get_distance(explosion_x, explosion_y, enemy.x, enemy.y);
+            return distance <= explosion_radius;
+        });
+
+        const destroyed_enemies = [];
+
+        affected_enemies.forEach(enemy => {
+            const is_destroyed = enemy.take_damage(damage);
+            
+            if (game_state.damage_numbers) {
+                game_state.damage_numbers.push(new DamageNumber(enemy.x, enemy.y, damage));
+            }
+
+            if (is_destroyed) {
+                destroyed_enemies.push(enemy);
+                
+                if (game_state.effects) {
+                    game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));
+                }
+
+                if (game_state.resource_system) {
+                    game_state.resource_system.spawn_particles_from_enemy(enemy, game_state);
+                }
+
+                const enemy_index = game_state.enemies.indexOf(enemy);
+                if (enemy_index !== -1) {
+                    game_state.enemies.splice(enemy_index, 1);
+                }
+
+                this.handle_enemy_destroyed(game_state);
+            }
+        });
+
+        return destroyed_enemies;
+    }
+
     is_circle_collision(entity1, entity2) {
         const distance = MathUtils.get_distance(entity1.x, entity1.y, entity2.x, entity2.y);
         return distance < entity1.radius + entity2.radius;
