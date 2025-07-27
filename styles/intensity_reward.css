@@ -33,9 +33,9 @@
 
 #intensity_up_text {
     position: absolute;
-    top: 10%;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     color: #F5F5DC;
     font-size: 4em;
     font-weight: bold;
