@@ -1,6 +1,7 @@
 const ADAPTATION_CONFIGS = {
     CYTOTOXIC_SURGE: {
         name: 'Cytotoxic Surge',
+        key_property: 'damage_multiplier',
         effects: {
             0: { damage_multiplier: 1.16 },
             1: { damage_multiplier: 1.24 },
@@ -16,6 +17,7 @@ const ADAPTATION_CONFIGS = {
     },
     REGENERATIVE_CYCLE: {
         name: 'Regenerative Cycle',
+        key_property: 'core_heal_per_intensity',
         effects: {
             0: { core_heal_per_intensity: 2 },
             1: { core_heal_per_intensity: 3 },
@@ -31,6 +33,7 @@ const ADAPTATION_CONFIGS = {
     },
     HYPERPLASIA: {
         name: 'Hyperplasia',
+        key_property: 'max_hp_increase',
         effects: {
             0: { max_hp_increase: 1 },
             1: { max_hp_increase: 2 },
@@ -46,6 +49,7 @@ const ADAPTATION_CONFIGS = {
     },
     NECROTIC_RECYCLING: {
         name: 'Necrotic Recycling',
+        key_property: 'energy_refund_percent',
         effects: {
             0: { energy_refund_percent: 0.08 },
             1: { energy_refund_percent: 0.12 },
@@ -61,6 +65,7 @@ const ADAPTATION_CONFIGS = {
     },
     ADRENAL_RESPONSE: {
         name: 'Adrenal Response',
+        key_property: 'energy_cost_reduction',
         effects: {
             0: { energy_cost_reduction: 0.16 },
             1: { energy_cost_reduction: 0.24 },
@@ -76,6 +81,7 @@ const ADAPTATION_CONFIGS = {
     },
     MITOCHONDRIAL_BOOST: {
         name: 'Mitochondrial Boost',
+        key_property: 'energy_regen_multiplier',
         effects: {
             0: { energy_regen_multiplier: 1.08 },
             1: { energy_regen_multiplier: 1.12 },
@@ -91,6 +97,7 @@ const ADAPTATION_CONFIGS = {
     },
     CYTOKINE_INFUSION: {
         name: 'Cytokine Infusion',
+        key_property: 'cytokine_double_chance',
         effects: {
             0: { cytokine_double_chance: 0.10 },
             1: { cytokine_double_chance: 0.15 },
@@ -106,6 +113,7 @@ const ADAPTATION_CONFIGS = {
     },
     ADJUVANT_BOLUS: {
         name: 'Adjuvant Bolus',
+        key_property: 'adjuvant_double_chance',
         effects: {
             0: { adjuvant_double_chance: 0.10 },
             1: { adjuvant_double_chance: 0.15 },
@@ -121,6 +129,7 @@ const ADAPTATION_CONFIGS = {
     },
     SPONTANEOUS_GENERATION: {
         name: 'Spontaneous Generation',
+        key_property: 'free_placement_chance',
         effects: {
             0: { free_placement_chance: 0.10 },
             1: { free_placement_chance: 0.15 },
@@ -136,6 +145,7 @@ const ADAPTATION_CONFIGS = {
     },
     CHRONIC_INFLAMMATION: {
         name: 'Chronic Inflammation',
+        key_property: 'status_effect_duration_multiplier',
         effects: {
             0: { status_effect_duration_multiplier: 1.16 },
             1: { status_effect_duration_multiplier: 1.24 },
@@ -151,6 +161,7 @@ const ADAPTATION_CONFIGS = {
     },
     CATABOLIC_CONVERSION: {
         name: 'Catabolic Conversion',
+        key_property: 'energy_per_kill',
         effects: {
             0: { energy_per_kill: 2 },
             1: { energy_per_kill: 3 },
@@ -166,6 +177,7 @@ const ADAPTATION_CONFIGS = {
     },
     EXTENDED_CHEMOTAXIS: {
         name: 'Extended Chemotaxis',
+        key_property: 'range_multiplier',
         effects: {
             0: { range_multiplier: 1.16 },
             1: { range_multiplier: 1.24 },
@@ -181,6 +193,7 @@ const ADAPTATION_CONFIGS = {
     },
     NECROTROPHIC_REPAIR: {
         name: 'Necrotrophic Repair',
+        key_property: 'hp_per_ten_kills',
         effects: {
             0: { hp_per_ten_kills: 2 },
             1: { hp_per_ten_kills: 3 },
@@ -196,6 +209,7 @@ const ADAPTATION_CONFIGS = {
     },
     BIOMASS_INJECTION: {
         name: 'Biomass Injection',
+        key_property: 'biomass_double_chance',
         effects: {
             0: { biomass_double_chance: 0.10 },
             1: { biomass_double_chance: 0.15 },
@@ -211,6 +225,7 @@ const ADAPTATION_CONFIGS = {
     },
     HOMEOSTATIC_POTENTIATION: {
         name: 'Homeostatic Potentiation',
+        key_property: 'damage_per_core_hp_percent',
         effects: {
             0: { damage_per_core_hp_percent: 0.04 },
             1: { damage_per_core_hp_percent: 0.06 },
@@ -226,6 +241,7 @@ const ADAPTATION_CONFIGS = {
     },
     NUTRIENT_GLUT: {
         name: 'Nutrient Glut',
+        key_property: 'biomass_gain',
         effects: {
             0: { biomass_gain: 200 },
             1: { biomass_gain: 200 },
@@ -241,6 +257,7 @@ const ADAPTATION_CONFIGS = {
     },
     CYTOKINE_CACHE: {
         name: 'Cytokine Cache',
+        key_property: 'cytokine_gain',
         effects: {
             0: { cytokine_gain: 100 },
             1: { cytokine_gain: 100 },
@@ -256,6 +273,7 @@ const ADAPTATION_CONFIGS = {
     },
     ADJUVANT_HOARD: {
         name: 'Adjuvant Hoard',
+        key_property: 'adjuvant_gain',
         effects: {
             0: { adjuvant_gain: 100 },
             1: { adjuvant_gain: 100 },
