@@ -6,6 +6,7 @@ class IntensityRewardSystem {
         this.modal_element = null;
         this.card_elements = [];
         this.intensity_up_text_element = null;
+        this.projected_level_circles = [];
     }
 
     initialize() {
@@ -37,6 +38,16 @@ class IntensityRewardSystem {
         root.style.setProperty('--reward-card-name-font-size-base', `${REWARD_CARD_CONFIG.NAME_FONT_SIZE_BASE}em`);
         root.style.setProperty('--reward-card-name-font-size-min', `${REWARD_CARD_CONFIG.NAME_FONT_SIZE_MIN}em`);
         root.style.setProperty('--intensity-up-text-size', `${REWARD_CARD_CONFIG.INTENSITY_UP_TEXT_SIZE}em`);
+        
+        root.style.setProperty('--outline-projection-growth-duration', `${REWARD_CARD_CONFIG.OUTLINE_PROJECTION_GROWTH_DURATION_MS}ms`);
+        root.style.setProperty('--outline-projection-fade-duration', `${REWARD_CARD_CONFIG.OUTLINE_PROJECTION_FADE_DURATION_MS}ms`);
+        root.style.setProperty('--outline-projection-max-scale', REWARD_CARD_CONFIG.OUTLINE_PROJECTION_MAX_SCALE);
+        
+        root.style.setProperty('--level-circle-pulse-duration', `${REWARD_CARD_CONFIG.LEVEL_CIRCLE_PULSE_DURATION_MS}ms`);
+        root.style.setProperty('--level-circle-pulse-delay', `${REWARD_CARD_CONFIG.LEVEL_CIRCLE_PULSE_DELAY_MS}ms`);
+        
+        root.style.setProperty('--card-zoom-scale', REWARD_CARD_CONFIG.CARD_ZOOM_SCALE);
+        root.style.setProperty('--card-zoom-duration', `${REWARD_CARD_CONFIG.CARD_ZOOM_DURATION_MS}ms`);
     }
 
     create_modal_elements() {
@@ -134,13 +145,103 @@ class IntensityRewardSystem {
 
         const is_generic_adaptation = this.is_generic_adaptation(adaptation_type);
         const current_adaptation = window.game_state.adaptation_system.get_adaptation(adaptation_type);
-        const target_level = current_adaptation ? current_adaptation.get_level() + 1 : 0;
-        const description = adaptation_config.descriptions[target_level] || adaptation_config.descriptions[0];
+        const current_level = current_adaptation ? current_adaptation.get_level() : -1;
+        const target_level = current_level + 1;
+        
+        const enhanced_description = this.get_enhanced_description(adaptation_config, adaptation_type, current_level, target_level);
 
         this.update_level_circles(card_element, target_level, is_generic_adaptation);
         this.update_adaptation_name(card_element, adaptation_config.name);
-        this.update_description(card_element, description);
+        this.update_description(card_element, enhanced_description);
         this.update_card_classes(card_element, is_generic_adaptation);
+    }
+
+    get_enhanced_description(adaptation_config, adaptation_type, current_level, target_level) {
+        const base_description = adaptation_config.descriptions[target_level] || adaptation_config.descriptions[0];
+        
+        if (current_level === -1) {
+            return this.add_bold_formatting_to_description(base_description, adaptation_config.key_property, adaptation_config.effects[target_level]);
+        }
+        
+        return this.add_level_up_formatting_to_description(base_description, adaptation_config, current_level, target_level);
+    }
+
+    add_bold_formatting_to_description(description, key_property, effect_data) {
+        if (!key_property || !effect_data || !effect_data.hasOwnProperty(key_property)) {
+            return description;
+        }
+
+        const key_value = effect_data[key_property];
+        let formatted_value;
+
+        if (this.is_percentage_property(key_property)) {
+            if (key_property.includes('multiplier')) {
+                formatted_value = `${Math.round((key_value - 1) * 100)}%`;
+            } else {
+                formatted_value = `${Math.round(key_value * 100)}%`;
+            }
+        } else {
+            formatted_value = key_value.toString();
+        }
+
+        return this.replace_value_in_description(description, formatted_value);
+    }
+
+    add_level_up_formatting_to_description(description, adaptation_config, current_level, target_level) {
+        const current_effect = adaptation_config.effects[current_level];
+        const target_effect = adaptation_config.effects[target_level];
+        const key_property = adaptation_config.key_property;
+
+        if (!current_effect || !target_effect || !key_property) {
+            return this.add_bold_formatting_to_description(description, key_property, target_effect);
+        }
+
+        const current_value = current_effect[key_property];
+        const target_value = target_effect[key_property];
+
+        let current_formatted, target_formatted;
+
+        if (this.is_percentage_property(key_property)) {
+            if (key_property.includes('multiplier')) {
+                current_formatted = `${Math.round((current_value - 1) * 100)}%`;
+                target_formatted = `${Math.round((target_value - 1) * 100)}%`;
+            } else {
+                current_formatted = `${Math.round(current_value * 100)}%`;
+                target_formatted = `${Math.round(target_value * 100)}%`;
+            }
+        } else {
+            current_formatted = current_value.toString();
+            target_formatted = target_value.toString();
+        }
+
+        const change_pattern = `<span class="value_change">${current_formatted}<span class="arrow">→</span>${target_formatted}</span>`;
+        return this.replace_value_in_description(description, target_formatted, change_pattern);
+    }
+
+    is_percentage_property(key_property) {
+        return key_property.includes('percent') || 
+               key_property.includes('chance') || 
+               key_property.includes('multiplier') ||
+               key_property.includes('reduction') ||
+               key_property.endsWith('_percent') ||
+               key_property.endsWith('_chance');
+    }
+
+    replace_value_in_description(description, search_value, replacement_value = null) {
+        const replacement = replacement_value || `<span class="bold_value">${search_value}</span>`;
+        
+        if (description.includes(search_value)) {
+            return description.replace(search_value, replacement);
+        }
+        
+        const escaped_search = search_value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`\\b${escaped_search}\\b`, 'g');
+        
+        if (regex.test(description)) {
+            return description.replace(regex, replacement);
+        }
+        
+        return description;
     }
 
     update_level_circles(card_element, target_level, is_generic_adaptation) {
@@ -154,13 +255,16 @@ class IntensityRewardSystem {
             card_element.classList.remove('generic');
         }
 
-        const filled_circles = target_level + 1;
+        const filled_circles = target_level;
+        const projected_circle_index = target_level;
 
         level_circles.forEach((circle, index) => {
+            circle.classList.remove('filled', 'projected', 'instantly_filled');
+            
             if (index < filled_circles) {
                 circle.classList.add('filled');
-            } else {
-                circle.classList.remove('filled');
+            } else if (index === projected_circle_index) {
+                circle.classList.add('projected');
             }
         });
     }
@@ -193,7 +297,7 @@ class IntensityRewardSystem {
     update_description(card_element, description) {
         const description_element = card_element.querySelector('.adaptation_description');
         if (description_element) {
-            description_element.textContent = description;
+            description_element.innerHTML = description;
         }
     }
 
@@ -243,6 +347,8 @@ class IntensityRewardSystem {
         const selected_adaptation = this.current_choices[card_index];
         const selected_card = this.card_elements[card_index];
 
+        this.create_outline_projection(selected_card);
+        this.instantly_fill_projected_circle(selected_card);
         this.fade_out_other_cards(card_index);
         this.animate_selected_card(selected_card);
 
@@ -250,6 +356,44 @@ class IntensityRewardSystem {
             this.apply_selected_adaptation(selected_adaptation);
             this.hide_modal();
         }, 1000);
+    }
+
+    create_outline_projection(card_element) {
+        const cards_container = document.getElementById('reward_cards_container');
+        if (!cards_container) {
+            return;
+        }
+
+        const outline = document.createElement('div');
+        outline.classList.add('card_outline_projection');
+        
+        const card_rect = card_element.getBoundingClientRect();
+        const container_rect = cards_container.getBoundingClientRect();
+        
+        const relative_left = card_rect.left - container_rect.left;
+        const relative_top = card_rect.top - container_rect.top;
+        
+        outline.style.position = 'absolute';
+        outline.style.left = `${relative_left}px`;
+        outline.style.top = `${relative_top}px`;
+        outline.style.width = `${card_rect.width}px`;
+        outline.style.height = `${card_rect.height}px`;
+        
+        cards_container.appendChild(outline);
+
+        setTimeout(() => {
+            if (outline.parentNode) {
+                outline.parentNode.removeChild(outline);
+            }
+        }, REWARD_CARD_CONFIG.OUTLINE_PROJECTION_GROWTH_DURATION_MS + REWARD_CARD_CONFIG.OUTLINE_PROJECTION_FADE_DURATION_MS);
+    }
+
+    instantly_fill_projected_circle(card_element) {
+        const projected_circle = card_element.querySelector('.level_circle.projected');
+        if (projected_circle) {
+            projected_circle.classList.remove('projected');
+            projected_circle.classList.add('instantly_filled');
+        }
     }
 
     fade_out_other_cards(selected_index) {
@@ -288,6 +432,11 @@ class IntensityRewardSystem {
                 if (name_element) {
                     name_element.style.fontSize = '';
                 }
+                
+                const circles = card.querySelectorAll('.level_circle');
+                circles.forEach(circle => {
+                    circle.classList.remove('filled', 'projected', 'instantly_filled');
+                });
             }
         });
 
@@ -312,6 +461,7 @@ class IntensityRewardSystem {
         this.is_modal_active = false;
         this.current_choices = [];
         this.is_selection_in_progress = false;
+        this.projected_level_circles = [];
         
         if (window.game_state) {
             window.game_state.is_game_paused = false;
@@ -335,6 +485,11 @@ class IntensityRewardSystem {
                 if (name_element) {
                     name_element.style.fontSize = '';
                 }
+                
+                const circles = card.querySelectorAll('.level_circle');
+                circles.forEach(circle => {
+                    circle.classList.remove('filled', 'projected', 'instantly_filled');
+                });
             }
         });
 
