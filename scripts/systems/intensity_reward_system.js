@@ -174,7 +174,7 @@ class IntensityRewardSystem {
         const key_value = effect_data[key_property];
         let formatted_value;
 
-        if (key_property.includes('percent') || key_property.includes('chance') || key_property.includes('multiplier')) {
+        if (this.is_percentage_property(key_property)) {
             if (key_property.includes('multiplier')) {
                 formatted_value = `${Math.round((key_value - 1) * 100)}%`;
             } else {
@@ -184,7 +184,7 @@ class IntensityRewardSystem {
             formatted_value = key_value.toString();
         }
 
-        return description.replace(formatted_value, `<span class="bold_value">${formatted_value}</span>`);
+        return this.replace_value_in_description(description, formatted_value);
     }
 
     add_level_up_formatting_to_description(description, adaptation_config, current_level, target_level) {
@@ -201,7 +201,7 @@ class IntensityRewardSystem {
 
         let current_formatted, target_formatted;
 
-        if (key_property.includes('percent') || key_property.includes('chance') || key_property.includes('multiplier')) {
+        if (this.is_percentage_property(key_property)) {
             if (key_property.includes('multiplier')) {
                 current_formatted = `${Math.round((current_value - 1) * 100)}%`;
                 target_formatted = `${Math.round((target_value - 1) * 100)}%`;
@@ -215,7 +215,33 @@ class IntensityRewardSystem {
         }
 
         const change_pattern = `<span class="value_change">${current_formatted}<span class="arrow">→</span>${target_formatted}</span>`;
-        return description.replace(target_formatted, change_pattern);
+        return this.replace_value_in_description(description, target_formatted, change_pattern);
+    }
+
+    is_percentage_property(key_property) {
+        return key_property.includes('percent') || 
+               key_property.includes('chance') || 
+               key_property.includes('multiplier') ||
+               key_property.includes('reduction') ||
+               key_property.endsWith('_percent') ||
+               key_property.endsWith('_chance');
+    }
+
+    replace_value_in_description(description, search_value, replacement_value = null) {
+        const replacement = replacement_value || `<span class="bold_value">${search_value}</span>`;
+        
+        if (description.includes(search_value)) {
+            return description.replace(search_value, replacement);
+        }
+        
+        const escaped_search = search_value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`\\b${escaped_search}\\b`, 'g');
+        
+        if (regex.test(description)) {
+            return description.replace(regex, replacement);
+        }
+        
+        return description;
     }
 
     update_level_circles(card_element, target_level, is_generic_adaptation) {
