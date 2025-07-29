@@ -81,6 +81,7 @@
     gap: 30px;
     align-items: flex-start;
     justify-content: center;
+    position: relative;
 }
 
 .reward_card {
@@ -167,32 +168,35 @@
 
 .card_outline_projection {
     position: absolute;
-    top: calc(-1 * var(--reward-card-border-thickness));
-    left: calc(-1 * var(--reward-card-border-thickness));
-    width: calc(100% + 2 * var(--reward-card-border-thickness));
-    height: calc(100% + 2 * var(--reward-card-border-thickness));
     border: var(--reward-card-border-thickness) solid var(--reward-card-adaptation-border-color);
     border-radius: 20px;
     pointer-events: none;
-    z-index: 10;
+    z-index: 20;
+    transform-origin: center center;
     animation: outline_projection_animation calc(var(--outline-projection-growth-duration) + var(--outline-projection-fade-duration)) ease-out forwards;
+    box-sizing: border-box;
 }
 
 @keyframes outline_projection_animation {
     0% {
         transform: scale(1);
-        opacity: 1;
+        opacity: 0.9;
         box-shadow: 0 0 0 rgba(74, 144, 226, 0.8);
     }
-    30% {
-        transform: scale(var(--outline-projection-max-scale));
-        opacity: 0.9;
-        box-shadow: 0 0 20px rgba(74, 144, 226, 0.6);
+    25% {
+        transform: scale(1.1);
+        opacity: 0.8;
+        box-shadow: 0 0 15px rgba(74, 144, 226, 0.7);
     }
-    60% {
+    50% {
         transform: scale(var(--outline-projection-max-scale));
         opacity: 0.6;
-        box-shadow: 0 0 40px rgba(74, 144, 226, 0.4);
+        box-shadow: 0 0 30px rgba(74, 144, 226, 0.5);
+    }
+    75% {
+        transform: scale(var(--outline-projection-max-scale));
+        opacity: 0.3;
+        box-shadow: 0 0 45px rgba(74, 144, 226, 0.3);
     }
     100% {
         transform: scale(var(--outline-projection-max-scale));

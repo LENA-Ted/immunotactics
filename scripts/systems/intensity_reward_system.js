@@ -359,9 +359,27 @@ class IntensityRewardSystem {
     }
 
     create_outline_projection(card_element) {
+        const cards_container = document.getElementById('reward_cards_container');
+        if (!cards_container) {
+            return;
+        }
+
         const outline = document.createElement('div');
         outline.classList.add('card_outline_projection');
-        card_element.appendChild(outline);
+        
+        const card_rect = card_element.getBoundingClientRect();
+        const container_rect = cards_container.getBoundingClientRect();
+        
+        const relative_left = card_rect.left - container_rect.left;
+        const relative_top = card_rect.top - container_rect.top;
+        
+        outline.style.position = 'absolute';
+        outline.style.left = `${relative_left}px`;
+        outline.style.top = `${relative_top}px`;
+        outline.style.width = `${card_rect.width}px`;
+        outline.style.height = `${card_rect.height}px`;
+        
+        cards_container.appendChild(outline);
 
         setTimeout(() => {
             if (outline.parentNode) {
