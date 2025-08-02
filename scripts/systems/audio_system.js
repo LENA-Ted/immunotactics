@@ -5,7 +5,7 @@ const AUDIO_CONFIG = {
         DAMAGE_CORE: 'sfx_damage_core',
         DESTROY_CORE: 'sfx_destroy_core',
         DESTROY_ENEMY: 'sfx_destroy_enemy',
-        EXPLOSION: 'sfx_explosion',
+        EXPLOSION: 'sfx_explode',
         HIT_PROJECTILE: 'sfx_hit_projectile',
         LEVELUP_INTENSITY: 'sfx_levelup_intensity',
         PICK_REWARD: 'sfx_pick_reward',
@@ -142,6 +142,26 @@ class AudioSystem {
                 }
             });
         });
+    }
+
+    unlock_audio_context() {
+        if (!this.is_audio_enabled || !this.is_initialized) {
+            return;
+        }
+
+        const test_audio = this.audio_elements.values().next().value;
+        if (test_audio && test_audio.length > 0) {
+            const audio = test_audio[0];
+            const play_promise = audio.play();
+            if (play_promise) {
+                play_promise.then(() => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }).catch(() => {
+                    
+                });
+            }
+        }
     }
 
     reset() {

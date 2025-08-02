@@ -24,12 +24,12 @@ class Game {
         this.game_state = null;
     }
 
-    initialize() {
+    async initialize() {
         this.set_canvas_sizes();
         this.create_factories();
         this.create_systems();
         this.create_initial_game_state();
-        this.setup_systems();
+        await this.setup_systems();
         this.is_initialized = true;
     }
 
@@ -106,13 +106,18 @@ class Game {
         };
     }
 
-    setup_systems() {
+    async setup_systems() {
         this.ui_system.initialize();
         this.input_system.initialize();
         this.selection_system.initialize();
         this.intensity_reward_system.initialize();
         this.pathogen_system.initialize();
-        this.audio_system.initialize();
+        
+        try {
+            await this.audio_system.initialize();
+        } catch (error) {
+            console.warn('Audio initialization failed, continuing without audio:', error);
+        }
 
         const systems = {
             spawn: this.spawn_system,
@@ -133,9 +138,9 @@ class Game {
         this.game_loop.initialize(systems, this.game_state);
     }
 
-    start() {
+    async start() {
         if (!this.is_initialized) {
-            this.initialize();
+            await this.initialize();
         }
 
         this.reset_game_state();
@@ -222,9 +227,9 @@ class Game {
         }
     }
 
-    restart() {
+    async restart() {
         this.stop();
-        this.start();
+        await this.start();
     }
 
     is_running() {
@@ -234,11 +239,11 @@ class Game {
 
 let game_instance = null;
 
-function init() {
+async function init() {
     if (!game_instance) {
         game_instance = new Game();
     }
-    game_instance.restart();
+    await game_instance.restart();
 }
 
 function handle_play_again_click(event) {
