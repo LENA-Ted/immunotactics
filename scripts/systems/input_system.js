@@ -155,6 +155,10 @@ class InputSystem {
             }
             window.game_state.towers.push(tower);
             
+            if (window.game_state.audio_system) {
+                window.game_state.audio_system.play_sound('PLACE_TOWER');
+            }
+            
             if (!window.game_state.player.is_in_free_placement_state()) {
                 window.game_state.player.check_spontaneous_generation();
             }

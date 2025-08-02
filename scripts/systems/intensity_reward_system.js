@@ -347,6 +347,10 @@ class IntensityRewardSystem {
         const selected_adaptation = this.current_choices[card_index];
         const selected_card = this.card_elements[card_index];
 
+        if (window.game_state && window.game_state.audio_system) {
+            window.game_state.audio_system.play_sound('PICK_REWARD');
+        }
+
         this.create_outline_projection(selected_card);
         this.instantly_fill_projected_circle(selected_card);
         this.fade_out_other_cards(card_index);

@@ -96,6 +96,7 @@ class SpawnSystem {
 
         if (enemy && window.game_state && window.game_state.enemies) {
             window.game_state.enemies.push(enemy);
+            this.play_spawn_sound();
         }
 
         return enemy;
@@ -124,9 +125,16 @@ class SpawnSystem {
 
         if (enemy && window.game_state && window.game_state.enemies) {
             window.game_state.enemies.push(enemy);
+            this.play_spawn_sound();
         }
 
         return enemy;
+    }
+
+    play_spawn_sound() {
+        if (window.game_state && window.game_state.audio_system) {
+            window.game_state.audio_system.play_sound('SPAWN_ENEMY');
+        }
     }
 
     get_spawn_group_number() {
@@ -154,6 +162,7 @@ class SpawnSystem {
 
         if (enemy && window.game_state && window.game_state.enemies) {
             window.game_state.enemies.push(enemy);
+            this.play_spawn_sound();
         }
 
         return enemy;
