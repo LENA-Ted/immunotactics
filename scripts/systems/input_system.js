@@ -10,6 +10,7 @@ class InputSystem {
             error_timer: 0
         };
         this.is_initialized = false;
+        this.audio_unlocked = false;
     }
 
     initialize() {
@@ -42,6 +43,8 @@ class InputSystem {
     }
 
     handle_mouse_click(event) {
+        this.unlock_audio_context();
+
         if (!window.game_state || window.game_state.is_game_over) {
             return;
         }
@@ -59,6 +62,7 @@ class InputSystem {
 
     handle_right_click(event) {
         event.preventDefault();
+        this.unlock_audio_context();
 
         if (!window.game_state || window.game_state.is_game_over) {
             return;
@@ -73,6 +77,17 @@ class InputSystem {
         }
 
         this.attempt_activate_phenotype();
+    }
+
+    unlock_audio_context() {
+        if (this.audio_unlocked) {
+            return;
+        }
+
+        if (window.game_state && window.game_state.audio_system) {
+            window.game_state.audio_system.unlock_audio_context();
+            this.audio_unlocked = true;
+        }
     }
 
     attempt_activate_phenotype() {
@@ -154,6 +169,10 @@ class InputSystem {
                 tower.update_range();
             }
             window.game_state.towers.push(tower);
+            
+            if (window.game_state.audio_system) {
+                window.game_state.audio_system.play_sound('PLACE_TOWER');
+            }
             
             if (!window.game_state.player.is_in_free_placement_state()) {
                 window.game_state.player.check_spontaneous_generation();

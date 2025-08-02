@@ -91,11 +91,19 @@ class CollisionSystem {
         const damage = projectile.get_damage();
         const is_enemy_destroyed = enemy.take_damage(damage);
 
+        if (game_state.audio_system) {
+            game_state.audio_system.play_sound('HIT_PROJECTILE');
+        }
+
         game_state.damage_numbers.push(new DamageNumber(enemy.x, enemy.y, damage));
 
         game_state.projectiles.splice(projectile_index, 1);
 
         if (is_enemy_destroyed) {
+            if (game_state.audio_system) {
+                game_state.audio_system.play_sound('DESTROY_ENEMY');
+            }
+
             game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));
             
             if (game_state.resource_system) {
@@ -147,6 +155,10 @@ class CollisionSystem {
         }
 
         if (is_pathogen_destroyed) {
+            if (game_state.audio_system) {
+                game_state.audio_system.play_sound('DESTROY_ENEMY');
+            }
+
             game_state.effects.push(new PopEffect(pathogen.x, pathogen.y, pathogen.color));
             game_state.enemies.splice(pathogen_index, 1);
             this.handle_enemy_destroyed(game_state);
@@ -160,6 +172,14 @@ class CollisionSystem {
 
     handle_enemy_hit_core(enemy, core, enemy_index, game_state) {
         const core_destroyed = core.take_damage(1);
+        
+        if (game_state.audio_system) {
+            game_state.audio_system.play_sound('DAMAGE_CORE');
+        }
+
+        if (core_destroyed && game_state.audio_system) {
+            game_state.audio_system.play_sound('DESTROY_CORE');
+        }
         
         game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));
         
@@ -213,6 +233,10 @@ class CollisionSystem {
         );
         game_state.intensity_level_pulsate.trigger();
 
+        if (game_state.audio_system) {
+            game_state.audio_system.play_sound('LEVELUP_INTENSITY');
+        }
+
         this.apply_regenerative_cycle_healing(game_state);
         this.trigger_intensity_reward_modal(game_state);
     }
@@ -251,6 +275,10 @@ class CollisionSystem {
 
             if (is_destroyed) {
                 destroyed_enemies.push(enemy);
+                
+                if (game_state.audio_system) {
+                    game_state.audio_system.play_sound('DESTROY_ENEMY');
+                }
                 
                 if (game_state.effects) {
                     game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));

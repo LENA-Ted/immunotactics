@@ -40,6 +40,9 @@ class MastCell extends BaseTower {
     shoot_cone() {
         const target = this.find_target();
         if (target) {
+            if (window.game_state && window.game_state.audio_system) {
+                window.game_state.audio_system.play_sound('SHOOT_PROJECTILE');
+            }
             this.create_cone_projectiles(target);
         }
     }
