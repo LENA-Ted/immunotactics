@@ -96,6 +96,10 @@ class Neutrophil extends BaseTower {
         this.has_exploded = true;
         this.hp = 0;
         
+        if (window.game_state && window.game_state.audio_system) {
+            window.game_state.audio_system.play_sound('EXPLOSION');
+        }
+        
         this.create_explosion_effect();
         this.trigger_screen_shake();
         this.deal_explosion_damage();
@@ -177,6 +181,10 @@ class Neutrophil extends BaseTower {
         }
 
         if (is_destroyed) {
+            if (window.game_state && window.game_state.audio_system) {
+                window.game_state.audio_system.play_sound('DESTROY_ENEMY');
+            }
+
             this.handle_enemy_destroyed(enemy);
         }
     }
@@ -232,6 +240,10 @@ class Neutrophil extends BaseTower {
         
         if (window.game_state.intensity_level_pulsate) {
             window.game_state.intensity_level_pulsate.trigger();
+        }
+
+        if (window.game_state.audio_system) {
+            window.game_state.audio_system.play_sound('LEVELUP_INTENSITY');
         }
 
         if (window.game_state.adaptation_system) {

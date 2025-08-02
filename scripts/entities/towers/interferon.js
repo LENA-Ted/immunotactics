@@ -26,6 +26,10 @@ class Interferon extends BaseTower {
     }
 
     release_wave() {
+        if (window.game_state && window.game_state.audio_system) {
+            window.game_state.audio_system.play_sound('PROJECT_WAVE');
+        }
+
         this.create_wave_effect();
         this.apply_interfered_to_enemies();
     }
