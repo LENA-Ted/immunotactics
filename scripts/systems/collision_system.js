@@ -45,7 +45,7 @@ class CollisionSystem {
                     if (enemy.is_pathogen()) {
                         this.handle_pathogen_hit_tower(enemy, tower, i, j, game_state);
                     } else {
-                        this.handle_enemy_hit_tower(enemy, tower, i, j, game_state);
+                        this.handle_microbe_hit_tower(enemy, tower, i, j, game_state);
                     }
                     break;
                 }
@@ -115,17 +115,29 @@ class CollisionSystem {
         }
     }
 
-    handle_enemy_hit_tower(enemy, tower, enemy_index, tower_index, game_state) {
-        game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));
+    handle_microbe_hit_tower(microbe, tower, microbe_index, tower_index, game_state) {
+        if (tower.can_resist_collision()) {
+            game_state.effects.push(new PopEffect(microbe.x, microbe.y, microbe.color));
+            
+            if (game_state.resource_system) {
+                game_state.resource_system.spawn_particles_from_enemy(microbe, game_state);
+            }
+            
+            game_state.enemies.splice(microbe_index, 1);
+            this.handle_enemy_destroyed(game_state);
+            return;
+        }
+
+        game_state.effects.push(new PopEffect(microbe.x, microbe.y, microbe.color));
         game_state.effects.push(new PopEffect(tower.x, tower.y, '#cccccc'));
 
         if (game_state.resource_system) {
-            game_state.resource_system.spawn_particles_from_enemy(enemy, game_state);
+            game_state.resource_system.spawn_particles_from_enemy(microbe, game_state);
         }
 
         this.apply_necrotic_recycling_refund(tower, game_state);
 
-        game_state.enemies.splice(enemy_index, 1);
+        game_state.enemies.splice(microbe_index, 1);
         game_state.towers.splice(tower_index, 1);
 
         if (window.game_state && window.game_state.last_tower_damage_time) {
