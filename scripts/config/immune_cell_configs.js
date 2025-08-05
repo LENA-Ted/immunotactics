@@ -11,7 +11,9 @@ const IMMUNE_CELL_CONFIGS = {
         range: null,
         projectile_count: 1,
         projectile_damage: 12,
-        projectile_speed: 8
+        projectile_speed: 8,
+        collision_behavior: 'DESTROY_ON_CONTACT',
+        targeting_behavior: 'DIRECTIONAL'
     },
     MAST_CELL: {
         cost: 25,
@@ -26,7 +28,9 @@ const IMMUNE_CELL_CONFIGS = {
         projectile_count: 5,
         projectile_damage: 6,
         projectile_speed: 8,
-        cone_angle_degrees: 45
+        cone_angle_degrees: 45,
+        collision_behavior: 'DESTROY_ON_CONTACT',
+        targeting_behavior: 'DIRECTIONAL'
     },
     INTERFERON: {
         cost: 25,
@@ -38,7 +42,9 @@ const IMMUNE_CELL_CONFIGS = {
         stroke_color: '#ffffff',
         stroke_width: 2,
         range_factor: 2/3,
-        interfered_duration_ms: 3000
+        interfered_duration_ms: 3000,
+        collision_behavior: 'DESTROY_ON_CONTACT',
+        targeting_behavior: 'NON_DIRECTIONAL'
     },
     NEUTROPHIL: {
         cost: 25,
@@ -49,7 +55,9 @@ const IMMUNE_CELL_CONFIGS = {
         stroke_width: 2,
         base_damage: 100,
         explosion_radius: 300,
-        countdown_duration_ms: 2000
+        countdown_duration_ms: 2000,
+        collision_behavior: 'ACTIVATE_ON_CONTACT',
+        targeting_behavior: 'NON_DIRECTIONAL'
     }
 };
 
@@ -67,6 +75,18 @@ const IMMUNE_CELL_NAMES = {
     NEUTROPHIL: 'Neutrophil'
 };
 
+const COLLISION_BEHAVIORS = {
+    DESTROY_ON_CONTACT: 'DESTROY_ON_CONTACT',
+    ACTIVATE_ON_CONTACT: 'ACTIVATE_ON_CONTACT'
+};
+
+const TARGETING_BEHAVIORS = {
+    DIRECTIONAL: 'DIRECTIONAL',
+    NON_DIRECTIONAL: 'NON_DIRECTIONAL'
+};
+
 window.IMMUNE_CELL_CONFIGS = IMMUNE_CELL_CONFIGS;
 window.IMMUNE_CELL_TYPES = IMMUNE_CELL_TYPES;
 window.IMMUNE_CELL_NAMES = IMMUNE_CELL_NAMES;
+window.COLLISION_BEHAVIORS = COLLISION_BEHAVIORS;
+window.TARGETING_BEHAVIORS = TARGETING_BEHAVIORS;
