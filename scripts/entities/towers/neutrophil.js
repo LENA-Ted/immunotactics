@@ -107,7 +107,13 @@ class Neutrophil extends BaseTower {
 
     create_explosion_effect() {
         if (window.game_state && window.game_state.effects) {
-            const explosion = new ExplosionEffect(this.x, this.y, this.config.explosion_radius);
+            const explosion = new ExplosionEffect(
+                this.x, 
+                this.y, 
+                this.config.explosion_radius,
+                'IMMUNE_CELL',
+                this.id
+            );
             window.game_state.effects.push(explosion);
         }
     }
@@ -131,6 +137,35 @@ class Neutrophil extends BaseTower {
 
         affected_enemies.forEach(enemy => {
             this.damage_enemy(enemy, damage);
+        });
+
+        this.apply_paracrine_regeneration();
+    }
+
+    apply_paracrine_regeneration() {
+        if (!window.game_state || !window.game_state.adaptation_system) {
+            return;
+        }
+
+        const heal_amount = window.game_state.adaptation_system.get_immune_explosion_heal();
+        if (heal_amount <= 0) {
+            return;
+        }
+
+        const affected_towers = this.get_towers_in_explosion_radius();
+        affected_towers.forEach(tower => {
+            tower.hp = Math.min(tower.max_hp, tower.hp + heal_amount);
+        });
+    }
+
+    get_towers_in_explosion_radius() {
+        if (!window.game_state || !window.game_state.towers) {
+            return [];
+        }
+
+        return window.game_state.towers.filter(tower => {
+            const distance = MathUtils.get_distance(this.x, this.y, tower.x, tower.y);
+            return distance <= this.config.explosion_radius && tower.id !== this.id;
         });
     }
 
