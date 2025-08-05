@@ -239,6 +239,86 @@ const ADAPTATION_CONFIGS = {
             };
         }
     },
+    PARACRINE_REGENERATION: {
+        name: 'Paracrine Regeneration',
+        key_property: 'immune_explosion_heal',
+        effects: {
+            0: { immune_explosion_heal: 2 },
+            1: { immune_explosion_heal: 3 },
+            2: { immune_explosion_heal: 4 }
+        },
+        get descriptions() {
+            return {
+                0: `Immune Cell explosions recover ${this.effects[0].immune_explosion_heal} HP to all affected Immune Cells.`,
+                1: `Immune Cell explosions recover ${this.effects[1].immune_explosion_heal} HP to all affected Immune Cells.`,
+                2: `Immune Cell explosions recover ${this.effects[2].immune_explosion_heal} HP to all affected Immune Cells.`
+            };
+        }
+    },
+    STERIC_EVASION: {
+        name: 'Steric Evasion',
+        key_property: 'collision_resistance_chance',
+        effects: {
+            0: { collision_resistance_chance: 0.10 },
+            1: { collision_resistance_chance: 0.15 },
+            2: { collision_resistance_chance: 0.20 }
+        },
+        get descriptions() {
+            return {
+                0: `Immune Cells gain a ${Math.round(this.effects[0].collision_resistance_chance * 100)}% chance to resist collisions with Microbes.`,
+                1: `Immune Cells gain a ${Math.round(this.effects[1].collision_resistance_chance * 100)}% chance to resist collisions with Microbes.`,
+                2: `Immune Cells gain a ${Math.round(this.effects[2].collision_resistance_chance * 100)}% chance to resist collisions with Microbes.`
+            };
+        }
+    },
+    CATALYTIC_EFFICIENCY: {
+        name: 'Catalytic Efficiency',
+        key_property: 'hp_preservation_chance',
+        effects: {
+            0: { hp_preservation_chance: 0.08 },
+            1: { hp_preservation_chance: 0.12 },
+            2: { hp_preservation_chance: 0.16 }
+        },
+        get descriptions() {
+            return {
+                0: `Immune Cells gain a ${Math.round(this.effects[0].hp_preservation_chance * 100)}% chance not to expend HP upon action.`,
+                1: `Immune Cells gain a ${Math.round(this.effects[1].hp_preservation_chance * 100)}% chance not to expend HP upon action.`,
+                2: `Immune Cells gain a ${Math.round(this.effects[2].hp_preservation_chance * 100)}% chance not to expend HP upon action.`
+            };
+        }
+    },
+    BIDIRECTIONAL_SECRETION: {
+        name: 'Bidirectional Secretion',
+        key_property: 'opposite_shot_chance',
+        effects: {
+            0: { opposite_shot_chance: 0.18 },
+            1: { opposite_shot_chance: 0.27 },
+            2: { opposite_shot_chance: 0.36 }
+        },
+        get descriptions() {
+            return {
+                0: `Directional Immune Cells have a ${Math.round(this.effects[0].opposite_shot_chance * 100)}% chance to shoot again at the opposite direction.`,
+                1: `Directional Immune Cells have a ${Math.round(this.effects[1].opposite_shot_chance * 100)}% chance to shoot again at the opposite direction.`,
+                2: `Directional Immune Cells have a ${Math.round(this.effects[2].opposite_shot_chance * 100)}% chance to shoot again at the opposite direction.`
+            };
+        }
+    },
+    REFRACTORY_PERIOD: {
+        name: 'Refractory Period',
+        key_property: 'invincibility_duration_ms',
+        effects: {
+            0: { invincibility_duration_ms: 1000 },
+            1: { invincibility_duration_ms: 1500 },
+            2: { invincibility_duration_ms: 2000 }
+        },
+        get descriptions() {
+            return {
+                0: `After taking damage, the Cell Core becomes invincible for ${this.effects[0].invincibility_duration_ms / 1000} second.`,
+                1: `After taking damage, the Cell Core becomes invincible for ${this.effects[1].invincibility_duration_ms / 1000} seconds.`,
+                2: `After taking damage, the Cell Core becomes invincible for ${this.effects[2].invincibility_duration_ms / 1000} seconds.`
+            };
+        }
+    },
     NUTRIENT_GLUT: {
         name: 'Nutrient Glut',
         key_property: 'biomass_gain',
@@ -305,6 +385,11 @@ const ADAPTATION_TYPES = {
     NECROTROPHIC_REPAIR: 'NECROTROPHIC_REPAIR',
     BIOMASS_INJECTION: 'BIOMASS_INJECTION',
     HOMEOSTATIC_POTENTIATION: 'HOMEOSTATIC_POTENTIATION',
+    PARACRINE_REGENERATION: 'PARACRINE_REGENERATION',
+    STERIC_EVASION: 'STERIC_EVASION',
+    CATALYTIC_EFFICIENCY: 'CATALYTIC_EFFICIENCY',
+    BIDIRECTIONAL_SECRETION: 'BIDIRECTIONAL_SECRETION',
+    REFRACTORY_PERIOD: 'REFRACTORY_PERIOD',
     NUTRIENT_GLUT: 'NUTRIENT_GLUT',
     CYTOKINE_CACHE: 'CYTOKINE_CACHE',
     ADJUVANT_HOARD: 'ADJUVANT_HOARD'
@@ -325,7 +410,12 @@ const ADAPTATION_POOL = [
     ADAPTATION_TYPES.EXTENDED_CHEMOTAXIS,
     ADAPTATION_TYPES.NECROTROPHIC_REPAIR,
     ADAPTATION_TYPES.BIOMASS_INJECTION,
-    ADAPTATION_TYPES.HOMEOSTATIC_POTENTIATION
+    ADAPTATION_TYPES.HOMEOSTATIC_POTENTIATION,
+    ADAPTATION_TYPES.PARACRINE_REGENERATION,
+    ADAPTATION_TYPES.STERIC_EVASION,
+    ADAPTATION_TYPES.CATALYTIC_EFFICIENCY,
+    ADAPTATION_TYPES.BIDIRECTIONAL_SECRETION,
+    ADAPTATION_TYPES.REFRACTORY_PERIOD
 ];
 
 const GENERIC_ADAPTATIONS = [
