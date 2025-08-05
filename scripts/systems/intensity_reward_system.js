@@ -174,7 +174,9 @@ class IntensityRewardSystem {
         const key_value = effect_data[key_property];
         let formatted_value;
 
-        if (this.is_percentage_property(key_property)) {
+        if (this.is_duration_property(key_property)) {
+            formatted_value = this.convert_duration_to_display(key_value);
+        } else if (this.is_percentage_property(key_property)) {
             if (key_property.includes('multiplier')) {
                 formatted_value = `${Math.round((key_value - 1) * 100)}%`;
             } else {
@@ -201,7 +203,10 @@ class IntensityRewardSystem {
 
         let current_formatted, target_formatted;
 
-        if (this.is_percentage_property(key_property)) {
+        if (this.is_duration_property(key_property)) {
+            current_formatted = this.convert_duration_to_display(current_value);
+            target_formatted = this.convert_duration_to_display(target_value);
+        } else if (this.is_percentage_property(key_property)) {
             if (key_property.includes('multiplier')) {
                 current_formatted = `${Math.round((current_value - 1) * 100)}%`;
                 target_formatted = `${Math.round((target_value - 1) * 100)}%`;
@@ -216,6 +221,21 @@ class IntensityRewardSystem {
 
         const change_pattern = `<span class="value_change">${current_formatted}<span class="arrow">→</span>${target_formatted}</span>`;
         return this.replace_value_in_description(description, target_formatted, change_pattern);
+    }
+
+    is_duration_property(key_property) {
+        return key_property.endsWith('_ms') || key_property.endsWith('_duration');
+    }
+
+    convert_duration_to_display(duration_ms) {
+        const seconds = duration_ms / 1000;
+        if (seconds === 1) {
+            return '1 second';
+        } else if (seconds % 1 === 0) {
+            return `${seconds} seconds`;
+        } else {
+            return `${seconds} seconds`;
+        }
     }
 
     is_percentage_property(key_property) {
