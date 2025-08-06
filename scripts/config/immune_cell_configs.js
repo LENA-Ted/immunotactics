@@ -56,7 +56,7 @@ const IMMUNE_CELL_CONFIGS = {
         base_damage: 100,
         explosion_radius: 300,
         countdown_duration_ms: 2000,
-        collision_behavior: 'ACTIVATE_ON_CONTACT',
+        collision_behavior: 'DESTROY_ON_CONTACT',
         targeting_behavior: 'NON_DIRECTIONAL'
     }
 };
