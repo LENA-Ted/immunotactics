@@ -140,6 +140,31 @@ class Adaptation {
         const effect = this.get_effect();
         return effect.adjuvant_gain || 0;
     }
+
+    get_immune_explosion_heal() {
+        const effect = this.get_effect();
+        return effect.immune_explosion_heal || 0;
+    }
+
+    get_collision_resistance_chance() {
+        const effect = this.get_effect();
+        return effect.collision_resistance_chance || 0;
+    }
+
+    get_hp_preservation_chance() {
+        const effect = this.get_effect();
+        return effect.hp_preservation_chance || 0;
+    }
+
+    get_opposite_shot_chance() {
+        const effect = this.get_effect();
+        return effect.opposite_shot_chance || 0;
+    }
+
+    get_invincibility_duration_ms() {
+        const effect = this.get_effect();
+        return effect.invincibility_duration_ms || 0;
+    }
 }
 
 window.Adaptation = Adaptation;

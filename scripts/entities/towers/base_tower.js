@@ -137,9 +137,47 @@ class BaseTower {
     }
 
     consume_action_cost() {
+        if (this.should_preserve_hp()) {
+            return;
+        }
+
         const cost_key = this.config.shoot_hp_cost || this.config.action_hp_cost;
         this.hp -= cost_key;
         this.trigger_pulsate();
+    }
+
+    should_preserve_hp() {
+        if (!this.can_catalytic_efficiency_apply()) {
+            return false;
+        }
+
+        if (!window.game_state || !window.game_state.adaptation_system) {
+            return false;
+        }
+
+        const preservation_chance = window.game_state.adaptation_system.get_hp_preservation_chance();
+        return preservation_chance > 0 && Math.random() < preservation_chance;
+    }
+
+    can_catalytic_efficiency_apply() {
+        return this.config.collision_behavior !== COLLISION_BEHAVIORS.ACTIVATE_ON_CONTACT;
+    }
+
+    can_resist_collision() {
+        if (this.config.collision_behavior !== COLLISION_BEHAVIORS.DESTROY_ON_CONTACT) {
+            return false;
+        }
+
+        if (!window.game_state || !window.game_state.adaptation_system) {
+            return false;
+        }
+
+        const resistance_chance = window.game_state.adaptation_system.get_collision_resistance_chance();
+        return resistance_chance > 0 && Math.random() < resistance_chance;
+    }
+
+    is_directional() {
+        return this.config.targeting_behavior === TARGETING_BEHAVIORS.DIRECTIONAL;
     }
 
     is_alive() {

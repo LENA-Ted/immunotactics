@@ -33,14 +33,14 @@ class AdaptationSystem {
             const leveled_up = adaptation.level_up();
             
             if (leveled_up) {
-                this.apply_immediate_effects(adaptation);
+                this.apply_immediate_effects(adaptation, adaptation_type);
             }
             
             return leveled_up;
         } else {
             const adaptation = new Adaptation(adaptation_type);
             this.adaptations.set(adaptation_type, adaptation);
-            this.apply_immediate_effects(adaptation);
+            this.apply_immediate_effects(adaptation, adaptation_type);
             return true;
         }
     }
@@ -84,14 +84,17 @@ class AdaptationSystem {
         }
     }
 
-    apply_immediate_effects(adaptation) {
+    apply_immediate_effects(adaptation, adaptation_type) {
         if (!window.game_state) {
             return;
         }
 
-        switch (adaptation.type) {
+        switch (adaptation_type) {
             case ADAPTATION_TYPES.HYPERPLASIA:
                 this.apply_hyperplasia_effect(adaptation);
+                break;
+            case ADAPTATION_TYPES.REGENERATIVE_CYCLE:
+                this.apply_regenerative_cycle_immediate_effect(adaptation);
                 break;
         }
     }
@@ -100,7 +103,14 @@ class AdaptationSystem {
         const hp_increase = adaptation.get_max_hp_increase();
         if (hp_increase > 0 && window.game_state.core) {
             window.game_state.core.set_max_hp_bonus(hp_increase);
-            window.game_state.core.heal_to_max();
+            window.game_state.core.heal(1);
+        }
+    }
+
+    apply_regenerative_cycle_immediate_effect(adaptation) {
+        const heal_amount = adaptation.get_core_heal_per_intensity();
+        if (heal_amount > 0 && window.game_state.core) {
+            window.game_state.core.heal(heal_amount);
         }
     }
 
@@ -188,6 +198,31 @@ class AdaptationSystem {
     get_biomass_double_chance() {
         const adaptation = this.get_adaptation(ADAPTATION_TYPES.BIOMASS_INJECTION);
         return adaptation ? adaptation.get_biomass_double_chance() : 0;
+    }
+
+    get_immune_explosion_heal() {
+        const adaptation = this.get_adaptation(ADAPTATION_TYPES.PARACRINE_REGENERATION);
+        return adaptation ? adaptation.get_immune_explosion_heal() : 0;
+    }
+
+    get_collision_resistance_chance() {
+        const adaptation = this.get_adaptation(ADAPTATION_TYPES.STERIC_EVASION);
+        return adaptation ? adaptation.get_collision_resistance_chance() : 0;
+    }
+
+    get_hp_preservation_chance() {
+        const adaptation = this.get_adaptation(ADAPTATION_TYPES.CATALYTIC_EFFICIENCY);
+        return adaptation ? adaptation.get_hp_preservation_chance() : 0;
+    }
+
+    get_opposite_shot_chance() {
+        const adaptation = this.get_adaptation(ADAPTATION_TYPES.BIDIRECTIONAL_SECRETION);
+        return adaptation ? adaptation.get_opposite_shot_chance() : 0;
+    }
+
+    get_invincibility_duration_ms() {
+        const adaptation = this.get_adaptation(ADAPTATION_TYPES.REFRACTORY_PERIOD);
+        return adaptation ? adaptation.get_invincibility_duration_ms() : 0;
     }
 
     handle_enemy_killed() {

@@ -1,5 +1,5 @@
 class ExplosionEffect {
-    constructor(x, y, max_radius) {
+    constructor(x, y, max_radius, source_type = null, source_id = null) {
         this.x = x;
         this.y = y;
         this.max_radius = max_radius;
@@ -9,6 +9,8 @@ class ExplosionEffect {
         this.opacity = 1.0;
         this.growth_rate = max_radius / this.max_life;
         this.particles = [];
+        this.source_type = source_type;
+        this.source_id = source_id;
         
         this.create_particles();
     }
@@ -91,6 +93,18 @@ class ExplosionEffect {
 
     is_alive() {
         return this.life > 0;
+    }
+
+    get_source_type() {
+        return this.source_type;
+    }
+
+    get_source_id() {
+        return this.source_id;
+    }
+
+    is_immune_cell_explosion() {
+        return this.source_type === 'IMMUNE_CELL';
     }
 }
 

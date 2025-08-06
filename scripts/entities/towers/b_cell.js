@@ -42,7 +42,37 @@ class BCell extends BaseTower {
                 window.game_state.audio_system.play_sound('SHOOT_PROJECTILE');
             }
             this.create_projectile(target);
+            this.attempt_bidirectional_shot(target);
         }
+    }
+
+    attempt_bidirectional_shot(original_target) {
+        if (!this.is_directional()) {
+            return;
+        }
+
+        if (!window.game_state || !window.game_state.adaptation_system) {
+            return;
+        }
+
+        const opposite_shot_chance = window.game_state.adaptation_system.get_opposite_shot_chance();
+        if (opposite_shot_chance <= 0 || Math.random() >= opposite_shot_chance) {
+            return;
+        }
+
+        this.create_opposite_direction_projectile(original_target);
+    }
+
+    create_opposite_direction_projectile(original_target) {
+        const original_angle = MathUtils.get_angle_between(this.x, this.y, original_target.x, original_target.y);
+        const opposite_angle = original_angle + Math.PI;
+        
+        const opposite_target = {
+            x: this.x + Math.cos(opposite_angle) * 100,
+            y: this.y + Math.sin(opposite_angle) * 100
+        };
+
+        this.create_projectile(opposite_target);
     }
 
     find_target() {
