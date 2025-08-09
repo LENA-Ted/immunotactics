@@ -11,10 +11,14 @@ class BaseEnemy {
         this.displayed_hp = this.hp;
         this.base_speed = this.generate_speed_from_size();
         this.current_speed = this.base_speed;
-        this.radius = this.generate_radius_from_size();
+        this.base_radius = this.generate_radius_from_size();
+        this.radius = this.base_radius;
         this.color = this.generate_color();
         this.pulsate_effect = new PulsateEffect();
         this.status_effects = [];
+        this.inoculated_size_multiplier = 1.0;
+        this.inoculated_speed_multiplier = 1.0;
+        this.immunity_feedback_timer = 0;
     }
 
     generate_size_modifier() {
@@ -99,10 +103,17 @@ class BaseEnemy {
         });
         
         this.calculate_current_speed();
+        this.update_immunity_feedback_timer();
+    }
+
+    update_immunity_feedback_timer() {
+        if (this.immunity_feedback_timer > 0) {
+            this.immunity_feedback_timer--;
+        }
     }
 
     calculate_current_speed() {
-        this.current_speed = this.base_speed;
+        this.current_speed = this.base_speed * this.inoculated_speed_multiplier;
         
         this.status_effects.forEach(effect => {
             if (effect.get_type() === 'INTERFERED') {
@@ -112,6 +123,11 @@ class BaseEnemy {
     }
 
     add_status_effect(effect) {
+        if (this.is_immune_to_status_effect(effect)) {
+            this.trigger_immunity_feedback();
+            return false;
+        }
+
         const existing_effect_index = this.status_effects.findIndex(
             existing => existing.get_type() === effect.get_type()
         );
@@ -123,10 +139,48 @@ class BaseEnemy {
         
         this.status_effects.push(effect);
         effect.apply_effect(this);
+        return true;
+    }
+
+    is_immune_to_status_effect(effect) {
+        if (!effect) {
+            return false;
+        }
+
+        if (!this.has_inoculated_status()) {
+            return false;
+        }
+
+        return effect.is_from_immune_cell();
+    }
+
+    has_inoculated_status() {
+        return this.has_status_effect('INOCULATED');
+    }
+
+    trigger_immunity_feedback() {
+        this.immunity_feedback_timer = 60;
+        
+        if (window.game_state && window.game_state.effects) {
+            const immunity_text = new ImmunityFeedbackText(this.x, this.y);
+            window.game_state.effects.push(immunity_text);
+        }
     }
 
     has_status_effect(effect_type) {
         return this.status_effects.some(effect => effect.get_type() === effect_type);
+    }
+
+    apply_inoculated_bonuses(size_multiplier, speed_multiplier) {
+        this.inoculated_size_multiplier = size_multiplier;
+        this.inoculated_speed_multiplier = speed_multiplier;
+        this.radius = this.base_radius * this.inoculated_size_multiplier;
+    }
+
+    remove_inoculated_bonuses() {
+        this.inoculated_size_multiplier = 1.0;
+        this.inoculated_speed_multiplier = 1.0;
+        this.radius = this.base_radius;
     }
 
     draw_hp_gauge(ctx) {
@@ -206,4 +260,46 @@ class BaseEnemy {
     }
 }
 
+class ImmunityFeedbackText {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.text = 'IMMUNE';
+        this.life = 60;
+        this.max_life = 60;
+        this.opacity = 1.0;
+        this.float_speed = 1.0;
+        this.color = '#FFD700';
+    }
+
+    update() {
+        this.y -= this.float_speed;
+        this.life--;
+        this.opacity = this.life / this.max_life;
+    }
+
+    draw(ctx) {
+        if (this.life <= 0) {
+            return;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.font = 'bold 14px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.strokeText(this.text, this.x, this.y);
+        ctx.fillText(this.text, this.x, this.y);
+        ctx.restore();
+    }
+
+    is_alive() {
+        return this.life > 0;
+    }
+}
+
 window.BaseEnemy = BaseEnemy;
+window.ImmunityFeedbackText = ImmunityFeedbackText;

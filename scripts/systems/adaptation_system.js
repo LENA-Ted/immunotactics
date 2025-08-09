@@ -180,9 +180,18 @@ class AdaptationSystem {
         return adaptation ? adaptation.get_free_placement_chance() : 0;
     }
 
-    get_status_effect_duration_multiplier() {
+    get_status_effect_duration_multiplier(source_category = STATUS_EFFECT_SOURCES.OTHER) {
         const adaptation = this.get_adaptation(ADAPTATION_TYPES.CHRONIC_INFLAMMATION);
-        return adaptation ? adaptation.get_status_effect_duration_multiplier() : 1.0;
+        
+        if (!adaptation) {
+            return 1.0;
+        }
+
+        if (source_category === STATUS_EFFECT_SOURCES.IMMUNE_CELL) {
+            return adaptation.get_status_effect_duration_multiplier();
+        }
+
+        return 1.0;
     }
 
     get_energy_per_kill() {

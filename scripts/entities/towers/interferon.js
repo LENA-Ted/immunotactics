@@ -50,7 +50,7 @@ class Interferon extends BaseTower {
 
         window.game_state.enemies.forEach(enemy => {
             if (this.is_in_range(enemy)) {
-                const interfered_effect = new InterferedEffect(effect_duration);
+                const interfered_effect = new InterferedEffect(effect_duration, STATUS_EFFECT_SOURCES.IMMUNE_CELL);
                 enemy.add_status_effect(interfered_effect);
             }
         });

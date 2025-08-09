@@ -8,6 +8,7 @@ class EnemyFactory {
         this.register_enemy_type(ENEMY_TYPES.BASIC, BasicEnemy);
         this.register_enemy_type(ENEMY_CATEGORIES.MICROBE, Microbe);
         this.register_enemy_type(PATHOGEN_TYPES.MYCETOMA, Mycetoma);
+        this.register_enemy_type(PATHOGEN_TYPES.RICKETTSIA, Rickettsia);
     }
 
     register_enemy_type(type_name, enemy_class) {

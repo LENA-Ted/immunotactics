@@ -12,7 +12,8 @@ const AUDIO_CONFIG = {
         PLACE_TOWER: 'sfx_place_tower',
         PROJECT_WAVE: 'sfx_project_wave',
         SHOOT_PROJECTILE: 'sfx_shoot_projectile',
-        SPAWN_ENEMY: 'sfx_spawn_enemy'
+        SPAWN_ENEMY: 'sfx_spawn_enemy',
+        APPLY_LIGHTNING: 'sfx_apply_lightning'
     },
     DEFAULT_VOLUME: 0.7,
     MAX_CONCURRENT_INSTANCES: 5
