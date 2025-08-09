@@ -572,7 +572,6 @@ class IntensityRewardSystem {
         const slot_rect = slot_element.getBoundingClientRect();
         const container_rect = this.slot_selection_elements.container.getBoundingClientRect();
         
-        const animation_offset_y = -8;
         const scale_factor = SLOT_SELECTION_CONFIG.SELECTION_ZOOM_SCALE;
         
         const base_relative_left = slot_rect.left - container_rect.left;
@@ -585,7 +584,7 @@ class IntensityRewardSystem {
         const height_offset = (scaled_height - slot_rect.height) / 2;
         
         const target_left = base_relative_left - width_offset;
-        const target_top = base_relative_top + animation_offset_y - height_offset;
+        const target_top = base_relative_top - height_offset;
         
         outline.style.position = 'absolute';
         outline.style.left = `${target_left}px`;
