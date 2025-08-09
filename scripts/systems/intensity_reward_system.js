@@ -481,7 +481,7 @@ class IntensityRewardSystem {
             window.game_state.audio_system.play_sound('PICK_REWARD');
         }
 
-        this.create_outline_projection(selected_card);
+        this.create_outline_projection(selected_card, selected_reward.type);
         this.animate_selected_card_content(selected_card, selected_reward);
         this.fade_out_other_cards(card_index);
         this.animate_selected_card(selected_card);
@@ -522,7 +522,7 @@ class IntensityRewardSystem {
         }
     }
 
-    create_outline_projection(card_element) {
+    create_outline_projection(card_element, reward_type) {
         const cards_container = document.getElementById('reward_cards_container');
         if (!cards_container) {
             return;
@@ -530,6 +530,10 @@ class IntensityRewardSystem {
 
         const outline = document.createElement('div');
         outline.classList.add('card_outline_projection');
+        
+        if (reward_type === REWARD_TYPES.IMMUNE_CELL) {
+            outline.classList.add('immune_cell_outline');
+        }
         
         const card_rect = card_element.getBoundingClientRect();
         const container_rect = cards_container.getBoundingClientRect();
@@ -544,6 +548,40 @@ class IntensityRewardSystem {
         outline.style.height = `${card_rect.height}px`;
         
         cards_container.appendChild(outline);
+
+        setTimeout(() => {
+            if (outline.parentNode) {
+                outline.parentNode.removeChild(outline);
+            }
+        }, REWARD_CARD_CONFIG.OUTLINE_PROJECTION_GROWTH_DURATION_MS + REWARD_CARD_CONFIG.OUTLINE_PROJECTION_FADE_DURATION_MS);
+    }
+
+    create_slot_outline_projection(slot) {
+        if (!this.slot_selection_elements || !this.slot_selection_elements.container) {
+            return;
+        }
+
+        const slot_element = this.slot_selection_elements.slots[slot - 1];
+        if (!slot_element) {
+            return;
+        }
+
+        const outline = document.createElement('div');
+        outline.classList.add('slot_outline_projection');
+        
+        const slot_rect = slot_element.getBoundingClientRect();
+        const container_rect = this.slot_selection_elements.container.getBoundingClientRect();
+        
+        const relative_left = slot_rect.left - container_rect.left;
+        const relative_top = slot_rect.top - container_rect.top;
+        
+        outline.style.position = 'absolute';
+        outline.style.left = `${relative_left}px`;
+        outline.style.top = `${relative_top}px`;
+        outline.style.width = `${slot_rect.width}px`;
+        outline.style.height = `${slot_rect.height}px`;
+        
+        this.slot_selection_elements.container.appendChild(outline);
 
         setTimeout(() => {
             if (outline.parentNode) {
@@ -632,6 +670,11 @@ class IntensityRewardSystem {
 
         this.is_slot_selection_active = false;
         
+        if (window.game_state && window.game_state.audio_system) {
+            window.game_state.audio_system.play_sound('EQUIP');
+        }
+        
+        this.create_slot_outline_projection(slot);
         this.animate_slot_selection(slot);
         this.fade_out_other_slots(slot);
 
