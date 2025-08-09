@@ -56,7 +56,7 @@ class Rickettsia extends BaseEnemy {
         }
 
         const eligible_microbes = window.game_state.enemies.filter(enemy => 
-            this.is_eligible_microbe(enemy)
+            enemy && this.is_eligible_microbe(enemy)
         );
 
         if (eligible_microbes.length === 0) {
@@ -68,6 +68,10 @@ class Rickettsia extends BaseEnemy {
     }
 
     is_eligible_microbe(enemy) {
+        if (!enemy) {
+            return false;
+        }
+
         if (!enemy.is_microbe()) {
             return false;
         }
@@ -84,26 +88,35 @@ class Rickettsia extends BaseEnemy {
     }
 
     is_in_inoculation_range(target) {
+        if (!target) {
+            return false;
+        }
         const distance = MathUtils.get_distance(this.x, this.y, target.x, target.y);
         return distance <= this.inoculation_range;
     }
 
     has_inoculated_status(enemy) {
+        if (!enemy || !enemy.has_status_effect) {
+            return false;
+        }
         return enemy.has_status_effect('INOCULATED');
     }
 
     apply_inoculation_to_microbe(microbe) {
+        if (!microbe) {
+            return;
+        }
         this.clear_immune_cell_status_effects(microbe);
         this.apply_inoculated_status_effect(microbe);
     }
 
     clear_immune_cell_status_effects(microbe) {
-        if (!microbe.status_effects) {
+        if (!microbe || !microbe.status_effects) {
             return;
         }
 
         const effects_to_remove = microbe.status_effects.filter(effect => 
-            effect.is_from_immune_cell()
+            effect && typeof effect.is_from_immune_cell === 'function' && effect.is_from_immune_cell()
         );
 
         effects_to_remove.forEach(effect => {
@@ -116,12 +129,15 @@ class Rickettsia extends BaseEnemy {
     }
 
     apply_inoculated_status_effect(microbe) {
+        if (!microbe || !microbe.add_status_effect) {
+            return;
+        }
         const inoculated_effect = new InoculatedEffect();
         microbe.add_status_effect(inoculated_effect);
     }
 
     create_lightning_effect_to_target(target) {
-        if (!window.game_state || !window.game_state.effects) {
+        if (!target || !window.game_state || !window.game_state.effects) {
             return;
         }
 

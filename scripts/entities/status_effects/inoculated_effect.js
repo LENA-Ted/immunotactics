@@ -12,15 +12,17 @@ class InoculatedEffect extends BaseStatusEffect {
     }
 
     apply_effect(target) {
-        if (target.apply_inoculated_bonuses) {
-            target.apply_inoculated_bonuses(this.size_multiplier, this.speed_multiplier);
+        if (!target || !target.apply_inoculated_bonuses) {
+            return;
         }
+        target.apply_inoculated_bonuses(this.size_multiplier, this.speed_multiplier);
     }
 
     remove_effect(target) {
-        if (target.remove_inoculated_bonuses) {
-            target.remove_inoculated_bonuses();
+        if (!target || !target.remove_inoculated_bonuses) {
+            return;
         }
+        target.remove_inoculated_bonuses();
     }
 
     update(timestamp) {
@@ -59,12 +61,17 @@ class InoculatedEffect extends BaseStatusEffect {
         }
 
         return window.game_state.enemies.find(enemy => 
+            enemy && 
             enemy.status_effects && 
             enemy.status_effects.includes(this)
         );
     }
 
     create_inoculated_particle(target) {
+        if (!target) {
+            return null;
+        }
+
         const angle = Math.random() * Math.PI * 2;
         const distance = Math.random() * target.radius * 0.8;
         const particle_x = target.x + Math.cos(angle) * distance;

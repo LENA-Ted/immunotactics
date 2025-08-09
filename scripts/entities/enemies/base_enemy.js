@@ -143,6 +143,10 @@ class BaseEnemy {
     }
 
     is_immune_to_status_effect(effect) {
+        if (!effect) {
+            return false;
+        }
+
         if (!this.has_inoculated_status()) {
             return false;
         }
