@@ -153,9 +153,9 @@ const ADAPTATION_CONFIGS = {
         },
         get descriptions() {
             return {
-                0: `Increase status effect durations by ${Math.round((this.effects[0].status_effect_duration_multiplier - 1) * 100)}%.`,
-                1: `Increase status effect durations by ${Math.round((this.effects[1].status_effect_duration_multiplier - 1) * 100)}%.`,
-                2: `Increase status effect durations by ${Math.round((this.effects[2].status_effect_duration_multiplier - 1) * 100)}%.`
+                0: `Increase Immune Cell-applied status effect durations by ${Math.round((this.effects[0].status_effect_duration_multiplier - 1) * 100)}%.`,
+                1: `Increase Immune Cell-applied status effect durations by ${Math.round((this.effects[1].status_effect_duration_multiplier - 1) * 100)}%.`,
+                2: `Increase Immune Cell-applied status effect durations by ${Math.round((this.effects[2].status_effect_duration_multiplier - 1) * 100)}%.`
             };
         }
     },
