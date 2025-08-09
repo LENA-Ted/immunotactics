@@ -572,25 +572,14 @@ class IntensityRewardSystem {
         const slot_rect = slot_element.getBoundingClientRect();
         const container_rect = this.slot_selection_elements.container.getBoundingClientRect();
         
-        const scale_factor = SLOT_SELECTION_CONFIG.SELECTION_ZOOM_SCALE;
-        
-        const base_relative_left = slot_rect.left - container_rect.left;
-        const base_relative_top = slot_rect.top - container_rect.top;
-        
-        const scaled_width = slot_rect.width * scale_factor;
-        const scaled_height = slot_rect.height * scale_factor;
-        
-        const width_offset = (scaled_width - slot_rect.width) / 2;
-        const height_offset = (scaled_height - slot_rect.height) / 2;
-        
-        const target_left = base_relative_left - width_offset;
-        const target_top = base_relative_top - height_offset;
+        const relative_left = slot_rect.left - container_rect.left;
+        const relative_top = slot_rect.top - container_rect.top;
         
         outline.style.position = 'absolute';
-        outline.style.left = `${target_left}px`;
-        outline.style.top = `${target_top}px`;
-        outline.style.width = `${scaled_width}px`;
-        outline.style.height = `${scaled_height}px`;
+        outline.style.left = `${relative_left}px`;
+        outline.style.top = `${relative_top}px`;
+        outline.style.width = `${slot_rect.width}px`;
+        outline.style.height = `${slot_rect.height}px`;
         
         this.slot_selection_elements.container.appendChild(outline);
 
@@ -685,9 +674,12 @@ class IntensityRewardSystem {
             window.game_state.audio_system.play_sound('EQUIP');
         }
         
-        this.create_slot_outline_projection(slot);
         this.animate_slot_selection(slot);
         this.fade_out_other_slots(slot);
+        
+        setTimeout(() => {
+            this.create_slot_outline_projection(slot);
+        }, SLOT_SELECTION_CONFIG.SELECTION_ANIMATION_DURATION_MS);
 
         setTimeout(() => {
             this.apply_immune_cell_reward(slot);
