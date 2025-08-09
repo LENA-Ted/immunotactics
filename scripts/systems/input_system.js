@@ -141,10 +141,13 @@ class InputSystem {
     }
 
     attempt_place_tower() {
-        const tower_type = this.selection_system ? 
-            this.selection_system.get_current_selection() : 
-            TOWER_TYPES.SNIPER;
-            
+        const tower_type = this.get_current_selected_immune_cell_type();
+        
+        if (!tower_type) {
+            this.trigger_insufficient_energy_error();
+            return false;
+        }
+        
         const cost = this.tower_factory.get_tower_cost(tower_type);
         
         if (!window.game_state.player.can_afford(cost)) {
@@ -182,6 +185,17 @@ class InputSystem {
         }
 
         return false;
+    }
+
+    get_current_selected_immune_cell_type() {
+        if (!this.selection_system) {
+            return null;
+        }
+
+        const current_slot = this.selection_system.get_current_selection_slot();
+        const immune_cell_type = this.selection_system.get_equipped_immune_cell(current_slot);
+        
+        return immune_cell_type;
     }
 
     trigger_insufficient_energy_error() {

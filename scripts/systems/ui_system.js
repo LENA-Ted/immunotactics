@@ -77,7 +77,7 @@ class UISystem {
     }
 
     initialize_selection_ui() {
-        this.update_selection_ui(IMMUNE_CELL_TYPES.B_CELL);
+        this.update_selection_ui_from_game_state();
     }
 
     initialize_resource_feedback() {
@@ -235,28 +235,36 @@ class UISystem {
 
     update_selection_ui_from_game_state() {
         if (window.game_state && window.game_state.selection_system) {
-            const current_selection = window.game_state.selection_system.get_current_selection();
-            this.update_selection_ui(current_selection);
+            this.update_slot_based_selection_ui();
         }
     }
 
-    update_selection_ui(selected_type) {
-        const selection_map = {
-            [IMMUNE_CELL_TYPES.B_CELL]: 1,
-            [IMMUNE_CELL_TYPES.MAST_CELL]: 2,
-            [IMMUNE_CELL_TYPES.INTERFERON]: 3,
-            [IMMUNE_CELL_TYPES.NEUTROPHIL]: 4
-        };
+    update_slot_based_selection_ui() {
+        const selection_system = window.game_state.selection_system;
+        const slots_info = selection_system.get_equipped_slots_info();
+        const current_selection_slot = selection_system.get_current_selection_slot();
 
-        const selected_number = selection_map[selected_type];
-
-        Object.keys(this.selection_elements).forEach(key => {
-            const element = this.selection_elements[key];
+        Object.keys(this.selection_elements).forEach(slot_key => {
+            const slot = parseInt(slot_key);
+            const element = this.selection_elements[slot_key];
             if (!element) return;
 
-            if (parseInt(key) === selected_number) {
-                element.classList.add('selected');
+            const slot_info = slots_info[slot];
+            
+            if (slot_info.is_occupied) {
+                element.textContent = slot_info.name;
+                element.style.opacity = '';
+                element.style.pointerEvents = '';
+                
+                if (slot === current_selection_slot) {
+                    element.classList.add('selected');
+                } else {
+                    element.classList.remove('selected');
+                }
             } else {
+                element.textContent = 'Empty';
+                element.style.opacity = '0.3';
+                element.style.pointerEvents = 'none';
                 element.classList.remove('selected');
             }
         });

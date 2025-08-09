@@ -296,25 +296,115 @@ class AdaptationSystem {
         return available_choices;
     }
 
-    generate_intensity_reward_choices() {
-        const available_choices = this.get_available_adaptation_choices();
-        const choices = [];
+    get_available_immune_cell_choices() {
+        if (!window.game_state || !window.game_state.selection_system) {
+            return [];
+        }
 
-        if (available_choices.length === 0) {
+        return window.game_state.selection_system.get_available_immune_cell_types();
+    }
+
+    generate_resource_bonus(intensity_level) {
+        const bonus_types = IMMUNE_CELL_REWARD_CONFIG.RESOURCE_BONUS_TYPES;
+        const random_bonus_type = bonus_types[Math.floor(Math.random() * bonus_types.length)];
+        
+        let amount = 0;
+        let display_text = '';
+
+        switch (random_bonus_type) {
+            case 'CYTOKINES':
+                amount = IMMUNE_CELL_REWARD_CONFIG.CYTOKINE_MULTIPLIER * intensity_level;
+                display_text = `+${amount} CYT`;
+                break;
+            case 'ADJUVANTS':
+                amount = IMMUNE_CELL_REWARD_CONFIG.ADJUVANT_MULTIPLIER * intensity_level;
+                display_text = `+${amount} ADJ`;
+                break;
+            case 'BIOMASS':
+                amount = IMMUNE_CELL_REWARD_CONFIG.BIOMASS_MULTIPLIER * intensity_level;
+                display_text = `+${amount} BIO`;
+                break;
+            case 'FULL_HP':
+                display_text = 'FULL HP';
+                break;
+        }
+
+        return {
+            type: random_bonus_type,
+            amount: amount,
+            display_text: display_text
+        };
+    }
+
+    apply_resource_bonus(resource_bonus) {
+        if (!window.game_state || !window.game_state.resource_system) {
+            return;
+        }
+
+        switch (resource_bonus.type) {
+            case 'CYTOKINES':
+                window.game_state.resource_system.add_cytokines(resource_bonus.amount);
+                break;
+            case 'ADJUVANTS':
+                window.game_state.resource_system.add_adjuvants(resource_bonus.amount);
+                break;
+            case 'BIOMASS':
+                window.game_state.resource_system.add_biomass(resource_bonus.amount);
+                break;
+            case 'FULL_HP':
+                if (window.game_state.core) {
+                    window.game_state.core.heal_to_max();
+                }
+                break;
+        }
+    }
+
+    generate_reward_choices() {
+        const choices = [];
+        const available_adaptations = this.get_available_adaptation_choices();
+        const available_immune_cells = this.get_available_immune_cell_choices();
+        
+        const all_possible_choices = [];
+        
+        available_adaptations.forEach(adaptation_type => {
+            all_possible_choices.push({
+                type: REWARD_TYPES.ADAPTATION,
+                content: adaptation_type
+            });
+        });
+        
+        available_immune_cells.forEach(immune_cell_type => {
+            const intensity_level = window.game_state ? window.game_state.intensity_level : 1;
+            const resource_bonus = this.generate_resource_bonus(Math.max(1, intensity_level));
+            
+            all_possible_choices.push({
+                type: REWARD_TYPES.IMMUNE_CELL,
+                content: immune_cell_type,
+                resource_bonus: resource_bonus
+            });
+        });
+
+        if (all_possible_choices.length === 0) {
             return this.fill_choices_with_generic_adaptations([], ADAPTATION_CONFIG.REWARD_CHOICES_COUNT);
         }
 
-        const needed_choices = Math.min(ADAPTATION_CONFIG.REWARD_CHOICES_COUNT, available_choices.length);
+        const needed_choices = Math.min(ADAPTATION_CONFIG.REWARD_CHOICES_COUNT, all_possible_choices.length);
 
         for (let i = 0; i < needed_choices; i++) {
-            const random_index = Math.floor(Math.random() * available_choices.length);
-            const selected_choice = available_choices[random_index];
+            const random_index = Math.floor(Math.random() * all_possible_choices.length);
+            const selected_choice = all_possible_choices[random_index];
             choices.push(selected_choice);
-            available_choices.splice(random_index, 1);
+            all_possible_choices.splice(random_index, 1);
         }
 
         if (choices.length < ADAPTATION_CONFIG.REWARD_CHOICES_COUNT) {
-            return this.fill_choices_with_generic_adaptations(choices, ADAPTATION_CONFIG.REWARD_CHOICES_COUNT - choices.length);
+            const generic_choices = this.fill_choices_with_generic_adaptations([], ADAPTATION_CONFIG.REWARD_CHOICES_COUNT - choices.length);
+            generic_choices.forEach(adaptation_type => {
+                choices.push({
+                    type: REWARD_TYPES.ADAPTATION,
+                    content: adaptation_type
+                });
+            });
         }
 
         return choices;

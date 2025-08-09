@@ -1,7 +1,7 @@
 const IMMUNE_CELL_CONFIGS = {
     B_CELL: {
         cost: 25,
-        base_hp: 10,
+        base_hp: 15,
         shoot_hp_cost: 1,
         shoot_interval_ms: 2000,
         radius: 15,
@@ -13,11 +13,12 @@ const IMMUNE_CELL_CONFIGS = {
         projectile_damage: 12,
         projectile_speed: 8,
         collision_behavior: 'DESTROY_ON_CONTACT',
-        targeting_behavior: 'DIRECTIONAL'
+        targeting_behavior: 'DIRECTIONAL',
+        icon_path: null
     },
     MAST_CELL: {
         cost: 25,
-        base_hp: 10,
+        base_hp: 15,
         shoot_hp_cost: 1,
         shoot_interval_ms: 1000,
         radius: 15,
@@ -26,15 +27,16 @@ const IMMUNE_CELL_CONFIGS = {
         stroke_width: 2,
         range_factor: 1/3,
         projectile_count: 5,
-        projectile_damage: 6,
+        projectile_damage: 5,
         projectile_speed: 8,
         cone_angle_degrees: 45,
         collision_behavior: 'DESTROY_ON_CONTACT',
-        targeting_behavior: 'DIRECTIONAL'
+        targeting_behavior: 'DIRECTIONAL',
+        icon_path: null
     },
     INTERFERON: {
         cost: 25,
-        base_hp: 10,
+        base_hp: 15,
         action_hp_cost: 1,
         action_interval_ms: 3000,
         radius: 15,
@@ -44,7 +46,8 @@ const IMMUNE_CELL_CONFIGS = {
         range_factor: 2/3,
         interfered_duration_ms: 3000,
         collision_behavior: 'DESTROY_ON_CONTACT',
-        targeting_behavior: 'NON_DIRECTIONAL'
+        targeting_behavior: 'NON_DIRECTIONAL',
+        icon_path: null
     },
     NEUTROPHIL: {
         cost: 25,
@@ -57,7 +60,8 @@ const IMMUNE_CELL_CONFIGS = {
         explosion_radius: 300,
         countdown_duration_ms: 2000,
         collision_behavior: 'DESTROY_ON_CONTACT',
-        targeting_behavior: 'NON_DIRECTIONAL'
+        targeting_behavior: 'NON_DIRECTIONAL',
+        icon_path: null
     }
 };
 
@@ -75,6 +79,13 @@ const IMMUNE_CELL_NAMES = {
     NEUTROPHIL: 'Neutrophil'
 };
 
+const IMMUNE_CELL_DESCRIPTIONS = {
+    B_CELL: 'Shoots at the closest enemy. Has unlimited range.',
+    MAST_CELL: 'Shoots a spread at the closest enemy. Has short range.',
+    INTERFERON: 'Projects an AoE ray that slows down enemies. Has medium range.',
+    NEUTROPHIL: 'Explodes after a short wait. Deals large damage.'
+};
+
 const COLLISION_BEHAVIORS = {
     DESTROY_ON_CONTACT: 'DESTROY_ON_CONTACT',
     ACTIVATE_ON_CONTACT: 'ACTIVATE_ON_CONTACT'
@@ -88,5 +99,6 @@ const TARGETING_BEHAVIORS = {
 window.IMMUNE_CELL_CONFIGS = IMMUNE_CELL_CONFIGS;
 window.IMMUNE_CELL_TYPES = IMMUNE_CELL_TYPES;
 window.IMMUNE_CELL_NAMES = IMMUNE_CELL_NAMES;
+window.IMMUNE_CELL_DESCRIPTIONS = IMMUNE_CELL_DESCRIPTIONS;
 window.COLLISION_BEHAVIORS = COLLISION_BEHAVIORS;
 window.TARGETING_BEHAVIORS = TARGETING_BEHAVIORS;
