@@ -7,6 +7,9 @@ class IntensityRewardSystem {
         this.card_elements = [];
         this.intensity_up_text_element = null;
         this.projected_level_circles = [];
+        this.is_slot_selection_active = false;
+        this.selected_immune_cell_reward = null;
+        this.slot_selection_elements = null;
     }
 
     initialize() {
@@ -33,6 +36,7 @@ class IntensityRewardSystem {
         root.style.setProperty('--diagonal-stripes-duration', `${GAME_CONFIG.DIAGONAL_STRIPES_ANIMATION_DURATION_S}s`);
         root.style.setProperty('--reward-card-border-thickness', `${REWARD_CARD_CONFIG.BORDER_THICKNESS}px`);
         root.style.setProperty('--reward-card-adaptation-border-color', REWARD_CARD_CONFIG.ADAPTATION_BORDER_COLOR);
+        root.style.setProperty('--reward-card-immune-cell-border-color', REWARD_CARD_CONFIG.IMMUNE_CELL_BORDER_COLOR);
         root.style.setProperty('--reward-card-description-height', `${REWARD_CARD_CONFIG.DESCRIPTION_HEIGHT}px`);
         root.style.setProperty('--reward-card-name-container-height', `${REWARD_CARD_CONFIG.NAME_CONTAINER_HEIGHT}px`);
         root.style.setProperty('--reward-card-name-font-size-base', `${REWARD_CARD_CONFIG.NAME_FONT_SIZE_BASE}em`);
@@ -58,6 +62,51 @@ class IntensityRewardSystem {
             document.getElementById('reward_card_2'),
             document.getElementById('reward_card_3')
         ];
+        this.create_slot_selection_elements();
+    }
+
+    create_slot_selection_elements() {
+        if (!this.modal_element) {
+            return;
+        }
+
+        this.slot_selection_elements = {
+            container: document.createElement('div'),
+            slots: [],
+            labels: [],
+            names: []
+        };
+
+        this.slot_selection_elements.container.id = 'slot_selection_container';
+        this.slot_selection_elements.container.className = 'slot_selection_container';
+        this.slot_selection_elements.container.style.display = 'none';
+
+        for (let slot = 1; slot <= 4; slot++) {
+            const slot_wrapper = document.createElement('div');
+            slot_wrapper.className = 'slot_wrapper';
+
+            const slot_circle = document.createElement('div');
+            slot_circle.className = 'slot_circle';
+            slot_circle.dataset.slot = slot;
+
+            const slot_label = document.createElement('div');
+            slot_label.className = 'slot_label';
+            slot_label.textContent = `Slot ${slot}`;
+
+            const slot_name = document.createElement('div');
+            slot_name.className = 'slot_immune_cell_name';
+
+            slot_wrapper.appendChild(slot_circle);
+            slot_wrapper.appendChild(slot_label);
+            slot_wrapper.appendChild(slot_name);
+
+            this.slot_selection_elements.container.appendChild(slot_wrapper);
+            this.slot_selection_elements.slots.push(slot_circle);
+            this.slot_selection_elements.labels.push(slot_label);
+            this.slot_selection_elements.names.push(slot_name);
+        }
+
+        this.modal_element.appendChild(this.slot_selection_elements.container);
     }
 
     setup_event_listeners() {
@@ -68,6 +117,22 @@ class IntensityRewardSystem {
                 });
             }
         });
+
+        document.addEventListener('keydown', (event) => {
+            this.handle_slot_selection_key(event);
+        });
+    }
+
+    handle_slot_selection_key(event) {
+        if (!this.is_slot_selection_active) {
+            return;
+        }
+
+        const key = event.key;
+        if (['1', '2', '3', '4'].includes(key)) {
+            const slot = parseInt(key);
+            this.handle_slot_selection(slot);
+        }
     }
 
     show_intensity_reward_modal() {
@@ -77,6 +142,7 @@ class IntensityRewardSystem {
 
         this.is_modal_active = true;
         this.is_selection_in_progress = false;
+        this.is_slot_selection_active = false;
         
         this.generate_reward_choices();
         this.update_modal_content();
@@ -119,12 +185,12 @@ class IntensityRewardSystem {
 
     generate_reward_choices() {
         if (window.game_state && window.game_state.adaptation_system) {
-            this.current_choices = window.game_state.adaptation_system.generate_intensity_reward_choices();
+            this.current_choices = window.game_state.adaptation_system.generate_reward_choices();
         } else {
             this.current_choices = [
-                ADAPTATION_TYPES.NUTRIENT_GLUT,
-                ADAPTATION_TYPES.NUTRIENT_GLUT,
-                ADAPTATION_TYPES.NUTRIENT_GLUT
+                { type: REWARD_TYPES.ADAPTATION, content: ADAPTATION_TYPES.NUTRIENT_GLUT },
+                { type: REWARD_TYPES.ADAPTATION, content: ADAPTATION_TYPES.NUTRIENT_GLUT },
+                { type: REWARD_TYPES.ADAPTATION, content: ADAPTATION_TYPES.NUTRIENT_GLUT }
             ];
         }
     }
@@ -137,7 +203,15 @@ class IntensityRewardSystem {
         });
     }
 
-    update_card_content(card_element, adaptation_type) {
+    update_card_content(card_element, reward_choice) {
+        if (reward_choice.type === REWARD_TYPES.ADAPTATION) {
+            this.update_adaptation_card(card_element, reward_choice.content);
+        } else if (reward_choice.type === REWARD_TYPES.IMMUNE_CELL) {
+            this.update_immune_cell_card(card_element, reward_choice.content, reward_choice.resource_bonus);
+        }
+    }
+
+    update_adaptation_card(card_element, adaptation_type) {
         const adaptation_config = ADAPTATION_CONFIGS[adaptation_type];
         if (!adaptation_config) {
             return;
@@ -153,7 +227,38 @@ class IntensityRewardSystem {
         this.update_level_circles(card_element, target_level, is_generic_adaptation);
         this.update_adaptation_name(card_element, adaptation_config.name);
         this.update_description(card_element, enhanced_description);
-        this.update_card_classes(card_element, is_generic_adaptation);
+        this.update_card_classes(card_element, REWARD_TYPES.ADAPTATION, is_generic_adaptation);
+    }
+
+    update_immune_cell_card(card_element, immune_cell_type, resource_bonus) {
+        const immune_cell_name = IMMUNE_CELL_NAMES[immune_cell_type];
+        const immune_cell_description = IMMUNE_CELL_DESCRIPTIONS[immune_cell_type];
+
+        if (!immune_cell_name || !immune_cell_description) {
+            return;
+        }
+
+        this.update_resource_bonus_display(card_element, resource_bonus);
+        this.update_adaptation_name(card_element, immune_cell_name);
+        this.update_description(card_element, immune_cell_description);
+        this.update_card_classes(card_element, REWARD_TYPES.IMMUNE_CELL, false);
+    }
+
+    update_resource_bonus_display(card_element, resource_bonus) {
+        const level_circles_container = card_element.querySelector('.level_circles_container');
+        
+        if (!level_circles_container) {
+            return;
+        }
+
+        level_circles_container.className = 'resource_bonus_container';
+        level_circles_container.innerHTML = '';
+
+        const bonus_text = document.createElement('div');
+        bonus_text.className = 'resource_bonus_text';
+        bonus_text.textContent = resource_bonus.display_text;
+
+        level_circles_container.appendChild(bonus_text);
     }
 
     get_enhanced_description(adaptation_config, adaptation_type, current_level, target_level) {
@@ -321,11 +426,16 @@ class IntensityRewardSystem {
         }
     }
 
-    update_card_classes(card_element, is_generic_adaptation) {
-        if (is_generic_adaptation) {
-            card_element.classList.add('generic');
-        } else {
-            card_element.classList.remove('generic');
+    update_card_classes(card_element, reward_type, is_generic_adaptation) {
+        card_element.classList.remove('adaptation_card', 'immune_cell_card', 'generic');
+        
+        if (reward_type === REWARD_TYPES.ADAPTATION) {
+            card_element.classList.add('adaptation_card');
+            if (is_generic_adaptation) {
+                card_element.classList.add('generic');
+            }
+        } else if (reward_type === REWARD_TYPES.IMMUNE_CELL) {
+            card_element.classList.add('immune_cell_card');
         }
     }
 
@@ -364,7 +474,7 @@ class IntensityRewardSystem {
         }
 
         this.is_selection_in_progress = true;
-        const selected_adaptation = this.current_choices[card_index];
+        const selected_reward = this.current_choices[card_index];
         const selected_card = this.card_elements[card_index];
 
         if (window.game_state && window.game_state.audio_system) {
@@ -372,14 +482,44 @@ class IntensityRewardSystem {
         }
 
         this.create_outline_projection(selected_card);
-        this.instantly_fill_projected_circle(selected_card);
+        this.animate_selected_card_content(selected_card, selected_reward);
         this.fade_out_other_cards(card_index);
         this.animate_selected_card(selected_card);
 
-        setTimeout(() => {
-            this.apply_selected_adaptation(selected_adaptation);
-            this.hide_modal();
-        }, 1000);
+        if (selected_reward.type === REWARD_TYPES.ADAPTATION) {
+            setTimeout(() => {
+                this.apply_selected_adaptation(selected_reward.content);
+                this.hide_modal();
+            }, 1000);
+        } else if (selected_reward.type === REWARD_TYPES.IMMUNE_CELL) {
+            this.selected_immune_cell_reward = selected_reward;
+            setTimeout(() => {
+                this.transition_to_slot_selection();
+            }, 1000);
+        }
+    }
+
+    animate_selected_card_content(card_element, reward_choice) {
+        if (reward_choice.type === REWARD_TYPES.ADAPTATION) {
+            this.instantly_fill_projected_circle(card_element);
+        } else if (reward_choice.type === REWARD_TYPES.IMMUNE_CELL) {
+            this.invert_resource_bonus_display(card_element);
+        }
+    }
+
+    instantly_fill_projected_circle(card_element) {
+        const projected_circle = card_element.querySelector('.level_circle.projected');
+        if (projected_circle) {
+            projected_circle.classList.remove('projected');
+            projected_circle.classList.add('instantly_filled');
+        }
+    }
+
+    invert_resource_bonus_display(card_element) {
+        const resource_bonus_container = card_element.querySelector('.resource_bonus_container');
+        if (resource_bonus_container) {
+            resource_bonus_container.classList.add('inverted');
+        }
     }
 
     create_outline_projection(card_element) {
@@ -412,14 +552,6 @@ class IntensityRewardSystem {
         }, REWARD_CARD_CONFIG.OUTLINE_PROJECTION_GROWTH_DURATION_MS + REWARD_CARD_CONFIG.OUTLINE_PROJECTION_FADE_DURATION_MS);
     }
 
-    instantly_fill_projected_circle(card_element) {
-        const projected_circle = card_element.querySelector('.level_circle.projected');
-        if (projected_circle) {
-            projected_circle.classList.remove('projected');
-            projected_circle.classList.add('instantly_filled');
-        }
-    }
-
     fade_out_other_cards(selected_index) {
         this.card_elements.forEach((card, index) => {
             if (card && index !== selected_index) {
@@ -440,6 +572,118 @@ class IntensityRewardSystem {
         }
     }
 
+    transition_to_slot_selection() {
+        this.hide_card_selection();
+        setTimeout(() => {
+            this.show_slot_selection();
+        }, 200);
+    }
+
+    hide_card_selection() {
+        const cards_container = document.getElementById('reward_cards_container');
+        if (cards_container) {
+            cards_container.style.display = 'none';
+        }
+    }
+
+    show_slot_selection() {
+        this.is_slot_selection_active = true;
+        this.update_slot_selection_content();
+        
+        if (this.slot_selection_elements && this.slot_selection_elements.container) {
+            this.slot_selection_elements.container.style.display = 'flex';
+            
+            setTimeout(() => {
+                this.slot_selection_elements.slots.forEach(slot => {
+                    slot.classList.add('visible');
+                });
+            }, 100);
+        }
+    }
+
+    update_slot_selection_content() {
+        if (!this.slot_selection_elements || !window.game_state || !window.game_state.selection_system) {
+            return;
+        }
+
+        const slots_info = window.game_state.selection_system.get_equipped_slots_info();
+
+        for (let slot = 1; slot <= 4; slot++) {
+            const slot_element = this.slot_selection_elements.slots[slot - 1];
+            const name_element = this.slot_selection_elements.names[slot - 1];
+            const slot_info = slots_info[slot];
+
+            if (slot_info.is_occupied) {
+                slot_element.classList.add('occupied');
+                slot_element.classList.remove('empty');
+                name_element.textContent = slot_info.name;
+            } else {
+                slot_element.classList.add('empty');
+                slot_element.classList.remove('occupied');
+                name_element.textContent = '';
+            }
+        }
+    }
+
+    handle_slot_selection(slot) {
+        if (!this.is_slot_selection_active || !this.selected_immune_cell_reward) {
+            return;
+        }
+
+        this.is_slot_selection_active = false;
+        
+        this.animate_slot_selection(slot);
+        this.fade_out_other_slots(slot);
+
+        setTimeout(() => {
+            this.apply_immune_cell_reward(slot);
+            this.hide_modal();
+        }, 1000);
+    }
+
+    animate_slot_selection(selected_slot) {
+        const slot_element = this.slot_selection_elements.slots[selected_slot - 1];
+        const name_element = this.slot_selection_elements.names[selected_slot - 1];
+        
+        if (slot_element) {
+            slot_element.classList.add('selected');
+            slot_element.classList.add('occupied');
+            slot_element.classList.remove('empty');
+        }
+
+        if (name_element && this.selected_immune_cell_reward) {
+            const immune_cell_name = IMMUNE_CELL_NAMES[this.selected_immune_cell_reward.content];
+            name_element.textContent = immune_cell_name;
+        }
+    }
+
+    fade_out_other_slots(selected_slot) {
+        this.slot_selection_elements.slots.forEach((slot, index) => {
+            if (index !== selected_slot - 1) {
+                slot.classList.add('faded');
+            }
+        });
+    }
+
+    apply_immune_cell_reward(slot) {
+        if (!this.selected_immune_cell_reward || !window.game_state) {
+            return;
+        }
+
+        if (window.game_state.selection_system) {
+            window.game_state.selection_system.set_equipped_immune_cell(
+                slot, 
+                this.selected_immune_cell_reward.content
+            );
+        }
+
+        if (window.game_state.adaptation_system && this.selected_immune_cell_reward.resource_bonus) {
+            window.game_state.adaptation_system.apply_resource_bonus(
+                this.selected_immune_cell_reward.resource_bonus
+            );
+        }
+    }
+
     hide_modal() {
         if (this.modal_element) {
             this.modal_element.classList.remove('active');
@@ -449,9 +693,28 @@ class IntensityRewardSystem {
             this.intensity_up_text_element.classList.remove('visible');
         }
 
+        this.reset_card_states();
+        this.reset_slot_selection_states();
+
+        this.is_modal_active = false;
+        this.is_selection_in_progress = false;
+        this.is_slot_selection_active = false;
+        this.current_choices = [];
+        this.selected_immune_cell_reward = null;
+
+        if (window.game_state) {
+            window.game_state.is_game_paused = false;
+        }
+
+        if (window.game_state && window.game_state.ui_system) {
+            window.game_state.ui_system.show_all_gameplay_ui();
+        }
+    }
+
+    reset_card_states() {
         this.card_elements.forEach(card => {
             if (card) {
-                card.classList.remove('visible', 'selected', 'faded', 'generic');
+                card.classList.remove('visible', 'selected', 'faded', 'generic', 'adaptation_card', 'immune_cell_card');
                 const name_element = card.querySelector('.adaptation_name');
                 if (name_element) {
                     name_element.style.fontSize = '';
@@ -461,19 +724,39 @@ class IntensityRewardSystem {
                 circles.forEach(circle => {
                     circle.classList.remove('filled', 'projected', 'instantly_filled');
                 });
+
+                const resource_bonus_container = card.querySelector('.resource_bonus_container');
+                if (resource_bonus_container) {
+                    resource_bonus_container.classList.remove('inverted');
+                    resource_bonus_container.className = 'level_circles_container';
+                    resource_bonus_container.innerHTML = `
+                        <div class="level_circles">
+                            <div class="level_circle"></div>
+                            <div class="level_circle"></div>
+                            <div class="level_circle"></div>
+                        </div>
+                    `;
+                }
             }
         });
 
-        this.is_modal_active = false;
-        this.is_selection_in_progress = false;
-        this.current_choices = [];
-
-        if (window.game_state) {
-            window.game_state.is_game_paused = false;
+        const cards_container = document.getElementById('reward_cards_container');
+        if (cards_container) {
+            cards_container.style.display = '';
         }
+    }
 
-        if (window.game_state && window.game_state.ui_system) {
-            window.game_state.ui_system.show_all_gameplay_ui();
+    reset_slot_selection_states() {
+        if (this.slot_selection_elements && this.slot_selection_elements.container) {
+            this.slot_selection_elements.container.style.display = 'none';
+            
+            this.slot_selection_elements.slots.forEach(slot => {
+                slot.classList.remove('visible', 'selected', 'faded', 'occupied', 'empty');
+            });
+
+            this.slot_selection_elements.names.forEach(name => {
+                name.textContent = '';
+            });
         }
     }
 
@@ -486,6 +769,8 @@ class IntensityRewardSystem {
         this.current_choices = [];
         this.is_selection_in_progress = false;
         this.projected_level_circles = [];
+        this.is_slot_selection_active = false;
+        this.selected_immune_cell_reward = null;
         
         if (window.game_state) {
             window.game_state.is_game_paused = false;
@@ -502,21 +787,8 @@ class IntensityRewardSystem {
             this.intensity_up_text_element.style.animationDuration = '';
         }
 
-        this.card_elements.forEach(card => {
-            if (card) {
-                card.classList.remove('visible', 'selected', 'faded', 'generic');
-                const name_element = card.querySelector('.adaptation_name');
-                if (name_element) {
-                    name_element.style.fontSize = '';
-                }
-                
-                const circles = card.querySelectorAll('.level_circle');
-                circles.forEach(circle => {
-                    circle.classList.remove('filled', 'projected', 'instantly_filled');
-                });
-            }
-        });
-
+        this.reset_card_states();
+        this.reset_slot_selection_states();
         this.reset_card_scroll_positions();
         this.initialize_diagonal_stripes();
     }
