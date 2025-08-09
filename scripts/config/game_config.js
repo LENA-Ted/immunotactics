@@ -82,7 +82,7 @@ const REWARD_CARD_CONFIG = {
 
 const STARTING_IMMUNE_CELL_SLOTS = {
     1: 'B_CELL',
-    2: null,
+    2: 'MAST_CELL',
     3: null,
     4: null
 };
