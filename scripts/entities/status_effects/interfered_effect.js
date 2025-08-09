@@ -1,6 +1,6 @@
 class InterferedEffect extends BaseStatusEffect {
-    constructor(duration_ms) {
-        super(duration_ms);
+    constructor(duration_ms, source_category = STATUS_EFFECT_SOURCES.IMMUNE_CELL) {
+        super(duration_ms, source_category);
         this.speed_reduction_factor = 0.5;
     }
 
