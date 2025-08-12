@@ -78,7 +78,7 @@ const IMMUNE_CELL_CONFIGS = {
     },
     PLASMA_CELL: {
         cost: 25,
-        base_hp: 15,
+        base_hp: 20,
         shoot_hp_cost: 1,
         shoot_interval_ms: 1000,
         radius: 15,
