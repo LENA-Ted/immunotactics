@@ -25,24 +25,15 @@ class DendriticCell extends BaseTower {
         }
 
         this.update_pulsate_visual();
-        this.check_enemy_contact();
     }
 
     update_pulsate_visual() {
         this.pulsate_timer += this.pulsate_speed_multiplier;
     }
 
-    check_enemy_contact() {
-        if (!window.game_state || !window.game_state.enemies || this.has_exploded) {
-            return;
-        }
-
-        for (const enemy of window.game_state.enemies) {
-            const distance = MathUtils.get_distance(this.x, this.y, enemy.x, enemy.y);
-            if (distance < this.radius + enemy.radius) {
-                this.explode();
-                return;
-            }
+    handle_enemy_collision(enemy) {
+        if (!this.has_exploded) {
+            this.explode();
         }
     }
 
