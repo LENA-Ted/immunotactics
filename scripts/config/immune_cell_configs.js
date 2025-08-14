@@ -10,7 +10,7 @@ const IMMUNE_CELL_CONFIGS = {
         stroke_width: 2,
         range: null,
         projectile_count: 1,
-        projectile_damage: 12,
+        projectile_damage: 15,
         projectile_speed: 8,
         collision_behavior: 'DESTROY_ON_CONTACT',
         targeting_behavior: 'DIRECTIONAL',
@@ -27,7 +27,7 @@ const IMMUNE_CELL_CONFIGS = {
         stroke_width: 2,
         range_factor: 1/3,
         projectile_count: 5,
-        projectile_damage: 5,
+        projectile_damage: 8,
         projectile_speed: 8,
         cone_angle_degrees: 45,
         collision_behavior: 'DESTROY_ON_CONTACT',
@@ -62,6 +62,36 @@ const IMMUNE_CELL_CONFIGS = {
         collision_behavior: 'DESTROY_ON_CONTACT',
         targeting_behavior: 'NON_DIRECTIONAL',
         icon_path: null
+    },
+    DENDRITIC_CELL: {
+        cost: 25,
+        base_hp: 1,
+        radius: 15,
+        color: '#9370DB',
+        stroke_color: '#ffffff',
+        stroke_width: 2,
+        paralysis_radius: 300,
+        paralysis_duration_ms: 5000,
+        collision_behavior: 'ACTIVATE_ON_CONTACT',
+        targeting_behavior: 'NON_DIRECTIONAL',
+        icon_path: null
+    },
+    PLASMA_CELL: {
+        cost: 25,
+        base_hp: 20,
+        shoot_hp_cost: 1,
+        shoot_interval_ms: 1000,
+        radius: 15,
+        color: '#FF6347',
+        stroke_color: '#ffffff',
+        stroke_width: 2,
+        range_factor: 2/3,
+        projectile_count: 8,
+        projectile_damage: 10,
+        projectile_speed: 8,
+        collision_behavior: 'DESTROY_ON_CONTACT',
+        targeting_behavior: 'NON_DIRECTIONAL',
+        icon_path: null
     }
 };
 
@@ -69,21 +99,27 @@ const IMMUNE_CELL_TYPES = {
     B_CELL: 'B_CELL',
     MAST_CELL: 'MAST_CELL',
     INTERFERON: 'INTERFERON',
-    NEUTROPHIL: 'NEUTROPHIL'
+    NEUTROPHIL: 'NEUTROPHIL',
+    DENDRITIC_CELL: 'DENDRITIC_CELL',
+    PLASMA_CELL: 'PLASMA_CELL'
 };
 
 const IMMUNE_CELL_NAMES = {
     B_CELL: 'B-Cell',
     MAST_CELL: 'Mast Cell',
     INTERFERON: 'Interferon',
-    NEUTROPHIL: 'Neutrophil'
+    NEUTROPHIL: 'Neutrophil',
+    DENDRITIC_CELL: 'Dendritic Cell',
+    PLASMA_CELL: 'Plasma Cell'
 };
 
 const IMMUNE_CELL_DESCRIPTIONS = {
     B_CELL: 'Shoots at the closest enemy. Has unlimited range.',
     MAST_CELL: 'Shoots a spread at the closest enemy. Has short range.',
     INTERFERON: 'Projects an AoE ray that slows down enemies. Has medium range.',
-    NEUTROPHIL: 'Explodes after a short wait. Deals large damage.'
+    NEUTROPHIL: 'Explodes after a short wait. Deals large damage.',
+    DENDRITIC_CELL: 'Paralyzes enemies temporarily around an area upon death.',
+    PLASMA_CELL: 'Shoots projectiles around itself. Has medium range.'
 };
 
 const COLLISION_BEHAVIORS = {

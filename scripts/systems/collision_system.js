@@ -42,10 +42,16 @@ class CollisionSystem {
                 const tower = towers[j];
 
                 if (this.is_circle_collision(enemy, tower)) {
-                    if (enemy.is_pathogen()) {
-                        this.handle_pathogen_hit_tower(enemy, tower, i, j, game_state);
+                    if (tower.config && tower.config.collision_behavior === COLLISION_BEHAVIORS.ACTIVATE_ON_CONTACT) {
+                        if (tower.handle_enemy_collision) {
+                            tower.handle_enemy_collision(enemy);
+                        }
                     } else {
-                        this.handle_microbe_hit_tower(enemy, tower, i, j, game_state);
+                        if (enemy.is_pathogen()) {
+                            this.handle_pathogen_hit_tower(enemy, tower, i, j, game_state);
+                        } else {
+                            this.handle_microbe_hit_tower(enemy, tower, i, j, game_state);
+                        }
                     }
                     break;
                 }

@@ -115,6 +115,12 @@ class BaseEnemy {
     calculate_current_speed() {
         this.current_speed = this.base_speed * this.inoculated_speed_multiplier;
         
+        const is_paralyzed = this.has_status_effect('PARALYZED');
+        if (is_paralyzed) {
+            this.current_speed = 0;
+            return;
+        }
+        
         this.status_effects.forEach(effect => {
             if (effect.get_type() === 'INTERFERED') {
                 this.current_speed *= effect.get_speed_multiplier();
