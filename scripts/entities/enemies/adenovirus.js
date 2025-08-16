@@ -7,15 +7,11 @@ class Adenovirus extends BaseEnemy {
     update(target, timestamp) {
         this.update_status_effects(timestamp);
         this.move_toward_target(target);
-        this.update_aura();
+        this.update_aura_position();
     }
 
-    update_aura() {
+    update_aura_position() {
         this.permeation_aura.update_position(this.x, this.y);
-        
-        if (window.game_state && window.game_state.enemies) {
-            this.permeation_aura.update(window.game_state.enemies, this);
-        }
     }
 
     draw(ctx) {

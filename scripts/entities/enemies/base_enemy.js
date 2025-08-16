@@ -19,6 +19,8 @@ class BaseEnemy {
         this.inoculated_size_multiplier = 1.0;
         this.inoculated_speed_multiplier = 1.0;
         this.immunity_feedback_timer = 0;
+        this.healing_flag = false;
+        this.permeated_flag = false;
     }
 
     generate_size_modifier() {
@@ -104,6 +106,40 @@ class BaseEnemy {
         
         this.calculate_current_speed();
         this.update_immunity_feedback_timer();
+        this.apply_healing_if_flagged(timestamp);
+    }
+
+    apply_healing_if_flagged(timestamp) {
+        if (!this.healing_flag) {
+            return;
+        }
+
+        if (!this.last_heal_time) {
+            this.last_heal_time = this.get_current_adjusted_time(timestamp);
+            return;
+        }
+
+        const heal_interval_ms = 500;
+        const heal_percentage = 0.01;
+        const adjusted_elapsed = this.get_adjusted_elapsed_time_since_last_heal(timestamp);
+        
+        if (adjusted_elapsed >= heal_interval_ms) {
+            const heal_amount = Math.ceil(this.max_hp * heal_percentage);
+            this.hp = Math.min(this.max_hp, this.hp + heal_amount);
+            this.last_heal_time = this.get_current_adjusted_time(timestamp);
+        }
+    }
+
+    get_current_adjusted_time(timestamp) {
+        if (window.game_state && window.game_state.get_adjusted_elapsed_time) {
+            return window.game_state.get_adjusted_elapsed_time(0);
+        }
+        return timestamp;
+    }
+
+    get_adjusted_elapsed_time_since_last_heal(timestamp) {
+        const current_adjusted_time = this.get_current_adjusted_time(timestamp);
+        return current_adjusted_time - this.last_heal_time;
     }
 
     update_immunity_feedback_timer() {
@@ -229,6 +265,11 @@ class BaseEnemy {
     }
 
     draw_body(ctx) {
+        const is_permeated = this.has_status_effect('PERMEATED');
+        const body_opacity = is_permeated ? 0.6 : 1.0;
+        
+        ctx.save();
+        ctx.globalAlpha = body_opacity;
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.config.stroke_color;
         ctx.lineWidth = this.config.stroke_width;
@@ -236,6 +277,7 @@ class BaseEnemy {
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
+        ctx.restore();
     }
 
     draw(ctx) {

@@ -283,24 +283,15 @@ class CollisionSystem {
         }
     }
 
-    handle_explosion_damage(explosion_x, explosion_y, explosion_radius, damage, game_state, exclude_permeated = true) {
+    handle_explosion_damage(explosion_x, explosion_y, explosion_radius, damage, game_state, exclude_permeated = false) {
         if (!game_state.enemies) {
             return [];
         }
 
-        let affected_entities;
-        
-        if (exclude_permeated) {
-            affected_entities = game_state.enemies.filter(enemy => {
-                const distance = MathUtils.get_distance(explosion_x, explosion_y, enemy.x, enemy.y);
-                return distance <= explosion_radius && !this.is_permeated(enemy);
-            });
-        } else {
-            affected_entities = game_state.enemies.filter(enemy => {
-                const distance = MathUtils.get_distance(explosion_x, explosion_y, enemy.x, enemy.y);
-                return distance <= explosion_radius;
-            });
-        }
+        const affected_entities = game_state.enemies.filter(enemy => {
+            const distance = MathUtils.get_distance(explosion_x, explosion_y, enemy.x, enemy.y);
+            return distance <= explosion_radius;
+        });
 
         const destroyed_entities = [];
 

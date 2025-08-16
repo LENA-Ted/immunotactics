@@ -4,12 +4,14 @@ class GameLoop {
         this.animation_frame_id = null;
         this.systems = {};
         this.game_state = null;
+        this.aura_manager = null;
     }
 
     initialize(systems, initial_game_state) {
         this.systems = systems;
         this.game_state = initial_game_state;
         window.game_state = this.game_state;
+        this.aura_manager = new AuraManager();
         this.add_pause_methods_to_game_state();
     }
 
@@ -123,6 +125,10 @@ class GameLoop {
             this.systems.pathogen.update(timestamp);
         }
 
+        if (this.aura_manager) {
+            this.aura_manager.update(this.game_state);
+        }
+
         this.game_state.towers.forEach(tower => {
             tower.update(timestamp);
         });
@@ -175,8 +181,13 @@ class GameLoop {
     }
 
     clean_up_entities() {
+        this.clean_up_towers();
+        this.clean_up_other_entities();
+    }
+
+    clean_up_towers() {
         this.game_state.towers = this.game_state.towers.filter(tower => {
-            if (!tower.is_alive()) {
+            if (tower.check_destruction()) {
                 if (this.game_state.last_tower_damage_time) {
                     delete this.game_state.last_tower_damage_time[tower.id];
                 }
@@ -190,7 +201,9 @@ class GameLoop {
             }
             return true;
         });
+    }
 
+    clean_up_other_entities() {
         this.game_state.damage_numbers = this.game_state.damage_numbers.filter(dn => 
             dn.is_alive()
         );

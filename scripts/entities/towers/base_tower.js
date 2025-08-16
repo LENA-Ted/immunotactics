@@ -184,6 +184,10 @@ class BaseTower {
         return this.hp > 0;
     }
 
+    check_destruction() {
+        return this.hp <= 0;
+    }
+
     get_cost() {
         return this.config.cost;
     }

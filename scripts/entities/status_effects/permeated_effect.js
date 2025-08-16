@@ -18,10 +18,6 @@ class PermeatedEffect extends BaseStatusEffect {
     is_immune_to_projectiles() {
         return true;
     }
-
-    is_immune_to_explosions() {
-        return true;
-    }
 }
 
 window.PermeatedEffect = PermeatedEffect;
