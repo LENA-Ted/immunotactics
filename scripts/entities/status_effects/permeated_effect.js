@@ -8,11 +8,19 @@ class PermeatedEffect extends BaseStatusEffect {
     }
 
     apply_effect(target) {
+        if (!target || !target.apply_permeated_visuals) {
+            return;
+        }
         
+        target.apply_permeated_visuals();
     }
 
     remove_effect(target) {
+        if (!target || !target.restore_original_visuals) {
+            return;
+        }
         
+        target.restore_original_visuals();
     }
 
     is_immune_to_projectiles() {

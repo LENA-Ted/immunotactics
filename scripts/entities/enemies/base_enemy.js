@@ -14,6 +14,8 @@ class BaseEnemy {
         this.base_radius = this.generate_radius_from_size();
         this.radius = this.base_radius;
         this.color = this.generate_color();
+        this.original_color = this.color;
+        this.original_stroke_color = this.config.stroke_color;
         this.pulsate_effect = new PulsateEffect();
         this.status_effects = [];
         this.inoculated_size_multiplier = 1.0;
@@ -94,6 +96,18 @@ class BaseEnemy {
         this.pulsate_effect.update();
     }
 
+    apply_permeated_visuals() {
+        this.color = STATUS_EFFECT_CONFIG.PERMEATED_GRAY_COLOR;
+        this.config.stroke_color = STATUS_EFFECT_CONFIG.PERMEATED_WHITE_OUTLINE;
+        this.config.stroke_width = STATUS_EFFECT_CONFIG.PERMEATED_OUTLINE_WIDTH;
+    }
+
+    restore_original_visuals() {
+        this.color = this.original_color;
+        this.config.stroke_color = this.original_stroke_color;
+        this.config.stroke_width = this.original_stroke_width || 2;
+    }
+
     update_status_effects(timestamp) {
         this.status_effects = this.status_effects.filter(effect => {
             effect.update(timestamp);
@@ -131,8 +145,8 @@ class BaseEnemy {
     }
 
     get_current_adjusted_time(timestamp) {
-        if (window.game_state && window.game_state.get_adjusted_elapsed_time) {
-            return window.game_state.get_adjusted_elapsed_time(0);
+        if (window.game_state && window.game_state.get_adjusted_time) {
+            return window.game_state.get_adjusted_time(timestamp);
         }
         return timestamp;
     }
@@ -142,62 +156,43 @@ class BaseEnemy {
         return current_adjusted_time - this.last_heal_time;
     }
 
+    calculate_current_speed() {
+        this.current_speed = this.base_speed * this.inoculated_speed_multiplier;
+        
+        this.status_effects.forEach(effect => {
+            if (effect.apply_speed_modification) {
+                this.current_speed = effect.apply_speed_modification(this.current_speed);
+            }
+        });
+    }
+
     update_immunity_feedback_timer() {
         if (this.immunity_feedback_timer > 0) {
             this.immunity_feedback_timer--;
         }
     }
 
-    calculate_current_speed() {
-        this.current_speed = this.base_speed * this.inoculated_speed_multiplier;
-        
-        const is_paralyzed = this.has_status_effect('PARALYZED');
-        if (is_paralyzed) {
-            this.current_speed = 0;
+    add_status_effect(effect) {
+        if (!effect) {
             return;
         }
         
-        this.status_effects.forEach(effect => {
-            if (effect.get_type() === 'INTERFERED') {
-                this.current_speed *= effect.get_speed_multiplier();
-            }
-        });
+        if (this.can_have_status_effect(effect)) {
+            this.status_effects.push(effect);
+            effect.apply_effect(this);
+        }
     }
 
-    add_status_effect(effect) {
-        if (this.is_immune_to_status_effect(effect)) {
-            this.trigger_immunity_feedback();
-            return false;
-        }
-
-        const existing_effect_index = this.status_effects.findIndex(
-            existing => existing.get_type() === effect.get_type()
-        );
-        
-        if (existing_effect_index !== -1) {
-            this.status_effects[existing_effect_index].remove_effect(this);
-            this.status_effects.splice(existing_effect_index, 1);
-        }
-        
-        this.status_effects.push(effect);
-        effect.apply_effect(this);
-        return true;
-    }
-
-    is_immune_to_status_effect(effect) {
+    can_have_status_effect(effect) {
         if (!effect) {
             return false;
         }
-
-        if (!this.has_inoculated_status()) {
+        
+        if (effect.source === STATUS_EFFECT_SOURCES.IMMUNE_CELL && this.is_pathogen()) {
             return false;
         }
-
-        return effect.is_from_immune_cell();
-    }
-
-    has_inoculated_status() {
-        return this.has_status_effect('INOCULATED');
+        
+        return true;
     }
 
     trigger_immunity_feedback() {
@@ -265,11 +260,13 @@ class BaseEnemy {
     }
 
     draw_body(ctx) {
-        const is_permeated = this.has_status_effect('PERMEATED');
-        const body_opacity = is_permeated ? STATUS_EFFECT_CONFIG.PERMEATED_VISUAL_OPACITY : 1.0;
+        const scale = this.pulsate_effect.get_scale();
         
         ctx.save();
-        ctx.globalAlpha = body_opacity;
+        ctx.translate(this.x, this.y);
+        ctx.scale(scale, scale);
+        ctx.translate(-this.x, -this.y);
+        
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.config.stroke_color;
         ctx.lineWidth = this.config.stroke_width;

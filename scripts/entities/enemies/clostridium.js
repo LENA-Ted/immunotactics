@@ -10,7 +10,51 @@ class Clostridium extends BaseEnemy {
         }
         
         this.update_status_effects(timestamp);
+        
+        if (this.is_colliding_with_core(target)) {
+            this.handle_core_collision(target);
+            return;
+        }
+        
         this.move_toward_target(target);
+    }
+
+    is_colliding_with_core(core) {
+        if (!core) {
+            return false;
+        }
+        
+        const distance = MathUtils.get_distance(this.x, this.y, core.x, core.y);
+        return distance < this.radius + core.radius;
+    }
+
+    handle_core_collision(core) {
+        core.take_damage(1);
+        
+        if (window.game_state && window.game_state.audio_system) {
+            window.game_state.audio_system.play_sound('DAMAGE_CORE');
+        }
+        
+        if (window.game_state && window.game_state.effects) {
+            window.game_state.effects.push(new PopEffect(this.x, this.y, this.color));
+        }
+        
+        if (window.game_state && window.game_state.resource_system) {
+            window.game_state.resource_system.spawn_particles_from_enemy(this, window.game_state);
+        }
+        
+        this.remove_from_game();
+    }
+
+    remove_from_game() {
+        if (!window.game_state || !window.game_state.enemies) {
+            return;
+        }
+        
+        const enemy_index = window.game_state.enemies.indexOf(this);
+        if (enemy_index !== -1) {
+            window.game_state.enemies.splice(enemy_index, 1);
+        }
     }
 
     take_damage(amount) {
@@ -42,7 +86,8 @@ class Clostridium extends BaseEnemy {
         
         this.create_explosion_effect();
         this.trigger_screen_shake();
-        this.damage_immune_cells_in_explosion_radius();
+        this.destroy_immune_cells_in_explosion_radius();
+        this.damage_core_if_in_range();
     }
 
     create_explosion_effect() {
@@ -67,22 +112,36 @@ class Clostridium extends BaseEnemy {
         }
     }
 
-    damage_immune_cells_in_explosion_radius() {
+    destroy_immune_cells_in_explosion_radius() {
         if (!window.game_state || !window.game_state.towers) {
             return;
         }
 
-        const damage = this.calculate_explosion_damage();
         const affected_towers = this.get_towers_in_explosion_radius();
-
         affected_towers.forEach(tower => {
-            this.damage_tower(tower, damage);
+            this.destroy_tower(tower);
         });
     }
 
-    calculate_explosion_damage() {
-        const intensity_level = window.game_state ? window.game_state.intensity_level : 0;
-        return Math.max(1, intensity_level);
+    damage_core_if_in_range() {
+        if (!window.game_state || !window.game_state.core) {
+            return;
+        }
+        
+        const core = window.game_state.core;
+        const distance = MathUtils.get_distance(this.x, this.y, core.x, core.y);
+        
+        if (distance <= this.config.explosion_radius) {
+            core.take_damage(1);
+            
+            if (window.game_state.audio_system) {
+                window.game_state.audio_system.play_sound('DAMAGE_CORE');
+            }
+            
+            if (window.game_state.effects) {
+                window.game_state.effects.push(new PopEffect(core.x, core.y, '#cccccc'));
+            }
+        }
     }
 
     get_towers_in_explosion_radius() {
@@ -96,16 +155,22 @@ class Clostridium extends BaseEnemy {
         });
     }
 
-    damage_tower(tower, damage) {
-        tower.hp -= damage;
-        tower.trigger_pulsate();
-        
-        if (window.game_state && window.game_state.damage_numbers) {
-            window.game_state.damage_numbers.push(new DamageNumber(tower.x, tower.y, damage));
+    destroy_tower(tower) {
+        if (!window.game_state) {
+            return;
         }
-
-        if (window.game_state && window.game_state.effects) {
+        
+        if (window.game_state.effects) {
             window.game_state.effects.push(new PopEffect(tower.x, tower.y, '#cccccc'));
+        }
+        
+        const tower_index = window.game_state.towers.indexOf(tower);
+        if (tower_index !== -1) {
+            window.game_state.towers.splice(tower_index, 1);
+        }
+        
+        if (window.game_state.last_tower_damage_time && tower.id) {
+            delete window.game_state.last_tower_damage_time[tower.id];
         }
     }
 
