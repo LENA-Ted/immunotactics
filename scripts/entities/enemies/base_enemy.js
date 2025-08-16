@@ -119,8 +119,8 @@ class BaseEnemy {
             return;
         }
 
-        const heal_interval_ms = 500;
-        const heal_percentage = 0.01;
+        const heal_interval_ms = PATHOGEN_CONFIGS.CANDIDA.heal_interval_ms;
+        const heal_percentage = PATHOGEN_CONFIGS.CANDIDA.heal_percentage;
         const adjusted_elapsed = this.get_adjusted_elapsed_time_since_last_heal(timestamp);
         
         if (adjusted_elapsed >= heal_interval_ms) {
@@ -201,7 +201,7 @@ class BaseEnemy {
     }
 
     trigger_immunity_feedback() {
-        this.immunity_feedback_timer = 60;
+        this.immunity_feedback_timer = STATUS_EFFECT_CONFIG.IMMUNITY_FEEDBACK_DURATION_FRAMES;
         
         if (window.game_state && window.game_state.effects) {
             const immunity_text = new ImmunityFeedbackText(this.x, this.y);
@@ -266,7 +266,7 @@ class BaseEnemy {
 
     draw_body(ctx) {
         const is_permeated = this.has_status_effect('PERMEATED');
-        const body_opacity = is_permeated ? 0.6 : 1.0;
+        const body_opacity = is_permeated ? STATUS_EFFECT_CONFIG.PERMEATED_VISUAL_OPACITY : 1.0;
         
         ctx.save();
         ctx.globalAlpha = body_opacity;
@@ -313,8 +313,8 @@ class ImmunityFeedbackText {
         this.x = x;
         this.y = y;
         this.text = 'IMMUNE';
-        this.life = 60;
-        this.max_life = 60;
+        this.life = STATUS_EFFECT_CONFIG.IMMUNITY_FEEDBACK_DURATION_FRAMES;
+        this.max_life = STATUS_EFFECT_CONFIG.IMMUNITY_FEEDBACK_DURATION_FRAMES;
         this.opacity = 1.0;
         this.float_speed = 1.0;
         this.color = '#FFD700';
