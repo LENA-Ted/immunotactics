@@ -19,6 +19,10 @@ class CollisionSystem {
             for (let j = enemies.length - 1; j >= 0; j--) {
                 const enemy = enemies[j];
 
+                if (this.is_permeated(enemy)) {
+                    continue;
+                }
+
                 if (this.is_circle_collision(projectile, enemy)) {
                     this.handle_projectile_hit_enemy(projectile, enemy, i, j, game_state);
                     collision_found = true;
@@ -30,6 +34,13 @@ class CollisionSystem {
                 continue;
             }
         }
+    }
+
+    is_permeated(enemy) {
+        if (!enemy.has_status_effect) {
+            return false;
+        }
+        return enemy.has_status_effect('PERMEATED');
     }
 
     handle_enemy_tower_collisions(game_state) {
@@ -272,50 +283,59 @@ class CollisionSystem {
         }
     }
 
-    handle_explosion_damage(explosion_x, explosion_y, explosion_radius, damage, game_state) {
+    handle_explosion_damage(explosion_x, explosion_y, explosion_radius, damage, game_state, exclude_permeated = true) {
         if (!game_state.enemies) {
             return [];
         }
 
-        const affected_enemies = game_state.enemies.filter(enemy => {
-            const distance = MathUtils.get_distance(explosion_x, explosion_y, enemy.x, enemy.y);
-            return distance <= explosion_radius;
-        });
+        let affected_entities;
+        
+        if (exclude_permeated) {
+            affected_entities = game_state.enemies.filter(enemy => {
+                const distance = MathUtils.get_distance(explosion_x, explosion_y, enemy.x, enemy.y);
+                return distance <= explosion_radius && !this.is_permeated(enemy);
+            });
+        } else {
+            affected_entities = game_state.enemies.filter(enemy => {
+                const distance = MathUtils.get_distance(explosion_x, explosion_y, enemy.x, enemy.y);
+                return distance <= explosion_radius;
+            });
+        }
 
-        const destroyed_enemies = [];
+        const destroyed_entities = [];
 
-        affected_enemies.forEach(enemy => {
-            const is_destroyed = enemy.take_damage(damage);
+        affected_entities.forEach(entity => {
+            const is_destroyed = entity.take_damage(damage);
             
             if (game_state.damage_numbers) {
-                game_state.damage_numbers.push(new DamageNumber(enemy.x, enemy.y, damage));
+                game_state.damage_numbers.push(new DamageNumber(entity.x, entity.y, damage));
             }
 
             if (is_destroyed) {
-                destroyed_enemies.push(enemy);
+                destroyed_entities.push(entity);
                 
                 if (game_state.audio_system) {
                     game_state.audio_system.play_sound('DESTROY_ENEMY');
                 }
                 
                 if (game_state.effects) {
-                    game_state.effects.push(new PopEffect(enemy.x, enemy.y, enemy.color));
+                    game_state.effects.push(new PopEffect(entity.x, entity.y, entity.color));
                 }
 
                 if (game_state.resource_system) {
-                    game_state.resource_system.spawn_particles_from_enemy(enemy, game_state);
+                    game_state.resource_system.spawn_particles_from_enemy(entity, game_state);
                 }
 
-                const enemy_index = game_state.enemies.indexOf(enemy);
-                if (enemy_index !== -1) {
-                    game_state.enemies.splice(enemy_index, 1);
+                const entity_index = game_state.enemies.indexOf(entity);
+                if (entity_index !== -1) {
+                    game_state.enemies.splice(entity_index, 1);
                 }
 
                 this.handle_enemy_destroyed(game_state);
             }
         });
 
-        return destroyed_enemies;
+        return destroyed_entities;
     }
 
     is_circle_collision(entity1, entity2) {
