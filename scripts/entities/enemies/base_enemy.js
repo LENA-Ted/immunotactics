@@ -8,7 +8,7 @@ class BaseEnemy {
         this.size_modifier = this.generate_size_modifier();
         this.hp = this.generate_hp_from_size();
         this.max_hp = this.hp;
-        this.displayed_hp = this.hp;
+        this.displayed_hp_progress = 1.0;
         this.base_speed = this.generate_speed_from_size();
         this.current_speed = this.base_speed;
         this.base_radius = this.generate_radius_from_size();
@@ -190,21 +190,16 @@ class BaseEnemy {
     }
 
     draw_hp_gauge(ctx) {
-        const target_hp = this.hp;
-        const hp_difference = Math.abs(this.displayed_hp - target_hp);
+        const target_hp_progress = this.hp / this.max_hp;
         
-        if (hp_difference > GAME_CONFIG.ENEMY_HP_GAUGE_ANIMATION_THRESHOLD) {
-            this.displayed_hp = MathUtils.dynamic_ease_lerp(
-                this.displayed_hp,
-                target_hp,
-                GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
-                GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
-            );
-        } else {
-            this.displayed_hp = target_hp;
-        }
+        this.displayed_hp_progress = MathUtils.dynamic_ease_lerp(
+            this.displayed_hp_progress,
+            target_hp_progress,
+            GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
+            GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
+        );
         
-        const hp_angle = (this.displayed_hp / this.max_hp) * Math.PI * 2;
+        const hp_angle = this.displayed_hp_progress * Math.PI * 2;
         const gauge_radius = this.radius + GAME_CONFIG.ENEMY_HP_GAUGE_RADIUS_OFFSET;
         const scale = this.pulsate_effect.get_scale();
 
