@@ -193,19 +193,19 @@ class BaseEnemy {
         const target_hp = this.hp;
         const hp_difference = Math.abs(this.displayed_hp - target_hp);
         
-        if (hp_difference > 0.1) {
+        if (hp_difference > GAME_CONFIG.ENEMY_HP_GAUGE_ANIMATION_THRESHOLD) {
             this.displayed_hp = MathUtils.dynamic_ease_lerp(
                 this.displayed_hp,
                 target_hp,
-                GAME_CONFIG.ENEMY_HP_GAUGE_ANIMATION_SPEED,
-                GAME_CONFIG.ENEMY_HP_GAUGE_EASING_STRENGTH
+                GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
+                GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
             );
         } else {
             this.displayed_hp = target_hp;
         }
         
         const hp_angle = (this.displayed_hp / this.max_hp) * Math.PI * 2;
-        const gauge_radius = this.radius + 5;
+        const gauge_radius = this.radius + GAME_CONFIG.ENEMY_HP_GAUGE_RADIUS_OFFSET;
         const scale = this.pulsate_effect.get_scale();
 
         ctx.save();
@@ -215,14 +215,15 @@ class BaseEnemy {
         
         ctx.beginPath();
         ctx.arc(this.x, this.y, gauge_radius, 0, Math.PI * 2);
-        ctx.strokeStyle = '#00000040';
-        ctx.lineWidth = 4;
+        ctx.strokeStyle = GAME_CONFIG.ENEMY_HP_GAUGE_BACKGROUND_COLOR;
+        ctx.lineWidth = GAME_CONFIG.ENEMY_HP_GAUGE_STROKE_WIDTH;
         ctx.stroke();
         
         ctx.beginPath();
         ctx.arc(this.x, this.y, gauge_radius, -Math.PI / 2, -Math.PI / 2 + hp_angle);
         ctx.strokeStyle = GAME_CONFIG.COLOR_ENEMY_HP;
-        ctx.lineWidth = 4;
+        ctx.lineWidth = GAME_CONFIG.ENEMY_HP_GAUGE_STROKE_WIDTH;
+        ctx.lineCap = 'round';
         ctx.stroke();
         
         ctx.restore();
