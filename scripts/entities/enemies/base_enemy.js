@@ -8,7 +8,7 @@ class BaseEnemy {
         this.size_modifier = this.generate_size_modifier();
         this.hp = this.generate_hp_from_size();
         this.max_hp = this.hp;
-        this.displayed_hp = this.hp;
+        this.displayed_hp_progress = 1.0;
         this.base_speed = this.generate_speed_from_size();
         this.current_speed = this.base_speed;
         this.base_radius = this.generate_radius_from_size();
@@ -190,22 +190,17 @@ class BaseEnemy {
     }
 
     draw_hp_gauge(ctx) {
-        const target_hp = this.hp;
-        const hp_difference = Math.abs(this.displayed_hp - target_hp);
+        const target_hp_progress = this.hp / this.max_hp;
         
-        if (hp_difference > 0.1) {
-            this.displayed_hp = MathUtils.dynamic_ease_lerp(
-                this.displayed_hp,
-                target_hp,
-                GAME_CONFIG.ENEMY_HP_GAUGE_ANIMATION_SPEED,
-                GAME_CONFIG.ENEMY_HP_GAUGE_EASING_STRENGTH
-            );
-        } else {
-            this.displayed_hp = target_hp;
-        }
+        this.displayed_hp_progress = MathUtils.dynamic_ease_lerp(
+            this.displayed_hp_progress,
+            target_hp_progress,
+            GAME_CONFIG.GAUGE_ANIMATION_BASE_SPEED,
+            GAME_CONFIG.GAUGE_ANIMATION_DISTANCE_MULTIPLIER
+        );
         
-        const hp_angle = (this.displayed_hp / this.max_hp) * Math.PI * 2;
-        const gauge_radius = this.radius + 5;
+        const hp_angle = this.displayed_hp_progress * Math.PI * 2;
+        const gauge_radius = this.radius + GAME_CONFIG.ENEMY_HP_GAUGE_RADIUS_OFFSET;
         const scale = this.pulsate_effect.get_scale();
 
         ctx.save();
@@ -215,14 +210,15 @@ class BaseEnemy {
         
         ctx.beginPath();
         ctx.arc(this.x, this.y, gauge_radius, 0, Math.PI * 2);
-        ctx.strokeStyle = '#00000040';
-        ctx.lineWidth = 4;
+        ctx.strokeStyle = GAME_CONFIG.ENEMY_HP_GAUGE_BACKGROUND_COLOR;
+        ctx.lineWidth = GAME_CONFIG.ENEMY_HP_GAUGE_STROKE_WIDTH;
         ctx.stroke();
         
         ctx.beginPath();
         ctx.arc(this.x, this.y, gauge_radius, -Math.PI / 2, -Math.PI / 2 + hp_angle);
         ctx.strokeStyle = GAME_CONFIG.COLOR_ENEMY_HP;
-        ctx.lineWidth = 4;
+        ctx.lineWidth = GAME_CONFIG.ENEMY_HP_GAUGE_STROKE_WIDTH;
+        ctx.lineCap = 'round';
         ctx.stroke();
         
         ctx.restore();
@@ -294,7 +290,7 @@ class ImmunityFeedbackText {
         ctx.fillStyle = this.color;
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 2;
-        ctx.font = 'bold 14px Arial';
+        ctx.font = 'bold 14px IBM Plex Sans';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.strokeText(this.text, this.x, this.y);

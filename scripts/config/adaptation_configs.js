@@ -3,9 +3,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Cytotoxic Surge',
         key_property: 'damage_multiplier',
         effects: {
-            0: { damage_multiplier: 1.16 },
-            1: { damage_multiplier: 1.24 },
-            2: { damage_multiplier: 1.32 }
+            0: { damage_multiplier: 1.24 },
+            1: { damage_multiplier: 1.36 },
+            2: { damage_multiplier: 1.48 }
         },
         get descriptions() {
             return {
@@ -19,9 +19,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Regenerative Cycle',
         key_property: 'core_heal_per_intensity',
         effects: {
-            0: { core_heal_per_intensity: 2 },
-            1: { core_heal_per_intensity: 3 },
-            2: { core_heal_per_intensity: 4 }
+            0: { core_heal_per_intensity: 1 },
+            1: { core_heal_per_intensity: 2 },
+            2: { core_heal_per_intensity: 3 }
         },
         get descriptions() {
             return {
@@ -51,9 +51,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Necrotic Recycling',
         key_property: 'energy_refund_percent',
         effects: {
-            0: { energy_refund_percent: 0.08 },
-            1: { energy_refund_percent: 0.12 },
-            2: { energy_refund_percent: 0.16 }
+            0: { energy_refund_percent: 0.16 },
+            1: { energy_refund_percent: 0.24 },
+            2: { energy_refund_percent: 0.32 }
         },
         get descriptions() {
             return {
@@ -67,9 +67,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Adrenal Response',
         key_property: 'energy_cost_reduction',
         effects: {
-            0: { energy_cost_reduction: 0.16 },
-            1: { energy_cost_reduction: 0.24 },
-            2: { energy_cost_reduction: 0.32 }
+            0: { energy_cost_reduction: 0.20 },
+            1: { energy_cost_reduction: 0.30 },
+            2: { energy_cost_reduction: 0.40 }
         },
         get descriptions() {
             return {
@@ -83,9 +83,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Mitochondrial Boost',
         key_property: 'energy_regen_multiplier',
         effects: {
-            0: { energy_regen_multiplier: 1.08 },
-            1: { energy_regen_multiplier: 1.12 },
-            2: { energy_regen_multiplier: 1.16 }
+            0: { energy_regen_multiplier: 1.12 },
+            1: { energy_regen_multiplier: 1.18 },
+            2: { energy_regen_multiplier: 1.24 }
         },
         get descriptions() {
             return {
@@ -99,9 +99,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Cytokine Infusion',
         key_property: 'cytokine_double_chance',
         effects: {
-            0: { cytokine_double_chance: 0.10 },
-            1: { cytokine_double_chance: 0.15 },
-            2: { cytokine_double_chance: 0.20 }
+            0: { cytokine_double_chance: 0.12 },
+            1: { cytokine_double_chance: 0.18 },
+            2: { cytokine_double_chance: 0.24 }
         },
         get descriptions() {
             return {
@@ -115,9 +115,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Adjuvant Bolus',
         key_property: 'adjuvant_double_chance',
         effects: {
-            0: { adjuvant_double_chance: 0.10 },
-            1: { adjuvant_double_chance: 0.15 },
-            2: { adjuvant_double_chance: 0.20 }
+            0: { adjuvant_double_chance: 0.12 },
+            1: { adjuvant_double_chance: 0.18 },
+            2: { adjuvant_double_chance: 0.24 }
         },
         get descriptions() {
             return {
@@ -147,9 +147,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Chronic Inflammation',
         key_property: 'status_effect_duration_multiplier',
         effects: {
-            0: { status_effect_duration_multiplier: 1.16 },
-            1: { status_effect_duration_multiplier: 1.24 },
-            2: { status_effect_duration_multiplier: 1.32 }
+            0: { status_effect_duration_multiplier: 1.20 },
+            1: { status_effect_duration_multiplier: 1.30 },
+            2: { status_effect_duration_multiplier: 1.40 }
         },
         get descriptions() {
             return {
@@ -179,9 +179,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Extended Chemotaxis',
         key_property: 'range_multiplier',
         effects: {
-            0: { range_multiplier: 1.16 },
-            1: { range_multiplier: 1.24 },
-            2: { range_multiplier: 1.32 }
+            0: { range_multiplier: 1.20 },
+            1: { range_multiplier: 1.30 },
+            2: { range_multiplier: 1.40 }
         },
         get descriptions() {
             return {
@@ -211,9 +211,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Biomass Injection',
         key_property: 'biomass_double_chance',
         effects: {
-            0: { biomass_double_chance: 0.10 },
-            1: { biomass_double_chance: 0.15 },
-            2: { biomass_double_chance: 0.20 }
+            0: { biomass_double_chance: 0.12 },
+            1: { biomass_double_chance: 0.18 },
+            2: { biomass_double_chance: 0.24 }
         },
         get descriptions() {
             return {
@@ -227,9 +227,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Homeostatic Potentiation',
         key_property: 'damage_per_core_hp_percent',
         effects: {
-            0: { damage_per_core_hp_percent: 0.04 },
-            1: { damage_per_core_hp_percent: 0.06 },
-            2: { damage_per_core_hp_percent: 0.08 }
+            0: { damage_per_core_hp_percent: 0.06 },
+            1: { damage_per_core_hp_percent: 0.09 },
+            2: { damage_per_core_hp_percent: 0.12 }
         },
         get descriptions() {
             return {
@@ -259,9 +259,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Steric Evasion',
         key_property: 'collision_resistance_chance',
         effects: {
-            0: { collision_resistance_chance: 0.10 },
-            1: { collision_resistance_chance: 0.15 },
-            2: { collision_resistance_chance: 0.20 }
+            0: { collision_resistance_chance: 0.16 },
+            1: { collision_resistance_chance: 0.24 },
+            2: { collision_resistance_chance: 0.32 }
         },
         get descriptions() {
             return {
@@ -275,9 +275,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Catalytic Efficiency',
         key_property: 'hp_preservation_chance',
         effects: {
-            0: { hp_preservation_chance: 0.08 },
-            1: { hp_preservation_chance: 0.12 },
-            2: { hp_preservation_chance: 0.16 }
+            0: { hp_preservation_chance: 0.14 },
+            1: { hp_preservation_chance: 0.21 },
+            2: { hp_preservation_chance: 0.28 }
         },
         get descriptions() {
             return {
@@ -291,9 +291,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Bidirectional Secretion',
         key_property: 'opposite_shot_chance',
         effects: {
-            0: { opposite_shot_chance: 0.18 },
-            1: { opposite_shot_chance: 0.27 },
-            2: { opposite_shot_chance: 0.36 }
+            0: { opposite_shot_chance: 0.20 },
+            1: { opposite_shot_chance: 0.30 },
+            2: { opposite_shot_chance: 0.40 }
         },
         get descriptions() {
             return {
@@ -307,13 +307,13 @@ const ADAPTATION_CONFIGS = {
         name: 'Refractory Period',
         key_property: 'invincibility_duration_ms',
         effects: {
-            0: { invincibility_duration_ms: 1000 },
-            1: { invincibility_duration_ms: 1500 },
-            2: { invincibility_duration_ms: 2000 }
+            0: { invincibility_duration_ms: 500 },
+            1: { invincibility_duration_ms: 750 },
+            2: { invincibility_duration_ms: 1000 }
         },
         get descriptions() {
             return {
-                0: `After taking damage, the Cell Core becomes invincible for ${this.effects[0].invincibility_duration_ms / 1000} second.`,
+                0: `After taking damage, the Cell Core becomes invincible for ${this.effects[0].invincibility_duration_ms / 1000} seconds.`,
                 1: `After taking damage, the Cell Core becomes invincible for ${this.effects[1].invincibility_duration_ms / 1000} seconds.`,
                 2: `After taking damage, the Cell Core becomes invincible for ${this.effects[2].invincibility_duration_ms / 1000} seconds.`
             };
@@ -339,9 +339,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Cytokine Cache',
         key_property: 'cytokine_gain',
         effects: {
-            0: { cytokine_gain: 100 },
-            1: { cytokine_gain: 100 },
-            2: { cytokine_gain: 100 }
+            0: { cytokine_gain: 200 },
+            1: { cytokine_gain: 200 },
+            2: { cytokine_gain: 200 }
         },
         get descriptions() {
             return {
@@ -355,9 +355,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Adjuvant Hoard',
         key_property: 'adjuvant_gain',
         effects: {
-            0: { adjuvant_gain: 100 },
-            1: { adjuvant_gain: 100 },
-            2: { adjuvant_gain: 100 }
+            0: { adjuvant_gain: 200 },
+            1: { adjuvant_gain: 200 },
+            2: { adjuvant_gain: 200 }
         },
         get descriptions() {
             return {
