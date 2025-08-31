@@ -13,7 +13,7 @@ class DamageNumber {
         ctx.save();
         ctx.globalAlpha = this.opacity;
         ctx.fillStyle = 'white';
-        ctx.font = '16px Arial';
+        ctx.font = '16px IBM Plex Sans';
         ctx.textAlign = 'center';
         ctx.fillText(this.text, this.x, this.y);
         ctx.restore();

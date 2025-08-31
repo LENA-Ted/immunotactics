@@ -290,7 +290,7 @@ class ImmunityFeedbackText {
         ctx.fillStyle = this.color;
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 2;
-        ctx.font = 'bold 14px Arial';
+        ctx.font = 'bold 14px IBM Plex Sans';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.strokeText(this.text, this.x, this.y);

@@ -74,7 +74,7 @@ class BaseTower {
         const scale = this.pulsate_effect.get_scale();
         
         ctx.save();
-        ctx.font = `${14 * scale}px Arial`;
+        ctx.font = `${14 * scale}px IBM Plex Sans`;
         ctx.fillStyle = GAME_CONFIG.COLOR_DARK_BLUE;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';

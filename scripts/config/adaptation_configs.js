@@ -313,7 +313,7 @@ const ADAPTATION_CONFIGS = {
         },
         get descriptions() {
             return {
-                0: `After taking damage, the Cell Core becomes invincible for ${this.effects[0].invincibility_duration_ms / 1000} second.`,
+                0: `After taking damage, the Cell Core becomes invincible for ${this.effects[0].invincibility_duration_ms / 1000} seconds.`,
                 1: `After taking damage, the Cell Core becomes invincible for ${this.effects[1].invincibility_duration_ms / 1000} seconds.`,
                 2: `After taking damage, the Cell Core becomes invincible for ${this.effects[2].invincibility_duration_ms / 1000} seconds.`
             };
