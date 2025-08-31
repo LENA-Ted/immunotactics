@@ -3,9 +3,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Cytotoxic Surge',
         key_property: 'damage_multiplier',
         effects: {
-            0: { damage_multiplier: 1.32 },
-            1: { damage_multiplier: 1.48 },
-            2: { damage_multiplier: 1.64 }
+            0: { damage_multiplier: 1.24 },
+            1: { damage_multiplier: 1.36 },
+            2: { damage_multiplier: 1.48 }
         },
         get descriptions() {
             return {
@@ -19,9 +19,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Regenerative Cycle',
         key_property: 'core_heal_per_intensity',
         effects: {
-            0: { core_heal_per_intensity: 2 },
-            1: { core_heal_per_intensity: 3 },
-            2: { core_heal_per_intensity: 4 }
+            0: { core_heal_per_intensity: 1 },
+            1: { core_heal_per_intensity: 2 },
+            2: { core_heal_per_intensity: 3 }
         },
         get descriptions() {
             return {
@@ -67,9 +67,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Adrenal Response',
         key_property: 'energy_cost_reduction',
         effects: {
-            0: { energy_cost_reduction: 0.24 },
-            1: { energy_cost_reduction: 0.36 },
-            2: { energy_cost_reduction: 0.48 }
+            0: { energy_cost_reduction: 0.20 },
+            1: { energy_cost_reduction: 0.30 },
+            2: { energy_cost_reduction: 0.40 }
         },
         get descriptions() {
             return {
@@ -83,9 +83,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Mitochondrial Boost',
         key_property: 'energy_regen_multiplier',
         effects: {
-            0: { energy_regen_multiplier: 1.14 },
-            1: { energy_regen_multiplier: 1.21 },
-            2: { energy_regen_multiplier: 1.28 }
+            0: { energy_regen_multiplier: 1.12 },
+            1: { energy_regen_multiplier: 1.18 },
+            2: { energy_regen_multiplier: 1.24 }
         },
         get descriptions() {
             return {
@@ -163,9 +163,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Catabolic Conversion',
         key_property: 'energy_per_kill',
         effects: {
-            0: { energy_per_kill: 4 },
-            1: { energy_per_kill: 6 },
-            2: { energy_per_kill: 8 }
+            0: { energy_per_kill: 2 },
+            1: { energy_per_kill: 3 },
+            2: { energy_per_kill: 4 }
         },
         get descriptions() {
             return {
@@ -195,9 +195,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Necrotrophic Repair',
         key_property: 'hp_per_ten_kills',
         effects: {
-            0: { hp_per_ten_kills: 4 },
-            1: { hp_per_ten_kills: 6 },
-            2: { hp_per_ten_kills: 8 }
+            0: { hp_per_ten_kills: 2 },
+            1: { hp_per_ten_kills: 3 },
+            2: { hp_per_ten_kills: 4 }
         },
         get descriptions() {
             return {
@@ -227,9 +227,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Homeostatic Potentiation',
         key_property: 'damage_per_core_hp_percent',
         effects: {
-            0: { damage_per_core_hp_percent: 0.08 },
-            1: { damage_per_core_hp_percent: 0.12 },
-            2: { damage_per_core_hp_percent: 0.16 }
+            0: { damage_per_core_hp_percent: 0.06 },
+            1: { damage_per_core_hp_percent: 0.09 },
+            2: { damage_per_core_hp_percent: 0.12 }
         },
         get descriptions() {
             return {
@@ -243,9 +243,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Paracrine Regeneration',
         key_property: 'immune_explosion_heal',
         effects: {
-            0: { immune_explosion_heal: 4 },
-            1: { immune_explosion_heal: 6 },
-            2: { immune_explosion_heal: 8 }
+            0: { immune_explosion_heal: 2 },
+            1: { immune_explosion_heal: 3 },
+            2: { immune_explosion_heal: 4 }
         },
         get descriptions() {
             return {
@@ -259,9 +259,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Steric Evasion',
         key_property: 'collision_resistance_chance',
         effects: {
-            0: { collision_resistance_chance: 0.18 },
-            1: { collision_resistance_chance: 0.27 },
-            2: { collision_resistance_chance: 0.36 }
+            0: { collision_resistance_chance: 0.16 },
+            1: { collision_resistance_chance: 0.24 },
+            2: { collision_resistance_chance: 0.32 }
         },
         get descriptions() {
             return {
@@ -275,9 +275,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Catalytic Efficiency',
         key_property: 'hp_preservation_chance',
         effects: {
-            0: { hp_preservation_chance: 0.16 },
-            1: { hp_preservation_chance: 0.24 },
-            2: { hp_preservation_chance: 0.32 }
+            0: { hp_preservation_chance: 0.14 },
+            1: { hp_preservation_chance: 0.21 },
+            2: { hp_preservation_chance: 0.28 }
         },
         get descriptions() {
             return {
@@ -307,9 +307,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Refractory Period',
         key_property: 'invincibility_duration_ms',
         effects: {
-            0: { invincibility_duration_ms: 1000 },
-            1: { invincibility_duration_ms: 1500 },
-            2: { invincibility_duration_ms: 2000 }
+            0: { invincibility_duration_ms: 500 },
+            1: { invincibility_duration_ms: 750 },
+            2: { invincibility_duration_ms: 1000 }
         },
         get descriptions() {
             return {
@@ -339,9 +339,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Cytokine Cache',
         key_property: 'cytokine_gain',
         effects: {
-            0: { cytokine_gain: 100 },
-            1: { cytokine_gain: 100 },
-            2: { cytokine_gain: 100 }
+            0: { cytokine_gain: 200 },
+            1: { cytokine_gain: 200 },
+            2: { cytokine_gain: 200 }
         },
         get descriptions() {
             return {
@@ -355,9 +355,9 @@ const ADAPTATION_CONFIGS = {
         name: 'Adjuvant Hoard',
         key_property: 'adjuvant_gain',
         effects: {
-            0: { adjuvant_gain: 100 },
-            1: { adjuvant_gain: 100 },
-            2: { adjuvant_gain: 100 }
+            0: { adjuvant_gain: 200 },
+            1: { adjuvant_gain: 200 },
+            2: { adjuvant_gain: 200 }
         },
         get descriptions() {
             return {
